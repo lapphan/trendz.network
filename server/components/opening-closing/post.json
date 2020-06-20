@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_opening_closing_posts",
+  "info": {
+    "name": "Post_Open_Close_datetime",
+    "icon": "calendar-alt"
+  },
+  "options": {},
+  "attributes": {
+    "open_datime": {
+      "type": "datetime"
+    },
+    "close_datetime": {
+      "type": "datetime"
+    }
+  }
+}
