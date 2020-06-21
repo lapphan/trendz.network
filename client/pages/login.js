@@ -21,6 +21,8 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faEnvelope, faLock} from '@fortawesome/free-solid-svg-icons'
 
 // core components
 //import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
@@ -104,7 +106,9 @@ const LoginPage = () => {
                         >
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
-                              <i className="tim-icons icon-email-85" />
+                            <i className="tim-icons">
+                              <FontAwesomeIcon icon={faEnvelope} />
+                                </i>
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input
@@ -135,7 +139,9 @@ const LoginPage = () => {
                         >
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
-                              <i className="tim-icons icon-lock-circle" />
+                              <i className="tim-icons">
+                              <FontAwesomeIcon icon={faLock} />
+                                </i>
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input

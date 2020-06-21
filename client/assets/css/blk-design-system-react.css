@@ -6300,6 +6300,10 @@ button.bg-success:focus {
   background-color: #1d8cf8 !important;
 }
 
+.bg-navbar{
+  background-color: #5603ad !important;
+}
+
 a.bg-info:hover,
 a.bg-info:focus,
 button.bg-info:hover,
@@ -16577,7 +16581,7 @@ code {
 .form-group .input-group-append .input-group-text,
 .input-group .input-group-prepend .input-group-text,
 .input-group .input-group-append .input-group-text {
-  padding: 10px 0 10px 18px;
+  padding: 6px 0 10px 18px;
 }
 .form-group .input-group-prepend .input-group-text + .form-control,
 .form-group .input-group-prepend .input-group-text ~ .form-control,

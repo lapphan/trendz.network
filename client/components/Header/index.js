@@ -43,7 +43,7 @@ function Header() {
       setNavColor((previousState) => {
         return {
           ...previousState,
-          color: "bg-info",
+          color: "bg-navbar",
         };
       });
     } else if (
@@ -146,21 +146,29 @@ function Header() {
           <Nav navbar>
             <NavItem>
               <Button className="nav-link d-none d-lg-block" color="default">
-                <Link href="/login"><a>Đăng nhập</a></Link>
+                <Link href="/login">
+                  <a>Đăng nhập</a>
+                </Link>
               </Button>
               <NavLink
                 className="nav-pills d-lg-none d-xl-none"
                 onClick={toggleCollapse}
               >
-                <Link href="/login"><a>Đăng nhập</a></Link>
+                <Link href="/login">
+                  <a>Đăng nhập</a>
+                </Link>
               </NavLink>
             </NavItem>
             <NavItem>
               <Button className="nav-link d-none d-lg-block" color="primary">
-                <Link href="/signup"><a>Đăng ký</a></Link>
+                <Link href="/signup">
+                  <a>Đăng ký</a>
+                </Link>
               </Button>
               <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-                <Link href="/signup"><a>Đăng ký</a></Link>
+                <Link href="/signup">
+                  <a>Đăng ký</a>
+                </Link>
               </NavLink>
             </NavItem>
           </Nav>
