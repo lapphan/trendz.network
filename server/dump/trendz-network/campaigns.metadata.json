@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"trendz-network.campaigns"}],"uuid":"7fc638b4ffdf4857ad14c4b2bcad443a"}
