@@ -6,3 +6,6 @@
 `mongorestore --db testTrendz .\dump\trendz-network\`
 3. Run server
 `yarn develop`
+4. Login into strapi:
+`username: admin`
+`password: Password`
