@@ -10,8 +10,7 @@
   },
   "attributes": {
     "name": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "description": {
       "type": "string"
@@ -29,12 +28,14 @@
       "model": "file",
       "via": "related",
       "allowedTypes": [
-        "images"
+        "images",
+        "files",
+        "videos"
       ],
       "plugin": "upload",
       "required": false
     },
-    "pictures": {
+    "picture": {
       "collection": "file",
       "via": "related",
       "allowedTypes": [
@@ -54,9 +55,9 @@
       "model": "category",
       "via": "channels"
     },
-    "post": {
+    "campaign": {
       "via": "channels",
-      "model": "post"
+      "model": "campaign"
     }
   }
 }

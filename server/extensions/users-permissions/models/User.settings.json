@@ -57,7 +57,9 @@
       "model": "file",
       "via": "related",
       "allowedTypes": [
-        "images"
+        "images",
+        "files",
+        "videos"
       ],
       "plugin": "upload",
       "required": false
@@ -66,9 +68,9 @@
       "via": "user",
       "collection": "channel"
     },
-    "posts": {
+    "campaigns": {
       "via": "user",
-      "collection": "post"
+      "collection": "campaign"
     }
   }
 }

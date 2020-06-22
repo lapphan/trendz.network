@@ -1,7 +1,7 @@
 {
-  "collectionName": "components_opening_closing_posts",
+  "collectionName": "components_ttl_campaign_ttls",
   "info": {
-    "name": "Post_Open_Close_datetime",
+    "name": "Campaign_TTL",
     "icon": "calendar-alt"
   },
   "options": {},

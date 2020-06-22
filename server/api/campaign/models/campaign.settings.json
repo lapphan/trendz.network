@@ -1,8 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "posts",
+  "collectionName": "campaigns",
   "info": {
-    "name": "post"
+    "name": "campaign"
   },
   "options": {
     "increments": true,
@@ -10,8 +10,7 @@
   },
   "attributes": {
     "title": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "content": {
       "type": "richtext"
@@ -33,19 +32,19 @@
     "user": {
       "plugin": "users-permissions",
       "model": "user",
-      "via": "posts"
+      "via": "campaigns"
     },
     "channels": {
       "collection": "channel",
-      "via": "post"
+      "via": "campaign"
     },
     "category": {
       "model": "category"
     },
-    "postTTL": {
+    "campaignTTL": {
       "type": "component",
       "repeatable": true,
-      "component": "opening-closing.post"
+      "component": "ttl.campaign-ttl"
     }
   }
 }
