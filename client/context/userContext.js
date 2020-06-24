@@ -30,7 +30,6 @@ const reducer = (state, { type, payload }) => {
         ...initialForms,
       };
     case LOGIN: {
-      console.log(payload)
       const { jwt, user } = payload;
       return {
         ...state,

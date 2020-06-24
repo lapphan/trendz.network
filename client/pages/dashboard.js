@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import Layout from "../components/layout";
 // import withPrivateRoute from '../components/withPrivateRoute';
 
 // const Dashboard = () => {
@@ -13,11 +14,23 @@ import React from "react";
 // export default withPrivateRoute(Dashboard);
 
 import { useAuth } from "../context/userContext";
-import { Router } from "next/router";
+import Router from "next/router";
 
 const Dashboard = () => {
-  const {state, dispatch} = useAuth();
-    return <h1>Private dashboard for {state.user.username}</h1>;
+  const { state } = useAuth();
+  useEffect(() => {
+    if (state.jwt !== "") return;
+    Router.replace("/dashboard", "/login", { shallow: true });
+    Router.push("/login");
+  }, [state]);
+
+  if (state.jwt !== "")
+    return (
+      <Layout>
+        <h1>Private dashboard for {state.user.username}</h1>
+      </Layout>
+    );
+  else return null;
 };
 
 export default Dashboard;
