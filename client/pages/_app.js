@@ -3,7 +3,7 @@ import React from "react";
 import Head from "next/head";
 import withApollo from "../utils/ApolloSetup/withApollo";
 import { ApolloProvider } from "react-apollo";
-import UserContextProvider from "../context/userContext";
+import {UserContextProvider} from "../context/userContext";
 
 import "../assets/css/blk-design-system-react.css";
 import "../assets/css/demo.css";

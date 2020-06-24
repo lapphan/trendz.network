@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+
 
 const initialForms = {
   jwt: "",
@@ -12,6 +13,8 @@ const initialForms = {
     }
   },
 };
+
+export const UserContext = createContext({ });
 
 /* TYPES */
 export const LOGIN = "LOGIN";
@@ -27,6 +30,7 @@ const reducer = (state, { type, payload }) => {
         ...initialForms,
       };
     case LOGIN: {
+      console.log(payload)
       const { jwt, user } = payload;
       return {
         ...state,
@@ -35,18 +39,30 @@ const reducer = (state, { type, payload }) => {
       };
     }
     default:
-      return state;
+      //return state;
+      throw new Error(`Unhandled action type: ${type}`)
   }
 };
 /* END */
 
-export const UserContext = createContext({ ...initialForms });
 
 //let token=''
 
-const UserContextProvider = (props) => {
-  const initialState = useContext(UserContext);
-  const [state, dispatch] = useReducer(reducer, initialState);
+export const UserContextProvider = (props) => {
+  //const initialState = useContext(UserContext);
+  let localState = null
+
+  if(typeof localStorage !== "undefined" && localStorage.getItem("userInfo")){
+    localState = JSON.parse(localStorage.getItem("userInfo") || "")
+  }
+  
+  const [state, dispatch] = useReducer(reducer, localState||initialForms);
+
+  if (typeof localStorage!=="undefined"){
+    useEffect(()=>{
+      localStorage.setItem("userInfo", JSON.stringify(state))
+    }, [state])
+  }
 
   return (
     <UserContext.Provider value={{ state, dispatch }}>
@@ -55,4 +71,5 @@ const UserContextProvider = (props) => {
   );
 };
 
-export default UserContextProvider;
+//export default UserContextProvider;
+export const useAuth = () =>useContext(UserContext)

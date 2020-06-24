@@ -98,8 +98,9 @@ const LoginPage = () => {
   const [requestLoginMutation, { loading: requestLoginLoading }] = useMutation(
     REQUEST_LOGIN,
     {
-      update(proxy, { data: { requestLogin: userData } }) {
-        dispatch({ type: LOGIN, payload: userData });
+      update(proxy, { data: userData }) {
+        console.log(userData.login)
+        dispatch({ type: LOGIN, payload: userData.login });
       },
       variables: accountValues,
     }
@@ -126,7 +127,7 @@ const LoginPage = () => {
       // )
       alert('Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)')
     }
-    try{
+    else try{
       await requestLoginMutation()
       Router.push('/dashboard')
       return alert('Đăng nhập thành công!') 
