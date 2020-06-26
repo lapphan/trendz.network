@@ -15,7 +15,7 @@ if (!isBrowser) {
 
 const create = (initialState, { getToken }) => {
   const httpLink = createHttpLink({
-    uri: process.env.API_URL || "http://localhost:1337/graphql",
+    uri: process.env.API_URL+"/graphql" || "http://localhost:1337/graphql",
     
   });
 

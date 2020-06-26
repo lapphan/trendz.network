@@ -20,7 +20,6 @@ const Dashboard = () => {
   const { state } = useAuth();
   useEffect(() => {
     if (state.jwt !== "") return;
-    Router.replace("/dashboard", "/login", { shallow: true });
     Router.push("/login");
   }, [state]);
 

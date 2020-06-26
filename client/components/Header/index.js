@@ -33,7 +33,7 @@ export const LOGOUT = "LOGOUT";
 /* END */
 
 function Header() {
-  const {state, dispatch} = useAuth();
+  const { state, dispatch } = useAuth();
   const [isOpen, toggleIsOpen] = useState(false);
   const [navColor, setNavColor] = useState({
     color: "navbar-transparent",
@@ -73,13 +73,6 @@ function Header() {
     };
   }, [changeColor]);
 
-  // useLayoutEffect(() => {window.addEventListener('scroll', changeColor)};
-  // useLayoutEffect(() => {
-  //   return () => {
-  //     window.removeEventListener('scroll', changeColor());
-  //   };
-  // });
-
   const toggleCollapse = () => {
     document.documentElement.classList.toggle("nav-open");
     toggleIsOpen((isOpen) => !isOpen);
@@ -102,61 +95,85 @@ function Header() {
     });
   };
 
-  const handleLogout = () =>{
+  const handleLogout = () => {
     localStorage.removeItem("userInfo");
-    dispatch({ type: LOGOUT});
-  }
+    dispatch({ type: LOGOUT });
+  };
 
-  const renderButton = 
+  const renderButton =
     state.jwt === "" ? (
       <Nav navbar>
-            <NavItem>
-              <Button className="nav-link d-none d-lg-block" color="default">
-                <Link href="/login">
-                  <a>Đăng nhập</a>
-                </Link>
-              </Button>
-              <NavLink
-                className="nav-pills d-lg-none d-xl-none"
-                onClick={()=>{toggleCollapse(); handleLogout()}}
-              >
-                <Link href="/login">
-                  <a>Đăng nhập</a>
-                </Link>
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <Button className="nav-link d-none d-lg-block" color="primary">
-                <Link href="/signup">
-                  <a>Đăng ký</a>
-                </Link>
-              </Button>
-              <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-                <Link href="/signup">
-                  <a>Đăng ký</a>
-                </Link>
-              </NavLink>
-            </NavItem>
-          </Nav>
+        <NavItem>
+          <Button className="nav-link d-none d-lg-block" color="default">
+            <Link href="/login">
+              <a>Đăng nhập</a>
+            </Link>
+          </Button>
+          <NavLink
+            className="nav-pills d-lg-none d-xl-none"
+            onClick={toggleCollapse}
+          >
+            <Link href="/login">
+              <a>Đăng nhập</a>
+            </Link>
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <Button className="nav-link d-none d-lg-block" color="primary">
+            <Link href="/signup">
+              <a>Đăng ký</a>
+            </Link>
+          </Button>
+          <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
+            <Link href="/signup">
+              <a>Đăng ký</a>
+            </Link>
+          </NavLink>
+        </NavItem>
+      </Nav>
     ) : (
       <Nav navbar>
-            <NavItem>
-              <Button className="nav-link d-none d-lg-block" color="default" onClick={handleLogout}>
-                <Link href="/">
-                  <a>Đăng xuất</a>
-                </Link>
-              </Button>
-              <NavLink
-                className="nav-pills d-lg-none d-xl-none"
-                onClick={toggleCollapse}
-              >
-                <Link href="/">
-                  <a>Đăng xuất</a>
-                </Link>
-              </NavLink>
-            </NavItem>
-          </Nav>
-    )
+        <NavItem>
+          <Button className="nav-link d-none d-lg-block" color="default">
+            <Link href="/profile">
+              {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
+              <a>Hồ sơ</a>
+            </Link>
+          </Button>
+          <NavLink
+            className="nav-pills d-lg-none d-xl-none"
+            onClick={toggleCollapse}
+          >
+            <Link href="/profile">
+              {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
+              <a>Hồ sơ</a>
+            </Link>
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <Button
+            className="nav-link d-none d-lg-block"
+            color="default"
+            onClick={handleLogout}
+          >
+            <Link href="/">
+              <a>Đăng xuất</a>
+            </Link>
+          </Button>
+          <NavLink
+            className="nav-pills d-lg-none d-xl-none"
+            onClick={() => {
+              toggleCollapse();
+              handleLogout();
+            }}
+          >
+            <Link href="/">
+              <a>Đăng xuất</a>
+            </Link>
+          </NavLink>
+        </NavItem>
+      </Nav>
+    );
 
   return (
     <Navbar

@@ -47,9 +47,9 @@
       "required": false
     },
     "user": {
+      "via": "channels",
       "plugin": "users-permissions",
-      "model": "user",
-      "via": "channels"
+      "model": "user"
     },
     "category": {
       "model": "category",

@@ -48,7 +48,6 @@ const reducer = (state, { type, payload }) => {
 //let token=''
 
 export const UserContextProvider = (props) => {
-  //const initialState = useContext(UserContext);
   let localState = null
 
   if(typeof localStorage !== "undefined" && localStorage.getItem("userInfo")){
@@ -59,7 +58,7 @@ export const UserContextProvider = (props) => {
 
   if (typeof localStorage!=="undefined"){
     useEffect(()=>{
-      localStorage.setItem("userInfo", JSON.stringify(state))
+      localStorage.setItem("userInfo", JSON.stringify(state.jwt))
     }, [state])
   }
 

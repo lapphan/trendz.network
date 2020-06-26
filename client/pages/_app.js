@@ -7,7 +7,7 @@ import {UserContextProvider} from "../context/userContext";
 
 import "../assets/css/blk-design-system-react.css";
 import "../assets/css/demo.css";
-//import "../assets/css/nucleo-icons.css";
+import "../assets/css/nucleo-icons.css";
 
 const App = ({ Component, pageProps, apolloClient }) => {
   return (
