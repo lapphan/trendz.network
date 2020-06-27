@@ -16,12 +16,10 @@ const Home = (props) => {
 
   useEffect(()=>{
     if (state.jwt==="") return
-    Router.replace("/", "/dashboard", {shallow: true})
     Router.push("/dashboard")
   },[state])
   return(
   <Layout>
-    
     <div className="page-header header-filter">
         <div className="squares square1" />
         <div className="squares square2" />
@@ -37,12 +35,6 @@ const Home = (props) => {
           </div>
         </Container>
       </div>
-    
-    <style jsx>
-      {`
-        
-      `}
-    </style>
   </Layout>
 )}
 

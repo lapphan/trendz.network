@@ -25,7 +25,7 @@ import {
 
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 
 import { isEmpty } from "lodash";
 
@@ -33,7 +33,7 @@ import { passwordCheck } from "../utils/functions/regEx";
 
 import { errorLog } from "../utils/functions/error-log-snackbar";
 
-import { REQUEST_LOGIN } from "../graphql/mutations/authentication/login";
+import { REQUEST_REGISTER } from "../graphql/mutations/registration/register";
 import { useMutation } from "react-apollo";
 import redirect from "../utils/ApolloSetup/redirect";
 import Router from 'next/router'
@@ -45,12 +45,12 @@ import Router from 'next/router'
 export const LOGIN = "LOGIN";
 /* END */
 
-const LoginPage = () => {
+const RegisterPage = () => {
   useEffect(() => {
-    document.body.classList.toggle("login-page");
+    document.body.classList.toggle("register-page");
     document.documentElement.addEventListener("mousemove", followCursor);
     return () => {
-      document.body.classList.toggle("login-page");
+      document.body.classList.toggle("register-page");
       document.documentElement.removeEventListener("mousemove", followCursor);
     };
   }, []);
@@ -58,9 +58,14 @@ const LoginPage = () => {
   const { state, dispatch } = useContext(UserContext);
 
   const [accountValues, setAccountValues] = useState({
-    identifier: "",
+    username: "",
+    email:"",
     password: "",
   });
+
+  const [reTypePassword, setReTypePassword] = useState({
+      rePassword:""
+  })
 
   const [pointer, setPointer] = useState({
     squares1to6: "",
@@ -70,6 +75,8 @@ const LoginPage = () => {
   const [focus, setFocus] = useState({
     emailFocus: false,
     passwordFocus: false,
+    usernameFocus: false,
+    rePasswordFocus: false
   });
   
   const followCursor = (event) => {
@@ -95,12 +102,11 @@ const LoginPage = () => {
     });
   };
 
-  const [requestLoginMutation, { loading: requestLoginLoading }] = useMutation(
-    REQUEST_LOGIN,
+  const [requestRegisterMutation, { loading: requestRegisterLoading }] = useMutation(
+    REQUEST_REGISTER,
     {
       update(proxy, { data: userData }) {
-        console.log(userData.login)
-        dispatch({ type: LOGIN, payload: userData.login });
+        dispatch({ type: LOGIN, payload: userData.register });
       },
       variables: accountValues,
     }
@@ -113,12 +119,19 @@ const LoginPage = () => {
     });
   };
 
-  const requestLogin = async() =>{
-    if (isEmpty(accountValues.identifier)&&isEmpty(accountValues.password)){
+  const handleReTypePasswordChange = (event) => {
+    const { name, value } = event.target;
+    setReTypePassword((previousState) => {
+      return { ...previousState, [name]: value };
+    });
+  };
+
+  const requestRegister = async() =>{
+    if (isEmpty(accountValues.username)&&isEmpty(accountValues.password)&&isEmpty(accountValues.email)){
       // enqueueSnackbar('Không được bỏ trống cả hai trường',{
       //   variant: 'error'
       // })
-      alert('Không được bỏ trống cả hai trường')
+      alert('Không được bỏ trống cả ba trường')
     }
     if(!passwordCheck.test(accountValues.password)){
       // enqueueSnackbar(
@@ -127,10 +140,13 @@ const LoginPage = () => {
       // )
       alert('Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)')
     }
+    if(accountValues.password !== reTypePassword.rePassword){
+        alert('Mật khẩu và Nhập lại mật khẩu không trùng khớp! Vui lòng thử lại')
+    }
     else try{
-      await requestLoginMutation()
+      await requestRegisterMutation()
       Router.push('/dashboard')
-      return alert('Đăng nhập thành công!') 
+      return alert('Đăng ký thành công!') 
       // enqueueSnackbar(
       //   'Đăng nhập thành công!',{variant: 'success'}
       // )
@@ -160,12 +176,50 @@ const LoginPage = () => {
                     id="square8"
                     style={{ transform: pointer.squares7and8 }}
                   />
-                  <Card className="card-login">
+                  <Card className="card-register">
                     <CardHeader>
-                      <CardTitle tag="h4">Đăng nhập</CardTitle>
+                      <CardTitle tag="h4">Đăng ký</CardTitle>
                     </CardHeader>
                     <CardBody>
                       <Form className="form">
+                        <InputGroup
+                          className={classnames({
+                            "input-group-focus": focus.usernameFocus,
+                          })}
+                        >
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="tim-icons">
+                                <FontAwesomeIcon icon={faUser} />
+                              </i>
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input
+                            placeholder="Tên đăng nhập"
+                            type="text"
+                            required
+                            onFocus={(event) =>
+                              setFocus((previousState) => {
+                                return {
+                                  ...previousState,
+                                  usernameFocus: true,
+                                };
+                              })
+                            }
+                            onBlur={(event) =>
+                              setFocus((previousState) => {
+                                return {
+                                  ...previousState,
+                                  usernameFocus: false,
+                                };
+                              })
+                            }
+                            id="username"
+                            name="username"
+                            onChange={handleAccountChange}
+                            value={accountValues.username}
+                          />
+                        </InputGroup>
                         <InputGroup
                           className={classnames({
                             "input-group-focus": focus.emailFocus,
@@ -179,7 +233,7 @@ const LoginPage = () => {
                             </InputGroupText>
                           </InputGroupAddon>
                           <Input
-                            placeholder="Tên đăng nhập"
+                            placeholder="Địa chỉ email"
                             type="text"
                             required
                             onFocus={(event) =>
@@ -198,10 +252,10 @@ const LoginPage = () => {
                                 };
                               })
                             }
-                            id="identifier"
-                            name="identifier"
+                            id="email"
+                            name="email"
                             onChange={handleAccountChange}
-                            value={accountValues.identifier}
+                            value={accountValues.email}
                           />
                         </InputGroup>
                         <InputGroup
@@ -242,17 +296,55 @@ const LoginPage = () => {
                             value={accountValues.password}
                           />
                         </InputGroup>
+                        <InputGroup
+                          className={classnames({
+                            "input-group-focus": focus.rePasswordFocus,
+                          })}
+                        >
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="tim-icons">
+                                <FontAwesomeIcon icon={faLock} />
+                              </i>
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input
+                            placeholder="Nhập lại mật khẩu"
+                            type="password"
+                            required
+                            onFocus={(event) =>
+                              setFocus((previousState) => {
+                                return {
+                                  ...previousState,
+                                  rePasswordFocus: true,
+                                };
+                              })
+                            }
+                            onBlur={(event) =>
+                              setFocus((previousState) => {
+                                return {
+                                  ...previousState,
+                                  rePasswordFocus: false,
+                                };
+                              })
+                            }
+                            id="rePassword"
+                            name="rePassword"
+                            onChange={handleReTypePasswordChange}
+                            value={reTypePassword.rePassword}
+                          />
+                        </InputGroup>
                       </Form>
                     </CardBody>
                     <CardFooter>
-                      <Button className="btn-round" color="primary" size="lg" onClick={requestLogin} disabled={requestLoginLoading}>
-                        Đăng nhập
+                      <Button className="btn-round" color="warning" size="lg" onClick={requestRegister} disabled={requestRegisterLoading}>
+                        Đăng ký
                       </Button>
                     </CardFooter>
                   </Card>
                 </Col>
               </Row>
-              <div className="login-bg" />
+              <div className="register-bg" />
               <div
                 className="square square-1"
                 id="square1"
@@ -291,4 +383,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

@@ -19,7 +19,7 @@ import Router from "next/router";
 const Dashboard = () => {
   const { state } = useAuth();
   useEffect(() => {
-    if (state.jwt !== "") return;
+    if (state.jwt === "") 
     Router.push("/login");
   }, [state]);
 

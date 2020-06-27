@@ -27,32 +27,33 @@ import {
 
 let ps = null;
 
-
-
-
 const Profile = () => {
   const { state } = useAuth();
   const [tabState, setTab] = useState({
     tabs: 1,
   });
-  
-  const [user, setUser] = useState()
 
-  useEffect(async()=>{
-    const {API_URL} = process.env
+  //const [user, setUser] = useState()
+
+  async function fetchUser(state) {
+    const { API_URL } = process.env;
 
     const requestOptions = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Authorization': `Bearer ${state.jwt}`,
+        Authorization: `Bearer ${state.jwt}`,
       },
-    }
-  
-    const res = await fetch(`${API_URL}/users/me`,requestOptions)
-    const user = await res.json()
+    };
+
+    const res = await fetch(`${API_URL}/users/me`, requestOptions);
+    const user = await res.json();
     // setUser()
-    return console.log(user)
-  })
+    return console.log(user);
+  }
+
+  useEffect(() => {
+    fetchUser(state);
+  }, [state]);
 
   const toggleTabs = (event, stateName, index) => {
     event.preventDefault();
@@ -85,8 +86,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (state.jwt !== "") return;
-    Router.push("/login");
+    if (state.jwt === "") Router.push("/login");
   }, [state]);
 
   if (state.jwt !== "")

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect } from "react";
 const initialForms = {
   jwt: "",
   user: {
+    id:"",
     username: "",
     email: "",
     role:{
@@ -58,7 +59,7 @@ export const UserContextProvider = (props) => {
 
   if (typeof localStorage!=="undefined"){
     useEffect(()=>{
-      localStorage.setItem("userInfo", JSON.stringify(state.jwt))
+      localStorage.setItem("userInfo", JSON.stringify(state))
     }, [state])
   }
 

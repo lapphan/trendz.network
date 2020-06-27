@@ -120,12 +120,12 @@ function Header() {
         </NavItem>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="primary">
-            <Link href="/signup">
+            <Link href="/register">
               <a>Đăng ký</a>
             </Link>
           </Button>
           <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-            <Link href="/signup">
+            <Link href="/register">
               <a>Đăng ký</a>
             </Link>
           </NavLink>
