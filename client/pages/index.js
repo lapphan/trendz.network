@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import Layout from '../components/layout'
 import { Container } from 'reactstrap';
+import { useAuth } from "../context/userContext";
+import Router  from 'next/router';
 
 const Home = (props) => {
   useEffect(() => {
@@ -9,9 +11,15 @@ const Home = (props) => {
       document.body.classList.toggle('index-page');
     };
   }, []);
+
+  const {state} = useAuth()
+
+  useEffect(()=>{
+    if (state.jwt==="") return
+    Router.push("/dashboard")
+  },[state])
   return(
   <Layout>
-    
     <div className="page-header header-filter">
         <div className="squares square1" />
         <div className="squares square2" />
@@ -27,12 +35,6 @@ const Home = (props) => {
           </div>
         </Container>
       </div>
-    
-    <style jsx>
-      {`
-        
-      `}
-    </style>
   </Layout>
 )}
 

@@ -57,20 +57,18 @@
       "model": "file",
       "via": "related",
       "allowedTypes": [
-        "images",
-        "files",
-        "videos"
+        "images"
       ],
       "plugin": "upload",
       "required": false
     },
     "channels": {
-      "via": "user",
-      "collection": "channel"
+      "collection": "channel",
+      "via": "user"
     },
     "campaigns": {
-      "via": "user",
-      "collection": "campaign"
+      "collection": "campaign",
+      "via": "user"
     }
   }
 }
