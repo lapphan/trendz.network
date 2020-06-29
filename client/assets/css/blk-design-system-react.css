@@ -1933,6 +1933,12 @@ textarea.form-control {
   margin-bottom: 1rem;
 }
 
+.form-button {
+  margin-top: 1rem;
+  float: right;
+  margin-right: 3px;
+}
+
 .form-text {
   display: block;
   margin-top: 0.25rem;
@@ -17264,8 +17270,9 @@ textarea.form-control:active {
 }
 .profile-page .title {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 15px;
 }
+
 .profile-page .description,
 .profile-page .category {
   text-align: center;
@@ -21208,6 +21215,7 @@ input.datetimepicker[data-color="yellow"]
   position: relative;
   width: 100%;
   margin-bottom: 30px;
+  margin-top:-60px;
   box-shadow: 0 1px 20px 0px rgba(0, 0, 0, 0.1);
   align-items: center;
 }
@@ -22465,6 +22473,8 @@ td.rdtYear:hover {
 .rdtCounter .rdtCount {
   font-size: inherit;
   line-height: 25px;
+  color: #1d8cf8;
+  font-weight: bold;
 }
 
 .rdtMilli {

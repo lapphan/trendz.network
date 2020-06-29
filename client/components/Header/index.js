@@ -134,6 +134,23 @@ function Header() {
     ) : (
       <Nav navbar>
         <NavItem>
+          <Button className="nav-link d-none d-lg-block" color="warning">
+            <Link href="/create">
+              {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
+              <a>Tạo campaign</a>
+            </Link>
+          </Button>
+          <NavLink
+            className="nav-pills d-lg-none d-xl-none"
+            onClick={toggleCollapse}
+          >
+            <Link href="/create">
+              {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
+              <a>Tạo campaign</a>
+            </Link>
+          </NavLink>
+        </NavItem>
+        <NavItem>
           <Button className="nav-link d-none d-lg-block" color="default">
             <Link href="/profile">
               {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
