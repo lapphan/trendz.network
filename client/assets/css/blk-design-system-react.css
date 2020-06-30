@@ -2358,6 +2358,7 @@ fieldset:disabled a.btn {
   color: #ffffff;
   background-color: #d725bb;
   border-color: #cd23b2;
+  
 }
 .btn-primary:not(:disabled):not(.disabled):active:focus,
 .btn-primary:not(:disabled):not(.disabled).active:focus,
@@ -2393,6 +2394,7 @@ fieldset:disabled a.btn {
   color: #212529;
   background-color: #d6dae2;
   border-color: #cfd3dc;
+  
 }
 .btn-secondary:not(:disabled):not(.disabled):active:focus,
 .btn-secondary:not(:disabled):not(.disabled).active:focus,
@@ -3419,6 +3421,7 @@ input[type="button"].btn-block {
 
 .dropdown-menu.show {
   display: block;
+  width: -webkit-fill-available;
 }
 
 .dropdown-header {
@@ -12073,7 +12076,6 @@ fieldset[disabled] .btn-link.active {
   width: 0;
   height: 0;
   vertical-align: middle;
-  content: "";
   top: -5px;
   left: 10px;
   right: auto;
@@ -12321,10 +12323,11 @@ fieldset[disabled] .btn-link.active {
   padding: 10px;
   margin: 0;
   margin-bottom: 5px;
+  min-width: 260px;
 }
 .btn.dropdown-toggle[data-toggle="dropdown"]:after {
   content: "";
-  margin-left: 5px;
+  float: right;
 }
 .btn span.bs-caret {
   display: none;
@@ -16843,9 +16846,10 @@ fieldset[disabled] .form-control {
 
 textarea.form-control {
   max-width: 100%;
-  max-height: 80px;
+  min-width: 100%;
+  min-height: 80px;
   padding: 10px 10px 0 0;
-  resize: none;
+  resize: auto;
   border: none;
   border-bottom: 1px solid #2b3553;
   border-radius: 0;
@@ -18197,6 +18201,7 @@ hr.line-deafult {
 .main {
   position: relative;
   width: 100%;
+  margin-top: 100px;
 }
 
 .section-navbars {
@@ -20229,7 +20234,6 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   -webkit-transition: 300ms ease 0s;
   -moz-transition: 300ms ease 0s;
   -ms-transition: 300ms ease 0s;
-
   transition: 300ms ease 0s;
 }
 
@@ -21215,7 +21219,7 @@ input.datetimepicker[data-color="yellow"]
   position: relative;
   width: 100%;
   margin-bottom: 30px;
-  margin-top:-60px;
+  margin-top: -60px;
   box-shadow: 0 1px 20px 0px rgba(0, 0, 0, 0.1);
   align-items: center;
 }
@@ -22241,11 +22245,11 @@ input.datetimepicker[data-color="yellow"]
 }
 
 .rdtDays tr .rdtDay {
-  color: #9a9a9a;
+  color: #344675;
 }
 .rdtDays tr .rdtDay.rdtOld,
 .rdtDays tr .rdtDay.rdtNew {
-  color: #344675;
+  color: #9a9a9a;
   font-weight: 300;
 }
 
@@ -22317,7 +22321,6 @@ input.datetimepicker[data-color="yellow"]
   display: inline-block;
   font: normal normal normal 1em/1 "Nucleo";
   vertical-align: middle;
-
   text-transform: none;
   -webkit-font-smoothing: antialiased;
 }
@@ -22526,7 +22529,6 @@ td.rdtYear:hover {
   display: inline-block;
   font: normal normal normal 1em/1 "Nucleo";
   vertical-align: middle;
-
   text-transform: none;
   -webkit-font-smoothing: antialiased;
   font-size: 1rem;
@@ -22658,5 +22660,23 @@ td.rdtYear:hover {
 .blockquote.blockquote-info small {
   color: #1d8cf8;
 }
+.mydropdown {
+  width: 100%;
+}
+.FileUpload {
+  max-width: 400px;
+  margin: initial;
+}
 
+.Progress,
+.Progress__Seek {
+  height: 3px;
+}
+.Progress {
+  background-color: #eee;
+  margin: 24px;
+}
+.Progress__Seek {
+  background-color: green;
+}
 /*# sourceMappingURL=blk-design-system-react.css.map */
