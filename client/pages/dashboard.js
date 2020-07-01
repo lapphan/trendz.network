@@ -1,18 +1,5 @@
 import React, { useEffect } from "react";
 import Layout from "../components/layout";
-// import withPrivateRoute from '../components/withPrivateRoute';
-
-// const Dashboard = () => {
-//   return <div>This is a Dashboard page which is private.</div>;
-// };
-
-// Dashboard.getInitialProps = async props => {
-//   console.info('##### Congratulations! You are authorized! ######', props);
-//   return {};
-// };
-
-// export default withPrivateRoute(Dashboard);
-
 import { useAuth } from "../context/userContext";
 import Router from "next/router";
 

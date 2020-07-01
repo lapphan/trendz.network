@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  CardImg,
   CardTitle,
   Form,
   Input,
@@ -140,6 +139,10 @@ const LoginPage = () => {
       // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
     }
   }
+
+  useEffect(() => {
+    Router.prefetch('/dashboard')
+  }, [])
 
   return (
     <Layout>

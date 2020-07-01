@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  CardImg,
   CardTitle,
   Form,
   Input,
@@ -156,6 +155,10 @@ const RegisterPage = () => {
       // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
     }
   }
+
+  useEffect(() => {
+    Router.prefetch('/dashboard')
+  }, [])
 
   return (
     <Layout>
