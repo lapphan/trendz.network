@@ -27,22 +27,12 @@ let ps = null;
 const Create = () => {
   const { state } = useAuth();
 
-  const calculatePercent = (value, total) => Math.round((value / total) * 100);
-
-  const [startDate, setStartDate] = useState({
-    date: new Date(),
-  });
-
-  const [endDate, setEndDate] = useState({
-    date: new Date(),
-  });
-
   const [campaignState, setCampaign] = useState({
     title: "",
     content: "",
     picture: null,
     status: true,
-    user: null,
+    user: state.user.id,
     category: null,
     channels: null,
     campaignTTL: {
@@ -51,16 +41,16 @@ const Create = () => {
     },
   });
 
-  //TODO: useEffect to get categories, fetch channels based on category chosed
-  //bind campaignTTL, userId, category & channels in handleSubmitCampaign
+  //TODO: useEffect to get categories, fetch channels based on category chosed 
+  //handleCategoryChange() and handleChannelChange() bind directly to campaignState
+  //mutate handleSubmitCampaign
 
   const [picture, setPicture] = useState({
     file: null,
-    percent: 0,
     loading: false,
     submmited: false,
   });
-  
+
   const handleCampaignChange = (event) => {
     const { name, value } = event.target;
     setCampaign((previousState) => {
@@ -70,18 +60,28 @@ const Create = () => {
 
   const handleStartDateChange = (event) => {
     if (event._d !== undefined) {
-      const { value } = event._d;
-      setStartDate((previousState) => {
-        return { ...previousState, date: value };
+      const value = event._d;
+      setCampaign((previousState) => {
+        return { ...previousState, 
+          campaignTTL:{
+            open_datime: value,
+            close_datetime: previousState.campaignTTL.close_datetime 
+          }
+        };
       });
     } else return;
   };
 
   const handleEndDateChange = (event) => {
     if (event._d !== undefined) {
-      const { value } = event._d;
-      setEndDate((previousState) => {
-        return { ...previousState, date: value };
+      const value = event._d;
+      setCampaign((previousState) => {
+        return { ...previousState, 
+          campaignTTL:{
+            open_datime: previousState.campaignTTL.open_datime,
+            close_datetime: value 
+          }
+        };
       });
     } else return;
   };
@@ -93,13 +93,12 @@ const Create = () => {
     });
   };
 
-  const handleRadioChange = (event) =>{
-    setCampaign((previousState)=>{
-      return{...previousState,
-      status: event.value
-      }
-    })
-  }
+  const handleRadioChange = (event) => {
+    const status = event.currentTarget.value === 'true' ? true:false
+    setCampaign((previousState) => {
+      return { ...previousState, status };
+    });
+  };
 
   // async function fetchCategory(state) {
   //   const { API_URL } = process.env;
@@ -111,19 +110,19 @@ const Create = () => {
   //     },
   //   };
 
-    const res = await fetch(`${API_URL}/users/me`, requestOptions);
-    const user = await res.json();
-    // setUser()
-    return console.log(user);
-  }
+  //   const res = await fetch(`${API_URL}/users/me`, requestOptions);
+  //   const user = await res.json();
+  //   setUser()
+  //   return console.log(user);
+  // }
 
   const handleImageSubmit = async (event) => {
     event.preventDefault();
-    setPicture((previousState)=>{
-      return{
+    setPicture((previousState) => {
+      return {
         ...previousState,
         loading: true,
-      }
+      };
     });
 
     const data = new FormData();
@@ -136,30 +135,22 @@ const Create = () => {
       },
       url: `${API_URL}/upload`,
       data,
-      onUploadProgress: (progress) =>
-        setPicture((previousState)=>{
-          return{
-            ...previousState,
-            percent: calculatePercent(progress.loaded, progress.total),
-          }
-        }),
     });
-    setPicture((previousState)=>{
-      return{
+    setPicture((previousState) => {
+      return {
         ...previousState,
         loading: false,
-        submmited: true 
-      }
-      });
-    //console.log(upload_resolve.data[0].id);
+        submmited: true,
+      };
+    });
     setCampaign((previousState) => {
       return { ...previousState, picture: upload_resolve.data[0].id };
     });
   };
 
-  const handleCampaignSubmit = () =>{
+  const handleCampaignSubmit = () => {
     console.log(campaignState)
-  }
+  };
 
   useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -226,7 +217,7 @@ const Create = () => {
                         <Label for="startDate">Chọn Ngày bắt đầu</Label>
                         <Datetime
                           onChange={handleStartDateChange}
-                          value={startDate.date}
+                          value={campaignState.campaignTTL.open_datime}
                           required
                         />
                       </FormGroup>
@@ -234,7 +225,7 @@ const Create = () => {
                         <Label for="endDate">Chọn Ngày kết thúc</Label>
                         <Datetime
                           onChange={handleEndDateChange}
-                          value={endDate.date}
+                          value={campaignState.campaignTTL.close_datetime}
                           required
                         />
                       </FormGroup>
@@ -246,10 +237,10 @@ const Create = () => {
                         <input type="file" onChange={handleImageChange} />
                         <Button>Tải lên</Button>
                       </form>
-                      {picture.loading ? <p>Đang tải lên...</p>:null}
+                      {picture.loading ? <p>Đang tải lên...</p> : null}
                     </div>
-                      {picture.submmited ? <p>Đã tải lên!</p>:<p></p>}
-                    <br/>
+                    {picture.submmited ? <p>Đã tải lên!</p> : <p></p>}
+                    <br />
                     <div className="form-row">
                       <FormGroup className="col-md-4">
                         <Label for="channel">Chọn Danh mục</Label>
@@ -294,11 +285,11 @@ const Create = () => {
                         <Label className="form-check-label">
                           <Input
                             type="radio"
-                            name="exampleRadios1"
-                            id="exampleRadios11"
-                            value={true}
-                            defaultChecked
-                            onClick={handleRadioChange}
+                            name="status"
+                            id="status"
+                            value="true"
+                            checked={campaignState.status === true}
+                            onChange={handleRadioChange}
                           />
                           Active<span className="form-check-sign"></span>
                         </Label>
@@ -307,22 +298,26 @@ const Create = () => {
                         <Label className="form-check-label">
                           <Input
                             type="radio"
-                            name="exampleRadios1"
-                            id="exampleRadios12"
-                            value={false}
-                            onClick={handleRadioChange}
-                          />
-                          Inactive<span className="form-check-sign"></span>
+                            name="status"
+                            id="status"
+                            value="false"
+                            checked={campaignState.status===false}
+                            onChange={handleRadioChange}
+                            />
+                            Inactive
+                          <span className="form-check-sign"></span>
                         </Label>
                       </FormGroup>
                     </div>
-                    <div className="form-button">
-                      <Button className="btn-neutral" type="reset" color="primary">
-                        Hủy
-                      </Button>
-                      <Button color="primary" type="submit" onClick={handleCampaignSubmit}>Tạo</Button>
-                    </div>
                   </form>
+                  <div className="form-button">
+                    <Button className="btn-neutral" color="primary">
+                      Hủy
+                    </Button>
+                    <Button color="primary" onClick={handleCampaignSubmit}>
+                      Tạo
+                    </Button>
+                  </div>
                 </CardBody>
               </Card>
             </Container>
