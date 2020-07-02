@@ -203,6 +203,23 @@ const Create = () => {
   };
 
   useEffect(() => {
+    // if (navigator.platform.indexOf("Win") > -1) {
+    //   document.documentElement.className += " perfect-scrollbar-on";
+    //   document.documentElement.classList.remove("perfect-scrollbar-off");
+    //   let tables = document.querySelectorAll(".table-responsive");
+    //   for (let i = 0; i < tables.length; i++) {
+    //     ps = new PerfectScrollbar(tables[i]);
+    //   }
+    // }
+    // document.body.classList.toggle("create-page");
+    // return () => {
+    //   if (navigator.platform.indexOf("Win") > 1) {
+    //     ps.destroy();
+    //     document.documentElement.className += " perfect-scrollbar-off";
+    //     document.documentElement.classList.remove("perfect-scrollbar-on");
+    //   }
+    //   document.body.classList.toggle("create-page");
+    // };
     if (navigator.platform.indexOf("Win") > -1) {
       document.documentElement.className += " perfect-scrollbar-on";
       document.documentElement.classList.remove("perfect-scrollbar-off");
@@ -211,35 +228,35 @@ const Create = () => {
         ps = new PerfectScrollbar(tables[i]);
       }
     }
-    document.body.classList.toggle("create-page");
+    document.body.classList.toggle("profile-page");
     return () => {
       if (navigator.platform.indexOf("Win") > 1) {
         ps.destroy();
         document.documentElement.className += " perfect-scrollbar-off";
         document.documentElement.classList.remove("perfect-scrollbar-on");
       }
-      document.body.classList.toggle("create-page");
+      document.body.classList.toggle("profile-page");
     };
   });
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
+     else {
+      const fetchCategory = async () => {
+        const get_resolve = await axios({
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+          url: `${API_URL}/categories`,
+        });
+        setCategories({ categories: get_resolve.data });
+      };
+      fetchCategory();
+     };
   }, [state]);
 
   if (state.jwt !== "") {
-    const fetchCategory = async () => {
-      const get_resolve = await axios({
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${state.jwt}`,
-        },
-        url: `${API_URL}/categories`,
-      });
-      setCategories({ categories: get_resolve.data });
-    };
-    fetchCategory();
     return (
       <Layout>
         <div className="wrapper">
