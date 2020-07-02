@@ -33,7 +33,11 @@ const create = (initialState, { getToken }) => {
   });
 
   const authLink = setContext((_, { headers }) => {
-    const token = getToken();
+
+    const cachedData = JSON.parse(localStorage.getItem("userInfo")||"")
+    console.log(cachedData.jwt)
+    const token = cachedData.jwt
+    //const token = getToken();
     return {
       // headers: {
       //   authorization: token ? `Bearer ${token}` : null,

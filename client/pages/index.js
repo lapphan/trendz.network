@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
-import Layout from '../components/layout'
+import dynamic from 'next/dynamic'
+const Layout = dynamic(() => import('../components/layout'))
+// import Layout from '../components/layout'
 import { Container } from 'reactstrap';
 import { useAuth } from "../context/userContext";
 import Router  from 'next/router';

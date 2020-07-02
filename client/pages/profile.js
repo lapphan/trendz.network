@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import Layout from "../components/layout";
+import dynamic from 'next/dynamic'
+const Layout = dynamic(() => import('../components/layout'))
+// import Layout from "../components/layout";
 import classnames from "classnames";
 import { useAuth, UserContext } from "../context/userContext";
 import Router from "next/router";

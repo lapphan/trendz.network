@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import Layout from "../components/layout";
 import { useAuth } from "../context/userContext";
 import Router from "next/router";
+import dynamic from 'next/dynamic'
+const Layout = dynamic(() => import('../components/layout'))
+// import Layout from "../components/layout";
 
 const Dashboard = () => {
   const { state } = useAuth();

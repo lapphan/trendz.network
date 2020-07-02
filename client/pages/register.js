@@ -3,7 +3,9 @@ import classnames from "classnames";
 
 import { UserContext } from "../context/userContext";
 
-import Layout from "../components/layout";
+import dynamic from 'next/dynamic'
+const Layout = dynamic(() => import('../components/layout'))
+// import Layout from "../components/layout";
 
 // reactstrap components
 import {

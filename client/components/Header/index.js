@@ -32,6 +32,12 @@ import { useAuth } from "../../context/userContext";
 export const LOGOUT = "LOGOUT";
 /* END */
 
+const TestButton = React.forwardRef(({children, href, onClick},ref)=>(
+  <p ref={ref} href={href} onClick={onClick} >
+    {children}
+  </p>
+))
+
 function Header() {
   const { state, dispatch } = useAuth();
   const [isOpen, toggleIsOpen] = useState(false);
@@ -105,28 +111,28 @@ function Header() {
       <Nav navbar>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="default">
-            <Link href="/login">
-              <a>Đăng nhập</a>
+            <Link href="/login" passHref>
+              <TestButton>Đăng nhập</TestButton>
             </Link>
           </Button>
           <NavLink
             className="nav-pills d-lg-none d-xl-none"
             onClick={toggleCollapse}
           >
-            <Link href="/login">
-              <a>Đăng nhập</a>
+            <Link href="/login" passHref>
+              <TestButton>Đăng nhập</TestButton>
             </Link>
           </NavLink>
         </NavItem>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="primary">
-            <Link href="/register">
-              <a>Đăng ký</a>
+            <Link href="/register" passHref>
+              <TestButton>Đăng ký</TestButton>
             </Link>
           </Button>
           <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-            <Link href="/register">
-              <a>Đăng ký</a>
+            <Link href="/register" passHref>
+              <TestButton>Đăng ký</TestButton>
             </Link>
           </NavLink>
         </NavItem>
@@ -135,35 +141,35 @@ function Header() {
       <Nav navbar>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="warning">
-            <Link href="/create">
+            <Link href="/create" passHref>
               {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
-              <a>Tạo campaign</a>
+              <TestButton>Tạo campaign</TestButton>
             </Link>
           </Button>
           <NavLink
             className="nav-pills d-lg-none d-xl-none"
             onClick={toggleCollapse}
           >
-            <Link href="/create">
+            <Link href="/create" passHref>
               {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
-              <a>Tạo campaign</a>
+              <TestButton>Tạo campaign</TestButton>
             </Link>
           </NavLink>
         </NavItem>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="default">
-            <Link href="/profile">
+            <Link href="/profile" passHref>
               {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
-              <a>Hồ sơ</a>
+              <TestButton>Hồ sơ</TestButton>
             </Link>
           </Button>
           <NavLink
             className="nav-pills d-lg-none d-xl-none"
             onClick={toggleCollapse}
           >
-            <Link href="/profile">
+            <Link href="/profile" passHref>
               {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
-              <a>Hồ sơ</a>
+              <TestButton>Hồ sơ</TestButton>
             </Link>
           </NavLink>
         </NavItem>
@@ -173,8 +179,8 @@ function Header() {
             color="default"
             onClick={handleLogout}
           >
-            <Link href="/">
-              <a>Đăng xuất</a>
+            <Link href="/" passHref>
+              <TestButton>Đăng xuất</TestButton>
             </Link>
           </Button>
           <NavLink
@@ -184,8 +190,8 @@ function Header() {
               handleLogout();
             }}
           >
-            <Link href="/">
-              <a>Đăng xuất</a>
+            <Link href="/" passHref>
+              <TestButton>Đăng xuất</TestButton>
             </Link>
           </NavLink>
         </NavItem>
@@ -199,13 +205,13 @@ function Header() {
       expand="lg"
     >
       <Container>
-        <div className="navbar-translate">
+      <div className="navbar-translate">
           <NavbarBrand id="navbar-brand">
-            <Link href="/">
-              <a>
+            <Link href="/" passHref>
+              <TestButton>
                 <span>TRENDZ • </span>
                 NETWORK
-              </a>
+              </TestButton>
             </Link>
           </NavbarBrand>
           <button

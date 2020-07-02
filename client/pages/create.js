@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
-import Layout from "../components/layout";
+import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+const Layout = dynamic(() => import("../components/layout"));
 import { useAuth } from "../context/userContext";
 import Router from "next/router";
 import PerfectScrollbar from "perfect-scrollbar";
@@ -16,13 +17,18 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Form,
 } from "reactstrap";
 
+import { CREATE_CAMPAIGN } from "../graphql/mutations/campaign/create";
+import { useMutation } from "react-apollo";
+import { isEmpty } from "lodash";
 import axios from "axios";
-
+import { errorLog } from "../utils/functions/error-log-snackbar";
 import Datetime from "react-datetime";
 
 let ps = null;
+const { API_URL } = process.env;
 
 const Create = () => {
   const { state } = useAuth();
@@ -30,25 +36,47 @@ const Create = () => {
   const [campaignState, setCampaign] = useState({
     title: "",
     content: "",
-    picture: null,
+    picture: [],
     status: true,
     user: state.user.id,
     category: null,
     channels: null,
     campaignTTL: {
-      open_datime: new Date(),
-      close_datetime: new Date(),
+      open_datime: new Date().toISOString(),
+      close_datetime: new Date().toISOString(),
     },
   });
 
-  //TODO: useEffect to get categories, fetch channels based on category chosed 
-  //handleCategoryChange() and handleChannelChange() bind directly to campaignState
-  //mutate handleSubmitCampaign
+  const [categories, setCategories] = useState({
+    categories: [],
+  });
+
+  const [tempData, setTempData] = useState({
+    categoryId: "",
+    categoryName: "",
+    channelId: "",
+    channelName: "",
+  });
 
   const [picture, setPicture] = useState({
     file: null,
     loading: false,
     submmited: false,
+  });
+
+  const [date, setDate] = useState(Datetime.moment().subtract(1, "day"))
+    var valid = function (current) {
+      return current.isAfter(date);
+    };
+
+    var validStartDate = function (current) {
+      return current.isAfter(Datetime.moment().subtract(1, "day"));
+    };
+
+  const [
+    requestCreateCampaignMutation,
+  ] = useMutation(CREATE_CAMPAIGN, {
+    variables: campaignState,
   });
 
   const handleCampaignChange = (event) => {
@@ -60,27 +88,30 @@ const Create = () => {
 
   const handleStartDateChange = (event) => {
     if (event._d !== undefined) {
-      const value = event._d;
+      const value = event._d.toISOString();
       setCampaign((previousState) => {
-        return { ...previousState, 
-          campaignTTL:{
+        return {
+          ...previousState,
+          campaignTTL: {
             open_datime: value,
-            close_datetime: previousState.campaignTTL.close_datetime 
-          }
+            close_datetime: previousState.campaignTTL.close_datetime,
+          },
         };
       });
+      setDate(value)
     } else return;
   };
 
   const handleEndDateChange = (event) => {
     if (event._d !== undefined) {
-      const value = event._d;
+      const value = event._d.toISOString();
       setCampaign((previousState) => {
-        return { ...previousState, 
-          campaignTTL:{
+        return {
+          ...previousState,
+          campaignTTL: {
             open_datime: previousState.campaignTTL.open_datime,
-            close_datetime: value 
-          }
+            close_datetime: value,
+          },
         };
       });
     } else return;
@@ -94,27 +125,36 @@ const Create = () => {
   };
 
   const handleRadioChange = (event) => {
-    const status = event.currentTarget.value === 'true' ? true:false
+    const status = event.currentTarget.value === "true" ? true : false;
     setCampaign((previousState) => {
       return { ...previousState, status };
     });
   };
 
-  // async function fetchCategory(state) {
-  //   const { API_URL } = process.env;
+  const handleCategoryChange = (id, name) => {
+    setCampaign((previousState) => {
+      return { ...previousState, category: id };
+    });
+    setTempData({
+      categoryId: id,
+      categoryName: name,
+      channelId: "",
+      channelName: "",
+    });
+  };
 
-  //   const requestOptions = {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${state.jwt}`,
-  //     },
-  //   };
-
-  //   const res = await fetch(`${API_URL}/users/me`, requestOptions);
-  //   const user = await res.json();
-  //   setUser()
-  //   return console.log(user);
-  // }
+  const handleChannelsChange = (id, name) => {
+    setCampaign((previousState) => {
+      return { ...previousState, channels: [id] };
+    });
+    setTempData((previousState) => {
+      return {
+        ...previousState,
+        channelId: id,
+        channelName: name,
+      };
+    });
+  };
 
   const handleImageSubmit = async (event) => {
     event.preventDefault();
@@ -124,10 +164,8 @@ const Create = () => {
         loading: true,
       };
     });
-
     const data = new FormData();
     data.append("files", picture.file);
-    const { API_URL } = process.env;
     const upload_resolve = await axios({
       method: "POST",
       headers: {
@@ -144,12 +182,24 @@ const Create = () => {
       };
     });
     setCampaign((previousState) => {
-      return { ...previousState, picture: upload_resolve.data[0].id };
+      return {
+        ...previousState,
+        picture: [...previousState.picture, upload_resolve.data[0].id],
+      };
     });
   };
 
-  const handleCampaignSubmit = () => {
-    console.log(campaignState)
+  const handleCampaignSubmit = async () => {
+    if (isEmpty(campaignState.title) || isEmpty(campaignState.content)) {
+      alert("Không đủ thông tin! Vui lòng kiểm tra lại!");
+    } else
+      try {
+        await requestCreateCampaignMutation();
+        Router.push("/dashboard");
+        return alert("Tạo campaign thành công!");
+      } catch (error) {
+        return alert(errorLog(error.message));
+      }
   };
 
   useEffect(() => {
@@ -172,11 +222,24 @@ const Create = () => {
     };
   });
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
   }, [state]);
 
-  if (state.jwt !== "")
+  if (state.jwt !== "") {
+    const fetchCategory = async () => {
+      const get_resolve = await axios({
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${state.jwt}`,
+        },
+        url: `${API_URL}/categories`,
+      });
+      setCategories({ categories: get_resolve.data });
+    };
+    fetchCategory();
     return (
       <Layout>
         <div className="wrapper">
@@ -187,7 +250,7 @@ const Create = () => {
                   <h3 className="title">Tạo campaign</h3>
                 </CardHeader>
                 <CardBody>
-                  <form>
+                  <Form className="form">
                     <FormGroup>
                       <Label for="title">Tiêu đề</Label>
                       <Input
@@ -217,30 +280,25 @@ const Create = () => {
                         <Label for="startDate">Chọn Ngày bắt đầu</Label>
                         <Datetime
                           onChange={handleStartDateChange}
-                          value={campaignState.campaignTTL.open_datime}
+                          value={
+                            campaignState.campaignTTL.open_datime.toISOString
+                          }
                           required
+                          isValidDate={validStartDate}
                         />
                       </FormGroup>
                       <FormGroup className="col-md-4">
                         <Label for="endDate">Chọn Ngày kết thúc</Label>
                         <Datetime
                           onChange={handleEndDateChange}
-                          value={campaignState.campaignTTL.close_datetime}
+                          value={
+                            campaignState.campaignTTL.close_datetime.toISOString
+                          }
                           required
+                          isValidDate={valid}
                         />
                       </FormGroup>
                     </div>
-                    <div className="FileUpload">
-                      <form onSubmit={handleImageSubmit}>
-                        <Label for="picture">Chọn ảnh...</Label>
-                        <br />
-                        <input type="file" onChange={handleImageChange} />
-                        <Button>Tải lên</Button>
-                      </form>
-                      {picture.loading ? <p>Đang tải lên...</p> : null}
-                    </div>
-                    {picture.submmited ? <p>Đã tải lên!</p> : <p></p>}
-                    <br />
                     <div className="form-row">
                       <FormGroup className="col-md-4">
                         <Label for="channel">Chọn Danh mục</Label>
@@ -252,12 +310,25 @@ const Create = () => {
                             data-toggle="dropdown"
                             className="mydropdown"
                           >
-                            Choose...
+                            {campaignState.category === null
+                              ? "Chọn Danh mục..."
+                              : tempData.categoryName}
                           </DropdownToggle>
                           <DropdownMenu>
-                            <DropdownItem>Action</DropdownItem>
-                            <DropdownItem>Another Action</DropdownItem>
-                            <DropdownItem>Something else here</DropdownItem>
+                            {categories.categories.map((category) => (
+                              <DropdownItem
+                                key={category.id}
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  handleCategoryChange(
+                                    category.id,
+                                    category.name
+                                  );
+                                }}
+                              >
+                                {category.name}
+                              </DropdownItem>
+                            ))}
                           </DropdownMenu>
                         </UncontrolledDropdown>
                       </FormGroup>
@@ -270,46 +341,80 @@ const Create = () => {
                             color="secondary"
                             data-toggle="dropdown"
                           >
-                            Choose...
+                            {campaignState.channels === null
+                              ? "Chọn Kênh..."
+                              : tempData.channelName}
                           </DropdownToggle>
-                          <DropdownMenu>
-                            <DropdownItem>Action</DropdownItem>
-                            <DropdownItem>Another Action</DropdownItem>
-                            <DropdownItem>Something else here</DropdownItem>
-                          </DropdownMenu>
+                          {campaignState.category !== null ? (
+                            <DropdownMenu>
+                              {categories.categories
+                                .find((x) => x.id === campaignState.category)
+                                .channels.map((channel) => (
+                                  <DropdownItem
+                                    key={channel.id}
+                                    onClick={(event) => {
+                                      event.preventDefault();
+                                      handleChannelsChange(
+                                        channel.id,
+                                        channel.name
+                                      );
+                                    }}
+                                  >
+                                    {channel.name}
+                                  </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                          ) : (
+                            <div></div>
+                          )}
                         </UncontrolledDropdown>
                       </FormGroup>
-                    </div>
-                    <div className="form-row">
-                      <FormGroup check inline className="form-check-radio">
-                        <Label className="form-check-label">
-                          <Input
-                            type="radio"
-                            name="status"
-                            id="status"
-                            value="true"
-                            checked={campaignState.status === true}
-                            onChange={handleRadioChange}
-                          />
-                          Active<span className="form-check-sign"></span>
-                        </Label>
+                      <FormGroup className="col-md-4">
+                        <Label for="channel">Chọn Kênh</Label>
+                        <br />
+                        <FormGroup>
+                          <FormGroup check inline className="form-check-radio">
+                            <Label className="form-check-label">
+                              <Input
+                                type="radio"
+                                name="status"
+                                id="status"
+                                value="true"
+                                checked={campaignState.status === true}
+                                onChange={handleRadioChange}
+                              />
+                              Active<span className="form-check-sign"></span>
+                            </Label>
+                          </FormGroup>
+                          <FormGroup check inline className="form-check-radio">
+                            <Label className="form-check-label">
+                              <Input
+                                type="radio"
+                                name="status"
+                                id="status"
+                                value="false"
+                                checked={campaignState.status === false}
+                                onChange={handleRadioChange}
+                              />
+                              Inactive
+                              <span className="form-check-sign"></span>
+                            </Label>
+                          </FormGroup>
+                        </FormGroup>
                       </FormGroup>
-                      <FormGroup check inline className="form-check-radio">
-                        <Label className="form-check-label">
-                          <Input
-                            type="radio"
-                            name="status"
-                            id="status"
-                            value="false"
-                            checked={campaignState.status===false}
-                            onChange={handleRadioChange}
-                            />
-                            Inactive
-                          <span className="form-check-sign"></span>
-                        </Label>
-                      </FormGroup>
                     </div>
-                  </form>
+                  </Form>
+                  <br />
+                  <div className="FileUpload">
+                    <form onSubmit={handleImageSubmit}>
+                      <Label for="picture">Chọn ảnh...</Label>
+                      <br />
+                      <input type="file" onChange={handleImageChange} />
+                      <Button>Tải lên</Button>
+                    </form>
+                    {picture.loading ? <p>Đang tải lên...</p> : null}
+                  </div>
+                  {picture.submmited ? <p>Đã tải lên!</p> : <p></p>}
                   <div className="form-button">
                     <Button className="btn-neutral" color="primary">
                       Hủy
@@ -325,7 +430,7 @@ const Create = () => {
         </div>
       </Layout>
     );
-  else return null;
+  } else return null;
 };
 
 export default Create;

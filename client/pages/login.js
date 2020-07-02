@@ -3,7 +3,9 @@ import classnames from "classnames";
 
 import { UserContext } from "../context/userContext";
 
-import Layout from "../components/layout";
+import dynamic from 'next/dynamic'
+const Layout = dynamic(() => import('../components/layout'))
+// import Layout from "../components/layout";
 
 // reactstrap components
 import {
@@ -34,7 +36,7 @@ import { errorLog } from "../utils/functions/error-log-snackbar";
 
 import { REQUEST_LOGIN } from "../graphql/mutations/authentication/login";
 import { useMutation } from "react-apollo";
-import redirect from "../utils/ApolloSetup/redirect";
+
 import Router from 'next/router'
 
 // core components
@@ -98,7 +100,6 @@ const LoginPage = () => {
     REQUEST_LOGIN,
     {
       update(proxy, { data: userData }) {
-        console.log(userData.login)
         dispatch({ type: LOGIN, payload: userData.login });
       },
       variables: accountValues,
