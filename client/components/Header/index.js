@@ -111,7 +111,7 @@ function Header() {
       <Nav navbar>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="default">
-            <Link href="/login" passHref>
+            <Link href="/login">
               <TestButton>Đăng nhập</TestButton>
             </Link>
           </Button>
@@ -119,19 +119,19 @@ function Header() {
             className="nav-pills d-lg-none d-xl-none"
             onClick={toggleCollapse}
           >
-            <Link href="/login" passHref>
+            <Link href="/login">
               <TestButton>Đăng nhập</TestButton>
             </Link>
           </NavLink>
         </NavItem>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="primary">
-            <Link href="/register" passHref>
+            <Link href="/register">
               <TestButton>Đăng ký</TestButton>
             </Link>
           </Button>
           <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-            <Link href="/register" passHref>
+            <Link href="/register">
               <TestButton>Đăng ký</TestButton>
             </Link>
           </NavLink>
@@ -141,7 +141,7 @@ function Header() {
       <Nav navbar>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="warning">
-            <Link href="/create" passHref>
+            <Link href="/create">
               {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
               <TestButton>Tạo campaign</TestButton>
             </Link>
@@ -150,7 +150,7 @@ function Header() {
             className="nav-pills d-lg-none d-xl-none"
             onClick={toggleCollapse}
           >
-            <Link href="/create" passHref>
+            <Link href="/create">
               {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
               <TestButton>Tạo campaign</TestButton>
             </Link>
@@ -158,7 +158,7 @@ function Header() {
         </NavItem>
         <NavItem>
           <Button className="nav-link d-none d-lg-block" color="default">
-            <Link href="/profile" passHref>
+            <Link href="/profile" >
               {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
               <TestButton>Hồ sơ</TestButton>
             </Link>
@@ -167,7 +167,7 @@ function Header() {
             className="nav-pills d-lg-none d-xl-none"
             onClick={toggleCollapse}
           >
-            <Link href="/profile" passHref>
+            <Link href="/profile" >
               {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
               <TestButton>Hồ sơ</TestButton>
             </Link>
@@ -179,7 +179,7 @@ function Header() {
             color="default"
             onClick={handleLogout}
           >
-            <Link href="/" passHref>
+            <Link href="/" >
               <TestButton>Đăng xuất</TestButton>
             </Link>
           </Button>
@@ -190,7 +190,7 @@ function Header() {
               handleLogout();
             }}
           >
-            <Link href="/" passHref>
+            <Link href="/" >
               <TestButton>Đăng xuất</TestButton>
             </Link>
           </NavLink>
@@ -207,7 +207,7 @@ function Header() {
       <Container>
       <div className="navbar-translate">
           <NavbarBrand id="navbar-brand">
-            <Link href="/" passHref>
+            <Link href="/" >
               <TestButton>
                 <span>TRENDZ • </span>
                 NETWORK

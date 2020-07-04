@@ -3,11 +3,8 @@ import classnames from "classnames";
 
 import { UserContext } from "../context/userContext";
 
-import dynamic from 'next/dynamic'
-const Layout = dynamic(() => import('../components/layout'))
-// import Layout from "../components/layout";
-
-// reactstrap components
+import dynamic from "next/dynamic";
+const Layout = dynamic(() => import("../components/layout"));
 import {
   Button,
   Card,
@@ -23,7 +20,6 @@ import {
   Container,
   Row,
   Col,
-
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -36,11 +32,7 @@ import { errorLog } from "../utils/functions/error-log-snackbar";
 
 import { REQUEST_REGISTER } from "../graphql/mutations/registration/register";
 import { useMutation } from "react-apollo";
-import redirect from "../utils/ApolloSetup/redirect";
-import Router from 'next/router'
-
-// core components
-//import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
+import Router from "next/router";
 
 /* TYPES */
 export const LOGIN = "LOGIN";
@@ -60,26 +52,26 @@ const RegisterPage = () => {
 
   const [accountValues, setAccountValues] = useState({
     username: "",
-    email:"",
+    email: "",
     password: "",
   });
 
   const [reTypePassword, setReTypePassword] = useState({
-      rePassword:""
-  })
+    rePassword: "",
+  });
 
   const [pointer, setPointer] = useState({
     squares1to6: "",
     squares7and8: "",
   });
-  
+
   const [focus, setFocus] = useState({
     emailFocus: false,
     passwordFocus: false,
     usernameFocus: false,
-    rePasswordFocus: false
+    rePasswordFocus: false,
   });
-  
+
   const followCursor = (event) => {
     let posX = event.clientX - window.innerWidth / 2;
     let posY = event.clientY - window.innerWidth / 6;
@@ -103,15 +95,15 @@ const RegisterPage = () => {
     });
   };
 
-  const [requestRegisterMutation, { loading: requestRegisterLoading }] = useMutation(
-    REQUEST_REGISTER,
-    {
-      update(proxy, { data: userData }) {
-        dispatch({ type: LOGIN, payload: userData.register });
-      },
-      variables: accountValues,
-    }
-  );
+  const [
+    requestRegisterMutation,
+    { loading: requestRegisterLoading },
+  ] = useMutation(REQUEST_REGISTER, {
+    update(proxy, { data: userData }) {
+      dispatch({ type: LOGIN, payload: userData.register });
+    },
+    variables: accountValues,
+  });
 
   const handleAccountChange = (event) => {
     const { name, value } = event.target;
@@ -127,41 +119,46 @@ const RegisterPage = () => {
     });
   };
 
-  const requestRegister = async() =>{
-    if (isEmpty(accountValues.username)&&isEmpty(accountValues.password)&&isEmpty(accountValues.email)){
+  const requestRegister = async () => {
+    if (
+      isEmpty(accountValues.username) &&
+      isEmpty(accountValues.password) &&
+      isEmpty(accountValues.email)
+    ) {
       // enqueueSnackbar('Không được bỏ trống cả hai trường',{
       //   variant: 'error'
       // })
-      alert('Không được bỏ trống cả ba trường')
+      alert("Không được bỏ trống cả ba trường");
     }
-    if(!passwordCheck.test(accountValues.password)){
+    if (!passwordCheck.test(accountValues.password)) {
       // enqueueSnackbar(
       //   'Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)',
       //   { variant: 'error' }
       // )
-      alert('Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)')
+      alert(
+        "Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)"
+      );
     }
-    if(accountValues.password !== reTypePassword.rePassword){
-        alert('Mật khẩu và Nhập lại mật khẩu không trùng khớp! Vui lòng thử lại')
-    }
-    else try{
-      await requestRegisterMutation()
-      Router.push('/dashboard')
-      return alert('Đăng ký thành công!') 
-      // enqueueSnackbar(
-      //   'Đăng nhập thành công!',{variant: 'success'}
-      // )
-    }
-    catch (error){
-      return alert(errorLog(error.message)) 
-      // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
-    }
-  }
+    if (accountValues.password !== reTypePassword.rePassword) {
+      alert("Mật khẩu và Nhập lại mật khẩu không trùng khớp! Vui lòng thử lại");
+    } else
+      try {
+        await requestRegisterMutation();
+        Router.push("/dashboard");
+        return alert("Đăng ký thành công!");
+        // enqueueSnackbar(
+        //   'Đăng nhập thành công!',{variant: 'success'}
+        // )
+      } catch (error) {
+        return alert(errorLog(error.message));
+        // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
+      }
+  };
 
   useEffect(() => {
-    Router.prefetch('/dashboard')
-  }, [])
-
+    if (state.jwt === "") return;
+    Router.push("/dashboard");
+  }, [state]);
   return (
     <Layout>
       <div className="wrapper">
@@ -342,7 +339,13 @@ const RegisterPage = () => {
                       </Form>
                     </CardBody>
                     <CardFooter>
-                      <Button className="btn-round" color="warning" size="lg" onClick={requestRegister} disabled={requestRegisterLoading}>
+                      <Button
+                        className="btn-round"
+                        color="warning"
+                        size="lg"
+                        onClick={requestRegister}
+                        disabled={requestRegisterLoading}
+                      >
                         Đăng ký
                       </Button>
                     </CardFooter>

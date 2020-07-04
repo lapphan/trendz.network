@@ -370,7 +370,7 @@ const Create = () => {
                         </UncontrolledDropdown>
                       </FormGroup>
                       <FormGroup className="col-md-4">
-                        <Label for="channel">Chọn Kênh</Label>
+                        <Label for="channel">Trạng thái</Label>
                         <br />
                         <FormGroup>
                           <FormGroup check inline className="form-check-radio">

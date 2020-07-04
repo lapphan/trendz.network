@@ -3,8 +3,8 @@ import classnames from "classnames";
 
 import { UserContext } from "../context/userContext";
 
-import dynamic from 'next/dynamic'
-const Layout = dynamic(() => import('../components/layout'))
+import dynamic from "next/dynamic";
+const Layout = dynamic(() => import("../components/layout"));
 // import Layout from "../components/layout";
 
 // reactstrap components
@@ -23,7 +23,6 @@ import {
   Container,
   Row,
   Col,
-
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
@@ -37,7 +36,7 @@ import { errorLog } from "../utils/functions/error-log-snackbar";
 import { REQUEST_LOGIN } from "../graphql/mutations/authentication/login";
 import { useMutation } from "react-apollo";
 
-import Router from 'next/router'
+import Router from "next/router";
 
 // core components
 //import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
@@ -67,12 +66,12 @@ const LoginPage = () => {
     squares1to6: "",
     squares7and8: "",
   });
-  
+
   const [focus, setFocus] = useState({
     emailFocus: false,
     passwordFocus: false,
   });
-  
+
   const followCursor = (event) => {
     let posX = event.clientX - window.innerWidth / 2;
     let posY = event.clientY - window.innerWidth / 6;
@@ -113,38 +112,39 @@ const LoginPage = () => {
     });
   };
 
-  const requestLogin = async() =>{
-    if (isEmpty(accountValues.identifier)&&isEmpty(accountValues.password)){
+  const requestLogin = async () => {
+    if (isEmpty(accountValues.identifier) && isEmpty(accountValues.password)) {
       // enqueueSnackbar('Không được bỏ trống cả hai trường',{
       //   variant: 'error'
       // })
-      alert('Không được bỏ trống cả hai trường')
+      alert("Không được bỏ trống cả hai trường");
     }
-    if(!passwordCheck.test(accountValues.password)){
+    if (!passwordCheck.test(accountValues.password)) {
       // enqueueSnackbar(
       //   'Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)',
       //   { variant: 'error' }
       // )
-      alert('Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)')
-    }
-    else try{
-      await requestLoginMutation()
-      Router.push('/dashboard')
-      return alert('Đăng nhập thành công!') 
-      // enqueueSnackbar(
-      //   'Đăng nhập thành công!',{variant: 'success'}
-      // )
-    }
-    catch (error){
-      return alert(errorLog(error.message)) 
-      // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
-    }
-  }
+      alert(
+        "Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)"
+      );
+    } else
+      try {
+        await requestLoginMutation();
+        Router.push("/dashboard");
+        return alert("Đăng nhập thành công!");
+        // enqueueSnackbar(
+        //   'Đăng nhập thành công!',{variant: 'success'}
+        // )
+      } catch (error) {
+        return alert(errorLog(error.message));
+        // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
+      }
+  };
 
   useEffect(() => {
-    Router.prefetch('/dashboard')
-  }, [])
-
+    if (state.jwt === "") return;
+    Router.push("/dashboard");
+  }, [state]);
   return (
     <Layout>
       <div className="wrapper">
@@ -249,7 +249,13 @@ const LoginPage = () => {
                       </Form>
                     </CardBody>
                     <CardFooter>
-                      <Button className="btn-round" color="primary" size="lg" onClick={requestLogin} disabled={requestLoginLoading}>
+                      <Button
+                        className="btn-round"
+                        color="primary"
+                        size="lg"
+                        onClick={requestLogin}
+                        disabled={requestLoginLoading}
+                      >
                         Đăng nhập
                       </Button>
                     </CardFooter>
