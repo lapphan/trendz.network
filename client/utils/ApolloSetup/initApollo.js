@@ -35,7 +35,6 @@ const create = (initialState, { getToken }) => {
   const authLink = setContext((_, { headers }) => {
 
     const cachedData = JSON.parse(localStorage.getItem("userInfo")||"")
-    console.log(cachedData.jwt)
     const token = cachedData.jwt
     //const token = getToken();
     return {

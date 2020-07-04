@@ -41,10 +41,8 @@ const Create = () => {
     user: state.user.id,
     category: null,
     channels: null,
-    campaignTTL: {
-      open_datime: new Date().toISOString(),
-      close_datetime: new Date().toISOString(),
-    },
+    open_datime: new Date().toISOString(),
+    close_datetime: new Date().toISOString(),
   });
 
   const [categories, setCategories] = useState({
@@ -64,18 +62,16 @@ const Create = () => {
     submmited: false,
   });
 
-  const [date, setDate] = useState(Datetime.moment().subtract(1, "day"))
-    var valid = function (current) {
-      return current.isAfter(date);
-    };
+  const [date, setDate] = useState(Datetime.moment().subtract(1, "day"));
+  var valid = function (current) {
+    return current.isAfter(date);
+  };
 
-    var validStartDate = function (current) {
-      return current.isAfter(Datetime.moment().subtract(1, "day"));
-    };
+  var validStartDate = function (current) {
+    return current.isAfter(Datetime.moment().subtract(1, "day"));
+  };
 
-  const [
-    requestCreateCampaignMutation,
-  ] = useMutation(CREATE_CAMPAIGN, {
+  const [requestCreateCampaignMutation] = useMutation(CREATE_CAMPAIGN, {
     variables: campaignState,
   });
 
@@ -89,29 +85,25 @@ const Create = () => {
   const handleStartDateChange = (event) => {
     if (event._d !== undefined) {
       const value = event._d.toISOString();
+      //console.log(value);
       setCampaign((previousState) => {
         return {
           ...previousState,
-          campaignTTL: {
-            open_datime: value,
-            close_datetime: previousState.campaignTTL.close_datetime,
-          },
+          open_datime: value,
         };
       });
-      setDate(value)
+      setDate(value);
     } else return;
   };
 
   const handleEndDateChange = (event) => {
     if (event._d !== undefined) {
       const value = event._d.toISOString();
+      //console.log(campaignState.campaignTTL.open_datime);
       setCampaign((previousState) => {
         return {
           ...previousState,
-          campaignTTL: {
-            open_datime: previousState.campaignTTL.open_datime,
-            close_datetime: value,
-          },
+          close_datetime: value,
         };
       });
     } else return;
@@ -194,6 +186,7 @@ const Create = () => {
       alert("Không đủ thông tin! Vui lòng kiểm tra lại!");
     } else
       try {
+        console.log(campaignState.campaignTTL);
         await requestCreateCampaignMutation();
         Router.push("/dashboard");
         return alert("Tạo campaign thành công!");
@@ -224,7 +217,7 @@ const Create = () => {
 
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
-     else {
+    else {
       const fetchCategory = async () => {
         const get_resolve = await axios({
           method: "GET",
@@ -236,7 +229,7 @@ const Create = () => {
         setCategories({ categories: get_resolve.data });
       };
       fetchCategory();
-     };
+    }
   }, [state]);
 
   if (state.jwt !== "") {
@@ -281,7 +274,7 @@ const Create = () => {
                         <Datetime
                           onChange={handleStartDateChange}
                           value={
-                            campaignState.campaignTTL.open_datime.toISOString
+                            campaignState.open_datime.toISOString
                           }
                           required
                           isValidDate={validStartDate}
@@ -292,7 +285,7 @@ const Create = () => {
                         <Datetime
                           onChange={handleEndDateChange}
                           value={
-                            campaignState.campaignTTL.close_datetime.toISOString
+                            campaignState.close_datetime.toISOString
                           }
                           required
                           isValidDate={valid}

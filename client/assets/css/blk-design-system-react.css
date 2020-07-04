@@ -1066,7 +1066,7 @@ pre code {
   }
   .col-md-4 {
     flex: 0 0 33.33333%;
-    max-width: 33.33333%;
+    max-width: 768px;
   }
   .col-md-5 {
     flex: 0 0 41.66667%;
@@ -4537,6 +4537,16 @@ input[type="button"].btn-block {
   border-radius: 5%;
   background: rgb(241,112,169);
   background: linear-gradient(205deg, rgba(241,112,169,1) 40%, rgba(28,109,204,1) 85%);
+  max-width: 350px;
+  min-width: 350px;
+  max-height: 540px;
+  min-height: 540px;
+}
+
+.card .single-card {
+  margin-top: 15px;
+  margin-bottom: 80px;
+  width: 90%;
 }
 
 .card .campaign-card:hover
@@ -22700,5 +22710,7 @@ td.rdtYear:hover {
   background-color: green;
 }
 
-
 /* dashboard */
+.wrapper {
+  min-height: 612px;
+}
