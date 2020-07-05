@@ -40,7 +40,7 @@ const Create = () => {
     status: true,
     user: state.user.id,
     category: null,
-    channels: null,
+    channels: [],
     open_datime: new Date().toISOString(),
     close_datetime: new Date().toISOString(),
   });
@@ -85,7 +85,6 @@ const Create = () => {
   const handleStartDateChange = (event) => {
     if (event._d !== undefined) {
       const value = event._d.toISOString();
-      //console.log(value);
       setCampaign((previousState) => {
         return {
           ...previousState,
@@ -99,7 +98,6 @@ const Create = () => {
   const handleEndDateChange = (event) => {
     if (event._d !== undefined) {
       const value = event._d.toISOString();
-      //console.log(campaignState.campaignTTL.open_datime);
       setCampaign((previousState) => {
         return {
           ...previousState,
@@ -186,7 +184,6 @@ const Create = () => {
       alert("Không đủ thông tin! Vui lòng kiểm tra lại!");
     } else
       try {
-        console.log(campaignState.campaignTTL);
         await requestCreateCampaignMutation();
         Router.push("/dashboard");
         return alert("Tạo campaign thành công!");

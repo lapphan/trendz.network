@@ -4543,10 +4543,44 @@ input[type="button"].btn-block {
   min-height: 540px;
 }
 
+@media(max-width: 425px){
+  .card .campaign-card {
+    margin-top: 15px;
+    margin-bottom: 80px;
+    width: 90%;
+    border-radius: 5%;
+    background: rgb(241,112,169);
+    background: linear-gradient(205deg, rgba(241,112,169,1) 40%, rgba(28,109,204,1) 85%);
+    min-width: 270px;
+    max-height: 560px;
+  } 
+  .campaign-detail-img{
+    max-height: 500px;
+    max-width: 837px;
+  }
+}
+
 .card .single-card {
   margin-top: 15px;
   margin-bottom: 80px;
-  width: 90%;
+  width: 100%;
+}
+
+.card .single-card .card-title{
+  font-size: 24px !important;
+  margin-bottom: 8px !important;
+  min-height: 2rem !important;
+}
+
+.card .single-card .card-subtitle{
+  font-size: 16px;
+  margin-top: 24px !important;
+  margin-bottom: unset !important;
+  text-transform: uppercase !important;
+}
+
+.card .single-card .card-text{
+  font-size: 14px;
 }
 
 .card .campaign-card:hover
@@ -4565,6 +4599,20 @@ input[type="button"].btn-block {
   max-height: 300px;
   min-height: 300px;
 }
+.campaign-detail-img{
+  width: unset !important;
+  max-height: 500px;
+  max-width: 837px;
+}
+
+@media(max-width: 768px){
+  .campaign-detail-img{
+    width: 100% !important;
+    max-height: 500px;
+    max-width: 837px;
+  }
+}
+
 .campaign-img:hover{
   border-radius: 5%;
 }
@@ -4691,6 +4739,7 @@ input[type="button"].btn-block {
     margin-bottom: 0;
     margin-left: 15px;
   }
+ 
 }
 
 .card-group {
@@ -22538,6 +22587,7 @@ td.rdtYear:hover {
   cursor: pointer;
   border-radius: 50%;
   text-align: center;
+  color: #212529;
 }
 .rdtMonths .rdtMonth.rdtActive,
 .rdtMonths .rdtYear.rdtActive,

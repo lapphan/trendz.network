@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import dynamic from 'next/dynamic'
-const Layout = dynamic(() => import('../components/layout'))
-// import Layout from "../components/layout";
+import dynamic from "next/dynamic";
+const Layout = dynamic(() => import("../components/layout"));
+import Datetime from "react-datetime";
 import classnames from "classnames";
 import { useAuth, UserContext } from "../context/userContext";
 import Router from "next/router";
@@ -25,6 +25,10 @@ import {
   Container,
   Row,
   Col,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 
 let ps = null;
@@ -35,23 +39,77 @@ const Profile = () => {
     tabs: 1,
   });
 
-  //const [user, setUser] = useState()
+  const [user, setUser] = useState({
+    fullName: "",
+    address: "",
+    gender: "",
+    contact: "",
+    dob: "",
+  });
+
+  const [userUpdate, setUserUpdate] = useState({
+    fullName: "",
+    address: "",
+    gender: "",
+    contact: "",
+    dob: "",
+  });
 
   async function fetchUser(state) {
-    const { API_URL } = process.env;
-
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${state.jwt}`,
-      },
-    };
-
-    const res = await fetch(`${API_URL}/users/me`, requestOptions);
-    const user = await res.json();
+    // const { API_URL } = process.env;
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: {
+    //     Authorization: `Bearer ${state.jwt}`,
+    //   },
+    // };
+    // const res = await fetch(`${API_URL}/users/me`, requestOptions);
+    // const user = await res.json();
     // setUser()
-    return console.log(user);
+    //return console.log(user);
   }
+
+  const [date] = useState(Datetime.moment().subtract(15 , "year"));
+  var validBirthDay = function (current) {
+    return current.isBefore(date);
+  };
+
+  const handleBirthdayChange = (event) => {
+    if (event._d !== undefined) {
+      const value = event._d.toISOString();
+      setUserUpdate((previousState) => {
+        return {
+          ...previousState,
+          dob: value,
+        };
+      });
+    } else return;
+  };
+
+  const handleUserChange = (event) => {
+    event.preventDefault();
+    const { name, value } = event.target;
+    setUserUpdate((previousState) => {
+      return {
+        ...previousState,
+        [name]: value,
+      };
+    });
+  };
+
+  const updateUser = () => {
+    //TODO: POST method to update user
+    setUser((previousState) => {
+      return {
+        ...previousState,
+        fullName: userUpdate.fullName,
+        address: userUpdate.address,
+        gender: userUpdate.gender,
+        contact: userUpdate.contact,
+        dob: userUpdate.dob,
+      };
+    });
+  };
 
   useEffect(() => {
     fetchUser(state);
@@ -101,11 +159,11 @@ const Profile = () => {
                 <CardHeader>
                   <img
                     className="img-center img-fluid rounded-circle"
-                    src="/meoden.jpg"
+                    src="/256x186.svg"
                     height="100"
                   />
-                  <h3 className="title">Name</h3>
-                  <p className="title">(nút đổi ảnh đại diện)</p>
+                  <h3 className="title">{state.user.username}</h3>
+                  {/* <p className="title">(nút đổi ảnh đại diện)</p> */}
                 </CardHeader>
                 <CardBody>
                   <Nav className="nav-tabs-primary justify-content-center" tabs>
@@ -138,31 +196,51 @@ const Profile = () => {
                       <Row>
                         <Label sm="5">Tên</Label>
                         <Col sm="6">
-                          <h4>Hieu Huynh Thai</h4>
+                          <h4>
+                            {user.fullName === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.fullName}
+                          </h4>
                         </Col>
                       </Row>
                       <Row>
                         <Label sm="5">Ngày sinh</Label>
                         <Col sm="6">
-                          <h4>17/05/2000</h4>
+                          <h4>
+                            {user.dob === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : new Date(user.dob).toLocaleDateString("en-GB")}
+                          </h4>
                         </Col>
                       </Row>
                       <Row>
                         <Label sm="5">Số điện thoại</Label>
                         <Col sm="6">
-                          <h4>0905510622</h4>
+                          <h4>
+                            {user.contact === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.contact}
+                          </h4>
                         </Col>
                       </Row>
                       <Row>
                         <Label sm="5">Giới tính</Label>
                         <Col sm="6">
-                          <h4>Nam</h4>
+                          <h4>
+                            {user.gender === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.gender}
+                          </h4>
                         </Col>
                       </Row>
                       <Row>
                         <Label sm="5">Địa chỉ</Label>
                         <Col sm="6">
-                          <h4>123 Nơi nào có em</h4>
+                          <h4>
+                            {user.address === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.address}
+                          </h4>
                         </Col>
                       </Row>
                       <Button
@@ -199,7 +277,12 @@ const Profile = () => {
                         <Label sm="5">Tên</Label>
                         <Col sm="4">
                           <FormGroup>
-                            <Input value="Huỳnh Thái Hiếu" type="text" />
+                            <Input
+                              name="fullName"
+                              value={userUpdate.fullName}
+                              type="text"
+                              onChange={handleUserChange}
+                            />
                           </FormGroup>
                         </Col>
                       </Row>
@@ -207,7 +290,13 @@ const Profile = () => {
                         <Label sm="5">Ngày sinh</Label>
                         <Col sm="4">
                           <FormGroup>
-                            <Input value="17/05/2000" type="text" />
+                            <Datetime
+                              onChange={handleBirthdayChange}
+                              value={userUpdate.dob.toISOString}
+                              required
+                              isValidDate={validBirthDay}
+                              viewMode="years"
+                            />
                           </FormGroup>
                         </Col>
                       </Row>
@@ -215,7 +304,53 @@ const Profile = () => {
                         <Label sm="5">Số điện thoại</Label>
                         <Col sm="4">
                           <FormGroup>
-                            <Input value="0905510622" type="text" />
+                            <Input
+                              name="contact"
+                              value={userUpdate.contact}
+                              type="text"
+                              onChange={handleUserChange}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Giới tính</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <UncontrolledDropdown group>
+                              <DropdownToggle
+                                caret
+                                data-toggle="dropdown"
+                                className="mydropdown"
+                              >
+                                {userUpdate.gender === ""
+                                  ? "Giới tính..."
+                                  : userUpdate.gender}
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                <DropdownItem
+                                  name="gender"
+                                  value="Nam"
+                                  onClick={handleUserChange}
+                                >
+                                  Nam
+                                </DropdownItem>
+                                <DropdownItem
+                                  name="gender"
+                                  value="Nữ"
+                                  onClick={handleUserChange}
+                                >
+                                  Nữ
+                                </DropdownItem>
+                                <DropdownItem
+                                  name="gender"
+                                  value="Khác"
+                                  onClick={handleUserChange}
+                                >
+                                  Khác
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -223,18 +358,32 @@ const Profile = () => {
                         <Label sm="5">Địa chỉ</Label>
                         <Col sm="4">
                           <FormGroup>
-                            <Input value="123 Nơi nào có em" type="text" />
+                            <Input
+                              name="address"
+                              value={userUpdate.address}
+                              type="text"
+                              onChange={handleUserChange}
+                            />
                           </FormGroup>
                         </Col>
                       </Row>
                       <Row>
                         <Label sm="5"></Label>
                         <Button
-                          onClick={(event) => toggleTabs(event, "tabs", 1)}
+                          onClick={(event) => {
+                            setUserUpdate(user);
+                            toggleTabs(event, "tabs", 1);
+                          }}
                         >
                           Hủy
                         </Button>
-                        <Button color="primary" type="submit">
+                        <Button
+                          color="primary"
+                          onClick={(event) => {
+                            updateUser();
+                            toggleTabs(event, "tabs", 1);
+                          }}
+                        >
                           Lưu
                         </Button>
                       </Row>

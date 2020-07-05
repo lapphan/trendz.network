@@ -53,10 +53,6 @@ const Dashboard = () => {
 
   const toggleTabs = (event, stateName, index) => {
     event.preventDefault();
-    
-    console.log(
-      myCampaigns.campaigns
-    );
     setNav((previousState) => {
       return { ...previousState, [stateName]: index };
     });
@@ -77,7 +73,6 @@ const Dashboard = () => {
           },
           url: `${API_URL}/campaigns`,
         });
-        console.log(get_resolve.data);
         setCampaigns({ campaigns: get_resolve.data });
         setMyCampaigns({campaigns: get_resolve.data.filter(function(campaign){return campaign.user.id == state.user.id})})
       };
