@@ -643,6 +643,21 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "name": {
+                "type": "string"
+              },
+              "phoneNumber": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string"
+              },
+              "Address": {
+                "type": "string"
+              },
+              "birthDay": {
+                "type": "string"
               }
             }
           },
@@ -726,7 +741,7 @@
                 "id": {
                   "type": "string"
                 },
-                "open_datime": {
+                "open_datetime": {
                   "type": "datetime"
                 },
                 "close_datetime": {
@@ -771,7 +786,7 @@
                 "id": {
                   "type": "string"
                 },
-                "open_datime": {
+                "open_datetime": {
                   "type": "datetime"
                 },
                 "close_datetime": {

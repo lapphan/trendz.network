@@ -9,7 +9,7 @@ export const CREATE_CAMPAIGN = gql`
     $user: ID
     $category: ID
     $channels: [ID]
-    $open_datime: DateTime
+    $open_datetime: DateTime
     $close_datetime: DateTime
   ) {
     createCampaign(
@@ -23,7 +23,7 @@ export const CREATE_CAMPAIGN = gql`
           category: $category
           channels: $channels
           campaignTTL: {
-            open_datime: $open_datime
+            open_datetime: $open_datetime
             close_datetime: $close_datetime
           }
         }

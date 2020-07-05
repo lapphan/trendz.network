@@ -67,8 +67,28 @@
       "via": "user"
     },
     "campaigns": {
-      "collection": "campaign",
-      "via": "user"
+      "via": "user",
+      "collection": "campaign"
+    },
+    "name": {
+      "type": "string"
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": [
+        "male",
+        "female",
+        "other"
+      ]
+    },
+    "Address": {
+      "type": "string"
+    },
+    "birthDay": {
+      "type": "date"
     }
   }
 }

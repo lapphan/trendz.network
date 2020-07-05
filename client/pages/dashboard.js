@@ -141,7 +141,7 @@ const Dashboard = () => {
                                       <CardSubtitle>
                                         <small className="text-muted">
                                           {new Date(
-                                            campaign.campaignTTL[0].open_datime
+                                            campaign.campaignTTL[0].open_datetime
                                           ).toLocaleString() +
                                             " - " +
                                             new Date(
@@ -191,7 +191,7 @@ const Dashboard = () => {
                                       <CardSubtitle>
                                         <small className="text-muted">
                                           {new Date(
-                                            campaign.campaignTTL[0].open_datime
+                                            campaign.campaignTTL[0].open_datetime
                                           ).toLocaleString() +
                                             " - " +
                                             new Date(

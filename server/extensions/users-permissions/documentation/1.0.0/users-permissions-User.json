@@ -1394,6 +1394,26 @@
                 }
               }
             }
+          },
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "Address": {
+            "type": "string"
+          },
+          "birthDay": {
+            "type": "string"
           }
         }
       },
@@ -1443,6 +1463,26 @@
             "items": {
               "type": "string"
             }
+          },
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "Address": {
+            "type": "string"
+          },
+          "birthDay": {
+            "type": "string"
           }
         }
       }

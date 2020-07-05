@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "06/22/2020 4:10:55 PM"
+    "x-generation-date": "07/05/2020 7:32:46 PM"
   },
   "x-strapi-config": {
     "path": "/documentation",
@@ -3865,6 +3865,21 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "name": {
+                "type": "string"
+              },
+              "phoneNumber": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string"
+              },
+              "Address": {
+                "type": "string"
+              },
+              "birthDay": {
+                "type": "string"
               }
             }
           },
@@ -3948,7 +3963,7 @@
                 "id": {
                   "type": "string"
                 },
-                "open_datime": {
+                "open_datetime": {
                   "type": "datetime"
                 },
                 "close_datetime": {
@@ -3993,7 +4008,7 @@
                 "id": {
                   "type": "string"
                 },
-                "open_datime": {
+                "open_datetime": {
                   "type": "datetime"
                 },
                 "close_datetime": {
@@ -4282,6 +4297,21 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "name": {
+                "type": "string"
+              },
+              "phoneNumber": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string"
+              },
+              "Address": {
+                "type": "string"
+              },
+              "birthDay": {
+                "type": "string"
               }
             }
           },
@@ -4482,6 +4512,21 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "phoneNumber": {
+                  "type": "string"
+                },
+                "gender": {
+                  "type": "string"
+                },
+                "Address": {
+                  "type": "string"
+                },
+                "birthDay": {
+                  "type": "string"
                 }
               }
             }
@@ -4727,6 +4772,26 @@
                 }
               }
             }
+          },
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "Address": {
+            "type": "string"
+          },
+          "birthDay": {
+            "type": "string"
           }
         }
       },
@@ -4776,6 +4841,26 @@
             "items": {
               "type": "string"
             }
+          },
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "Address": {
+            "type": "string"
+          },
+          "birthDay": {
+            "type": "string"
           }
         }
       },

@@ -623,6 +623,21 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "name": {
+                  "type": "string"
+                },
+                "phoneNumber": {
+                  "type": "string"
+                },
+                "gender": {
+                  "type": "string"
+                },
+                "Address": {
+                  "type": "string"
+                },
+                "birthDay": {
+                  "type": "string"
                 }
               }
             }

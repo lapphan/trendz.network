@@ -41,7 +41,7 @@ const Create = () => {
     user: state.user.id,
     category: null,
     channels: [],
-    open_datime: new Date().toISOString(),
+    open_datetime: new Date().toISOString(),
     close_datetime: new Date().toISOString(),
   });
 
@@ -88,7 +88,7 @@ const Create = () => {
       setCampaign((previousState) => {
         return {
           ...previousState,
-          open_datime: value,
+          open_datetime: value,
         };
       });
       setDate(value);
@@ -271,7 +271,7 @@ const Create = () => {
                         <Datetime
                           onChange={handleStartDateChange}
                           value={
-                            campaignState.open_datime.toISOString
+                            campaignState.open_datetime.toISOString
                           }
                           required
                           isValidDate={validStartDate}

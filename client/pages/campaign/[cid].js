@@ -141,7 +141,7 @@ const Post = () => {
                             <CardText>
                               {"Từ " +
                                 new Date(
-                                  campaign.campaignTTL[0].open_datime
+                                  campaign.campaignTTL[0].open_datetime
                                 ).toLocaleDateString("en-GB") +
                                 " - Đến " +
                                 new Date(

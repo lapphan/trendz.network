@@ -6,7 +6,7 @@
   },
   "options": {},
   "attributes": {
-    "open_datime": {
+    "open_datetime": {
       "type": "datetime"
     },
     "close_datetime": {
