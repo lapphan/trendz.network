@@ -153,7 +153,7 @@ const Profile = () => {
     return (
       <Layout>
         <div className="wrapper">
-          <div className="page-header">
+          <div className="main">
             <Container>
               <Card className="card-coin card-plain">
                 <CardHeader>
@@ -295,7 +295,9 @@ const Profile = () => {
                               value={userUpdate.dob.toISOString}
                               required
                               isValidDate={validBirthDay}
-                              viewMode="years"
+                              timeFormat={false}
+                              initialViewDate={new Date('1-1-1995')}
+                              locale="en-GB"
                             />
                           </FormGroup>
                         </Col>

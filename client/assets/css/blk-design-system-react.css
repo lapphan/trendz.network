@@ -21392,6 +21392,7 @@ input.datetimepicker[data-color="yellow"]
 }
 .card.card-coin {
   border: 2px solid #344675;
+  margin-top:150px;
 }
 .card.card-coin .card-header {
   margin: -100px auto 1px;
