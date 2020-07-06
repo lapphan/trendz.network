@@ -67,8 +67,8 @@
       "via": "user"
     },
     "campaigns": {
-      "via": "user",
-      "collection": "campaign"
+      "collection": "campaign",
+      "via": "user"
     },
     "name": {
       "type": "string"
@@ -84,7 +84,7 @@
         "other"
       ]
     },
-    "Address": {
+    "address": {
       "type": "string"
     },
     "birthDay": {

@@ -1409,7 +1409,7 @@
               "other"
             ]
           },
-          "Address": {
+          "address": {
             "type": "string"
           },
           "birthDay": {
@@ -1478,7 +1478,7 @@
               "other"
             ]
           },
-          "Address": {
+          "address": {
             "type": "string"
           },
           "birthDay": {

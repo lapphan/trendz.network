@@ -720,7 +720,7 @@
               "gender": {
                 "type": "string"
               },
-              "Address": {
+              "address": {
                 "type": "string"
               },
               "birthDay": {
