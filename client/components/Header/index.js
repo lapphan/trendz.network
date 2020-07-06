@@ -23,6 +23,7 @@ import {
 } from "reactstrap";
 
 import { useAuth } from "../../context/userContext";
+import  Router  from "next/router";
 
 // import StyledHeader from './StyledHeader';
 // import Link from '../Link';
@@ -104,6 +105,7 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     dispatch({ type: LOGOUT });
+    Router.push("/login")
   };
 
   const renderButton =

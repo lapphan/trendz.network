@@ -5,8 +5,7 @@ import Router from "next/router";
 import dynamic from "next/dynamic";
 const Layout = dynamic(() => import("../../components/layout"));
 import axios from "axios";
-import classnames from "classnames";
-import Link from "next/link";
+
 import {
   Button,
   Card,
@@ -63,7 +62,6 @@ const Post = () => {
     if (state.jwt === "") Router.push("/login");
     else {
       const fetchCampaign = async () => {
-        console.log(cid);
         const get_resolve = await axios({
           method: "GET",
           headers: {
@@ -81,9 +79,9 @@ const Post = () => {
           title: get_resolve.data.title,
           content: get_resolve.data.content,
         });
-        setLoading(false);
+        
       };
-      fetchCampaign();
+      fetchCampaign().then(setLoading(false));
     }
   }, [state]);
 
