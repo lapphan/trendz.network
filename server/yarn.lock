@@ -9274,6 +9274,16 @@ strapi-provider-email-nodemailer-v3@^1.0.2:
     nodemailer "6.3.0"
     nodemailer-ntlm-auth "1.0.1"
 
+strapi-provider-email-nodemailer@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/strapi-provider-email-nodemailer/-/strapi-provider-email-nodemailer-2.0.0.tgz#08ef86163c8dfa095a241eb238b93d94a325ec1d"
+  integrity sha512-jyobMQrAgzZiUQcEGVHtHmjjvQOyP5bNvBct9l9jgotSgqOty69+Una22E0yiK6p/dXdInrf4qg6PyBntuXY2A==
+  dependencies:
+    dotenv "8.1.0"
+    lodash "4.17.15"
+    nodemailer "6.3.0"
+    nodemailer-ntlm-auth "1.0.1"
+
 strapi-provider-email-sendmail@3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/strapi-provider-email-sendmail/-/strapi-provider-email-sendmail-3.0.4.tgz#0139b0226b7982f1bc385bc1537f0b92173f57f4"
