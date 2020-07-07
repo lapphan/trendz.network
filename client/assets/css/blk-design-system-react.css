@@ -521,7 +521,7 @@ mark,
 
 .img-fluid {
   max-width: 100%;
-  height: auto;
+  height: 156px;
 }
 
 .img-thumbnail {
@@ -12714,7 +12714,7 @@ img {
   right: 27px;
   top: 24px;
   outline: 0;
-  padding: 1rem;
+  padding: 12px;
   margin: -1rem -1rem -1rem auto;
 }
 .modal-content .modal-header .title {
@@ -12726,7 +12726,8 @@ img {
   color: #222a42;
 }
 .modal-content .modal-header i.tim-icons {
-  font-size: 16px;
+  font-size: 19px;
+  font-weight: bold;
 }
 .modal-content .modal-header .modal-profile {
   width: 70px;
@@ -21399,7 +21400,7 @@ input.datetimepicker[data-color="yellow"]
   margin: -100px auto 1px;
 }
 .card.card-coin img {
-  width: 150px;
+  width: 156px;
 }
 .card.card-coin hr {
   width: 20%;

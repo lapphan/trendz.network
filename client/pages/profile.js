@@ -7,7 +7,7 @@ import { useAuth } from "../context/userContext";
 import Router from "next/router";
 import PerfectScrollbar from "perfect-scrollbar";
 import axios from "axios";
-import moment from 'moment'
+import moment from "moment";
 import {
   Button,
   Card,
@@ -15,9 +15,11 @@ import {
   CardBody,
   Label,
   FormGroup,
-  Form,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Input,
-  FormText,
   NavItem,
   NavLink,
   Nav,
@@ -32,6 +34,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
+import { raw } from "file-loader";
 
 let ps = null;
 const { API_URL } = process.env;
@@ -51,7 +54,13 @@ const Profile = () => {
     birthDay: "",
   });
 
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState({ preview: "", raw: "" });
+
+  const [userAvatar, setUserAvatar] = useState({
+    avatar: {
+      id: null,
+    },
+  });
 
   const [userUpdate, setUserUpdate] = useState(user);
 
@@ -60,10 +69,24 @@ const Profile = () => {
     return current.isBefore(date);
   };
 
+  const [avatarModal, setAvatarModal] = useState(false);
+
+  const toggleAvatarModal = () => {
+    setAvatarModal(!avatarModal);
+  };
+
+  const handleAvatarChange = (e) => {
+    if (e.target.files.length) {
+      setAvatar({
+        preview: URL.createObjectURL(e.target.files[0]),
+        raw: e.target.files[0],
+      });
+    }
+  };
+
   const handleBirthdayChange = (event) => {
     if (event._d !== undefined) {
-      const value = moment(event._d).add(1, "day").toISOString().substr(0, 10);
-      console.log(value);
+      const value = moment(event._d).add(1, "hour").toISOString().substr(0, 10);
       setUserUpdate((previousState) => {
         return {
           ...previousState,
@@ -84,8 +107,45 @@ const Profile = () => {
     });
   };
 
+  const updateAvatar = async () => {
+    const data = new FormData();
+    data.append("files", avatar.raw);
+    const upload_resolve = await axios({
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${state.jwt}`,
+      },
+      url: `${API_URL}/upload`,
+      data,
+    });
+
+    setUserAvatar((previousState) => {
+      return {
+        ...previousState,
+        avatar: {
+          id: upload_resolve.data[0].id,
+        },
+      };
+    });
+  };
+
+  const updateUserAvatar = async () => {
+    try {
+      await axios({
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${state.jwt}`,
+        },
+        url: `${API_URL}/users/${state.user.id}`,
+        data: userAvatar,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    return;
+  };
+
   const updateUser = async () => {
-    //TODO: POST method to update user
     setUser((previousState) => {
       return {
         ...previousState,
@@ -96,17 +156,44 @@ const Profile = () => {
         birthDay: userUpdate.birthDay,
       };
     });
+    const upload_resolve = await axios({
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${state.jwt}`,
+      },
+      url: `${API_URL}/users/${state.user.id}`,
+      data: userUpdate,
+    });
+  };
 
-    // const upload_resolve = await axios({
-    //   method: "PUT",
-    //   headers: {
-    //     Authorization: `Bearer ${state.jwt}`,
-    //   },
-    //   url: `${API_URL}/users/${state.user.id}`,
-    //   userUpdate,
-    // });
+  const renderSetGender = () => {
+    switch (userUpdate.gender) {
+      case "":
+        return "Giới tính...";
+      case "male":
+        return "Nam";
+      case "female":
+        return "Nữ";
+      case "other":
+        return "Khác";
+      default:
+        return "Giới tính...";
+    }
+  };
 
-    console.log(userUpdate);
+  const renderGender = () => {
+    switch (user.gender) {
+      case "":
+        return "(Vui lòng cập nhật thông tin)";
+      case "male":
+        return "Nam";
+      case "female":
+        return "Nữ";
+      case "other":
+        return "Khác";
+      default:
+        return "(Vui lòng cập nhật thông tin)";
+    }
   };
 
   const toggleTabs = (event, stateName, index) => {
@@ -118,7 +205,14 @@ const Profile = () => {
       };
     });
   };
-
+  
+  useEffect(() => {
+    if (userAvatar.avatar.id !== null) {
+      updateUserAvatar();
+      alert('Cập nhật ảnh đại diện thành công!')
+    }
+  }, [userAvatar]);
+  
   useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
       document.documentElement.className += " perfect-scrollbar-on";
@@ -165,10 +259,14 @@ const Profile = () => {
             birthDay: get_resolve.data.birthDay,
           });
         }
-        setAvatar(get_resolve.data.avatar);
+        if (get_resolve.data.avatar !== undefined) {
+          setAvatar({
+            preview: API_URL + get_resolve.data.avatar.formats.thumbnail.url,
+            raw: get_resolve.data.avatar.url,
+          });
+        }
       };
       fetchUser().then(setLoading(false));
-      //
     }
   }, [state]);
 
@@ -184,15 +282,63 @@ const Profile = () => {
                     <img
                       className="img-center img-fluid rounded-circle"
                       src={
-                        avatar !== null && avatar !== undefined
-                          ? `
-                      ${API_URL}${avatar[0].formats.thumbnail.url}`
-                          : "/256x186.svg"
+                        avatar.preview !== "" ? avatar.preview : "/256x186.svg"
                       }
-                      height="100"
                     />
                     <h3 className="title">{state.user.username}</h3>
-                    {/* <p className="title">(nút đổi ảnh đại diện)</p> */}
+                    <Button color="primary" onClick={toggleAvatarModal}>
+                      Cập nhật ảnh đại diện
+                    </Button>
+                    <Modal isOpen={avatarModal} toggle={toggleAvatarModal}>
+                      <div className="modal-header">
+                        <h4 className="modal-title" id="avatarModal">
+                          <strong>Cập nhật ảnh đại diện</strong>
+                        </h4>
+                        <button
+                          type="button"
+                          className="close"
+                          data-dismiss="modal"
+                          aria-hidden="true"
+                          onClick={toggleAvatarModal}
+                        >
+                          <i className="tim-icons icon-simple-remove" />
+                        </button>
+                      </div>
+                      <ModalBody>
+                        <label htmlFor="upload-button">
+                          {avatar.preview ? (
+                            <img
+                              src={avatar.preview}
+                              alt="dummy"
+                              width="300"
+                              height="300"
+                            />
+                          ) : (
+                            <>
+                              <input
+                                type="file"
+                                onChange={handleAvatarChange}
+                                id="upload-button"
+                              />
+                            </>
+                          )}
+                        </label>
+                        <input
+                          type="file"
+                          id="upload-button"
+                          onChange={handleAvatarChange}
+                        />
+                        <br />
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color="secondary" onClick={toggleAvatarModal}>
+                          Hủy
+                        </Button>
+                        <Button color="primary" onClick={()=>{updateAvatar(); toggleAvatarModal()}}>
+                          Lưu
+                        </Button>
+                      </ModalFooter>
+                    </Modal>
                   </CardHeader>
                   <CardBody>
                     <Nav
@@ -260,11 +406,7 @@ const Profile = () => {
                         <Row>
                           <Label sm="5">Giới tính</Label>
                           <Col sm="6">
-                            <h4>
-                              {user.gender === ""
-                                ? "(Vui lòng cập nhật thông tin)"
-                                : user.gender}
-                            </h4>
+                            <h4>{renderGender()}</h4>
                           </Col>
                         </Row>
                         <Row>
@@ -372,28 +514,26 @@ const Profile = () => {
                                   data-toggle="dropdown"
                                   className="mydropdown"
                                 >
-                                  {userUpdate.gender === ""
-                                    ? "Giới tính..."
-                                    : userUpdate.gender}
+                                  {renderSetGender()}
                                 </DropdownToggle>
                                 <DropdownMenu>
                                   <DropdownItem
                                     name="gender"
-                                    value="Nam"
+                                    value="male"
                                     onClick={handleUserChange}
                                   >
                                     Nam
                                   </DropdownItem>
                                   <DropdownItem
                                     name="gender"
-                                    value="Nữ"
+                                    value="female"
                                     onClick={handleUserChange}
                                   >
                                     Nữ
                                   </DropdownItem>
                                   <DropdownItem
                                     name="gender"
-                                    value="Khác"
+                                    value="other"
                                     onClick={handleUserChange}
                                   >
                                     Khác
