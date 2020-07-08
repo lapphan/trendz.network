@@ -82,11 +82,9 @@ const Post = () => {
     }
   }, [state]);
 
-  if (state.jwt !== "")
     return (
-
         <div className="wrapper">
-          <div className="single-campaign">
+          <div className="main">
             <Container>
               <Card>
                 <CardBody>
@@ -191,9 +189,7 @@ const Post = () => {
             </Container>
           </div>
         </div>
-
     );
-  else return null;
 };
 
 export default Post;

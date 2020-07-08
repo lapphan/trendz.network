@@ -145,7 +145,6 @@ function Header() {
       <NavItem>
         <Button className="nav-link d-none d-lg-block" color="warning">
           <Link href="/create">
-            {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
             <TestButton>Tạo campaign</TestButton>
           </Link>
         </Button>
@@ -154,7 +153,6 @@ function Header() {
           onClick={toggleCollapse}
         >
           <Link href="/create">
-            {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
             <TestButton>Tạo campaign</TestButton>
           </Link>
         </NavLink>
@@ -162,7 +160,6 @@ function Header() {
       <NavItem>
         <Button className="nav-link d-none d-lg-block" color="default">
           <Link href="/profile">
-            {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
             <TestButton>Hồ sơ</TestButton>
           </Link>
         </Button>
@@ -171,7 +168,6 @@ function Header() {
           onClick={toggleCollapse}
         >
           <Link href="/profile">
-            {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
             <TestButton>Hồ sơ</TestButton>
           </Link>
         </NavLink>
@@ -201,6 +197,24 @@ function Header() {
     </Nav>
   );
 
+  const renderUnloggedBrand = (
+    <Link href="/">
+      <TestButton>
+        <span>TRENDZ • </span>
+        NETWORK
+      </TestButton>
+    </Link>
+  );
+
+  const renderLoggedBrand = (
+    <Link href="/dashboard">
+      <TestButton>
+        <span>TRENDZ • </span>
+        NETWORK
+      </TestButton>
+    </Link>
+  );
+
   useEffect(() => {
     if (state.jwt !== "") {
       setLoggedIn(true);
@@ -216,12 +230,7 @@ function Header() {
       <Container>
         <div className="navbar-translate">
           <NavbarBrand id="navbar-brand">
-            <Link href="/">
-              <TestButton>
-                <span>TRENDZ • </span>
-                NETWORK
-              </TestButton>
-            </Link>
+            {!isLoggedIn ? renderUnloggedBrand : renderLoggedBrand}
           </NavbarBrand>
           <button
             aria-expanded={isOpen}

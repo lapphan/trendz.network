@@ -79,7 +79,6 @@ const Dashboard = () => {
   }, [state]);
 
     return (
-      <div>
         <div className="wrapper">
           <div className="main">
             <Card>
@@ -218,7 +217,6 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
-      </div>
     );
 };
 

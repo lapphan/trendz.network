@@ -4728,7 +4728,6 @@ input[type="button"].btn-block {
 @media (min-width: 576px) {
   .card-deck {
     flex-flow: row wrap;
-    margin-right: -15px;
     margin-left: -15px;
   }
   .card-deck .card {
@@ -18278,7 +18277,7 @@ hr.line-deafult {
   position: relative;
   width: 100%;
   margin-top: 100px;
-  height: 100vh;
+  height: 100%;
 }
 
 .single-campaign {
