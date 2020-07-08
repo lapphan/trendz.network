@@ -227,7 +227,6 @@ const Create = () => {
     }
   }, [state]);
 
-  if (state.jwt !== "") {
     return (
       <div>
         <div className="wrapper">
@@ -418,7 +417,6 @@ const Create = () => {
         </div>
       </div>
     );
-  } else return null;
 };
 
 export default Create;

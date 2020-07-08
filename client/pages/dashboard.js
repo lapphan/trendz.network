@@ -78,7 +78,6 @@ const Dashboard = () => {
     }
   }, [state]);
 
-  if (state.jwt !== "")
     return (
       <div>
         <div className="wrapper">
@@ -221,7 +220,6 @@ const Dashboard = () => {
         </div>
       </div>
     );
-  else return null;
 };
 
 export default Dashboard;

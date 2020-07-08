@@ -268,7 +268,6 @@ const Profile = () => {
     }
   }, [state]);
 
-  if (state.jwt !== "")
     return (
       <div>
         <div className="wrapper">
@@ -615,7 +614,6 @@ const Profile = () => {
         </div>
       </div>
     );
-  else return null;
 };
 
 export default Profile;
