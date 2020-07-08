@@ -18281,6 +18281,13 @@ hr.line-deafult {
   height: 100vh;
 }
 
+.single-campaign {
+  position: relative;
+  width: 100%;
+  margin-top: 100px;
+  height: 150vh !important;
+}
+
 .section-navbars {
   padding-bottom: 0;
   overflow: hidden;

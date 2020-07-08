@@ -23,7 +23,7 @@ import {
 } from "reactstrap";
 
 import { useAuth } from "../../context/userContext";
-import  Router  from "next/router";
+import Router from "next/router";
 
 // import StyledHeader from './StyledHeader';
 // import Link from '../Link';
@@ -33,11 +33,11 @@ import  Router  from "next/router";
 export const LOGOUT = "LOGOUT";
 /* END */
 
-const TestButton = React.forwardRef(({children, href, onClick},ref)=>(
-  <p ref={ref} href={href} onClick={onClick} >
+const TestButton = React.forwardRef(({ children, href, onClick }, ref) => (
+  <p ref={ref} href={href} onClick={onClick}>
     {children}
   </p>
-))
+));
 
 function Header() {
   const { state, dispatch } = useAuth();
@@ -48,7 +48,7 @@ function Header() {
   const [navCollapse, setNavCollapse] = useState({
     collapseOut: "",
   });
-
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const changeColor = useCallback(() => {
     if (
       document.documentElement.scrollTop > 99 ||
@@ -105,100 +105,107 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     dispatch({ type: LOGOUT });
-    Router.push("/login")
+    Router.reload();
   };
 
-  const renderButton =
-    state.jwt === "" ? (
-      <Nav navbar>
-        <NavItem>
-          <Button className="nav-link d-none d-lg-block" color="default">
-            <Link href="/login">
-              <TestButton>Đăng nhập</TestButton>
-            </Link>
-          </Button>
-          <NavLink
-            className="nav-pills d-lg-none d-xl-none"
-            onClick={toggleCollapse}
-          >
-            <Link href="/login">
-              <TestButton>Đăng nhập</TestButton>
-            </Link>
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <Button className="nav-link d-none d-lg-block" color="primary">
-            <Link href="/register">
-              <TestButton>Đăng ký</TestButton>
-            </Link>
-          </Button>
-          <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-            <Link href="/register">
-              <TestButton>Đăng ký</TestButton>
-            </Link>
-          </NavLink>
-        </NavItem>
-      </Nav>
-    ) : (
-      <Nav navbar>
-        <NavItem>
-          <Button className="nav-link d-none d-lg-block" color="warning">
-            <Link href="/create">
-              {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
-              <TestButton>Tạo campaign</TestButton>
-            </Link>
-          </Button>
-          <NavLink
-            className="nav-pills d-lg-none d-xl-none"
-            onClick={toggleCollapse}
-          >
-            <Link href="/create">
-              {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
-              <TestButton>Tạo campaign</TestButton>
-            </Link>
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <Button className="nav-link d-none d-lg-block" color="default">
-            <Link href="/profile" >
-              {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
-              <TestButton>Hồ sơ</TestButton>
-            </Link>
-          </Button>
-          <NavLink
-            className="nav-pills d-lg-none d-xl-none"
-            onClick={toggleCollapse}
-          >
-            <Link href="/profile" >
-              {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
-              <TestButton>Hồ sơ</TestButton>
-            </Link>
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <Button
-            className="nav-link d-none d-lg-block"
-            color="default"
-            onClick={handleLogout}
-          >
-            <Link href="/" >
-              <TestButton>Đăng xuất</TestButton>
-            </Link>
-          </Button>
-          <NavLink
-            className="nav-pills d-lg-none d-xl-none"
-            onClick={() => {
-              toggleCollapse();
-              handleLogout();
-            }}
-          >
-            <Link href="/" >
-              <TestButton>Đăng xuất</TestButton>
-            </Link>
-          </NavLink>
-        </NavItem>
-      </Nav>
-    );
+  const renderUnloggedInButton = (
+    <Nav navbar>
+      <NavItem>
+        <Button className="nav-link d-none d-lg-block" color="default">
+          <Link href="/login">
+            <TestButton>Đăng nhập</TestButton>
+          </Link>
+        </Button>
+        <NavLink
+          className="nav-pills d-lg-none d-xl-none"
+          onClick={toggleCollapse}
+        >
+          <Link href="/login">
+            <TestButton>Đăng nhập</TestButton>
+          </Link>
+        </NavLink>
+      </NavItem>
+      <NavItem>
+        <Button className="nav-link d-none d-lg-block" color="primary">
+          <Link href="/register">
+            <TestButton>Đăng ký</TestButton>
+          </Link>
+        </Button>
+        <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
+          <Link href="/register">
+            <TestButton>Đăng ký</TestButton>
+          </Link>
+        </NavLink>
+      </NavItem>
+    </Nav>
+  );
+
+  const renderLoggedInButton = (
+    <Nav navbar>
+      <NavItem>
+        <Button className="nav-link d-none d-lg-block" color="warning">
+          <Link href="/create">
+            {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
+            <TestButton>Tạo campaign</TestButton>
+          </Link>
+        </Button>
+        <NavLink
+          className="nav-pills d-lg-none d-xl-none"
+          onClick={toggleCollapse}
+        >
+          <Link href="/create">
+            {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
+            <TestButton>Tạo campaign</TestButton>
+          </Link>
+        </NavLink>
+      </NavItem>
+      <NavItem>
+        <Button className="nav-link d-none d-lg-block" color="default">
+          <Link href="/profile">
+            {/* <i class="tim-icons icon-single-02" aria-hidden="true" /> */}
+            <TestButton>Hồ sơ</TestButton>
+          </Link>
+        </Button>
+        <NavLink
+          className="nav-pills d-lg-none d-xl-none"
+          onClick={toggleCollapse}
+        >
+          <Link href="/profile">
+            {/* <i class="tim-icons icon-single-02" aria-hidden="true"></i> */}
+            <TestButton>Hồ sơ</TestButton>
+          </Link>
+        </NavLink>
+      </NavItem>
+      <NavItem>
+        <Button
+          className="nav-link d-none d-lg-block"
+          color="default"
+          onClick={handleLogout}
+        >
+          <Link href="/">
+            <TestButton>Đăng xuất</TestButton>
+          </Link>
+        </Button>
+        <NavLink
+          className="nav-pills d-lg-none d-xl-none"
+          onClick={() => {
+            toggleCollapse();
+            handleLogout();
+          }}
+        >
+          <Link href="/">
+            <TestButton>Đăng xuất</TestButton>
+          </Link>
+        </NavLink>
+      </NavItem>
+    </Nav>
+  );
+
+  useEffect(() => {
+    if (state.jwt !== "") {
+      setLoggedIn(true);
+    }
+  }, [state.jwt]);
 
   return (
     <Navbar
@@ -207,9 +214,9 @@ function Header() {
       expand="lg"
     >
       <Container>
-      <div className="navbar-translate">
+        <div className="navbar-translate">
           <NavbarBrand id="navbar-brand">
-            <Link href="/" >
+            <Link href="/">
               <TestButton>
                 <span>TRENDZ • </span>
                 NETWORK
@@ -247,7 +254,7 @@ function Header() {
               </Col>
             </Row>
           </div>
-          {renderButton}
+          {!isLoggedIn ? renderUnloggedInButton : renderLoggedInButton}
         </Collapse>
       </Container>
     </Navbar>

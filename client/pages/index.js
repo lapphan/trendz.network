@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import dynamic from 'next/dynamic'
-const Layout = dynamic(() => import('../components/layout'))
+
 // import Layout from '../components/layout'
 import { Container } from 'reactstrap';
 import { useAuth } from "../context/userContext";
@@ -21,7 +20,7 @@ const Home = (props) => {
     Router.push("/dashboard")
   },[state])
   return(
-  <Layout>
+  <div>
     <div className="page-header header-filter">
         <div className="squares square1" />
         <div className="squares square2" />
@@ -37,7 +36,7 @@ const Home = (props) => {
           </div>
         </Container>
       </div>
-  </Layout>
+  </div>
 )}
 
 export default Home

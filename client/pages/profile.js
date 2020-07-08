@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../components/layout"));
 import Datetime from "react-datetime";
 import classnames from "classnames";
 import { useAuth } from "../context/userContext";
@@ -272,7 +270,7 @@ const Profile = () => {
 
   if (state.jwt !== "")
     return (
-      <Layout>
+      <div>
         <div className="wrapper">
           <div className="main">
             <Container>
@@ -615,7 +613,7 @@ const Profile = () => {
             </Container>
           </div>
         </div>
-      </Layout>
+      </div>
     );
   else return null;
 };

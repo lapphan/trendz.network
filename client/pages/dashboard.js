@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/userContext";
 import Router from "next/router";
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../components/layout"));
 import axios from "axios";
 import classnames from "classnames";
 import Link from "next/link";
@@ -82,7 +80,7 @@ const Dashboard = () => {
 
   if (state.jwt !== "")
     return (
-      <Layout>
+      <div>
         <div className="wrapper">
           <div className="main">
             <Card>
@@ -221,7 +219,7 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
-      </Layout>
+      </div>
     );
   else return null;
 };

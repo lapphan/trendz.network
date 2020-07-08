@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../components/layout"));
 import { useAuth } from "../context/userContext";
 import Router from "next/router";
 import PerfectScrollbar from "perfect-scrollbar";
@@ -231,7 +229,7 @@ const Create = () => {
 
   if (state.jwt !== "") {
     return (
-      <Layout>
+      <div>
         <div className="wrapper">
           <div className="main">
             <Container>
@@ -418,7 +416,7 @@ const Create = () => {
             </Container>
           </div>
         </div>
-      </Layout>
+      </div>
     );
   } else return null;
 };

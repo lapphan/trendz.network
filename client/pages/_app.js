@@ -3,8 +3,9 @@ import React from "react";
 import Head from "next/head";
 import withApollo from "../utils/ApolloSetup/withApollo";
 import { ApolloProvider } from "react-apollo";
-import {UserContextProvider} from "../context/userContext";
-
+import { UserContextProvider } from "../context/userContext";
+import dynamic from "next/dynamic";
+const Layout = dynamic(() => import("../components/layout"));
 import "../assets/css/blk-design-system-react.css";
 import "../assets/css/demo.css";
 import "../assets/css/nucleo-icons.css";
@@ -13,7 +14,8 @@ const App = ({ Component, pageProps, apolloClient }) => {
   return (
     <ApolloProvider client={apolloClient}>
       <Head>
-        <title>Strapi blog</title>
+        <title>Trendz Network</title>
+
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link
           rel="stylesheet"
@@ -28,7 +30,9 @@ const App = ({ Component, pageProps, apolloClient }) => {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.2.0/js/uikit.js" />
       </Head>
       <UserContextProvider>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </UserContextProvider>
     </ApolloProvider>
   );

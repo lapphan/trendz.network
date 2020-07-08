@@ -2,8 +2,6 @@ import { useRouter } from "next/router";
 import { useAuth } from "../../context/userContext";
 import React, { useEffect, useState } from "react";
 import Router from "next/router";
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../../components/layout"));
 import axios from "axios";
 
 import {
@@ -79,7 +77,6 @@ const Post = () => {
           title: get_resolve.data.title,
           content: get_resolve.data.content,
         });
-        
       };
       fetchCampaign().then(setLoading(false));
     }
@@ -87,19 +84,20 @@ const Post = () => {
 
   if (state.jwt !== "")
     return (
-      <Layout>
+
         <div className="wrapper">
-          <div className="main">
+          <div className="single-campaign">
             <Container>
               <Card>
                 <CardBody>
                   <Row>
-                    {!isLoading ? (
+                    {isLoading === false ? (
                       <Container>
                         <Card className="single-card">
                           <CardImg
                             src={
-                              campaign.picture[0].formats.medium !== undefined
+                              campaign.picture[0] !== undefined
+                              
                                 ? `
                               ${API_URL}${campaign.picture[0].formats.medium.url}`
                                 : "/256x186.svg"
@@ -113,14 +111,40 @@ const Post = () => {
                             <CardSubtitle>
                               <strong>Thể loại:</strong>
                             </CardSubtitle>
-                            <CardText>{campaign.category.name} - {campaign.category.description}</CardText>
+                            {campaign.category !== undefined ? (
+                              <CardText>
+                                {campaign.category.name} -{" "}
+                                {campaign.category.description}
+                              </CardText>
+                            ) : (
+                              ""
+                            )}
                             <CardSubtitle>
                               <strong>Kênh:</strong>
                             </CardSubtitle>
-                            <CardText><strong>{campaign.channels[0].name}</strong></CardText>
-                            <CardText><strong>Website:</strong> <a href="##">{campaign.channels[0].website}</a></CardText>
-                            <CardText><strong>Địa chỉ:</strong> {campaign.channels[0].address}</CardText>
-                            <CardText><strong>Liên hệ:</strong> {campaign.channels[0].phone}</CardText>
+                            {campaign.channels[0] !== undefined ? (
+                              <>
+                                <CardText>
+                                  <strong>{campaign.channels[0].name}</strong>
+                                </CardText>
+                                <CardText>
+                                  <strong>Website:</strong>{" "}
+                                  <a href="##">
+                                    {campaign.channels[0].website}
+                                  </a>
+                                </CardText>
+                                <CardText>
+                                  <strong>Địa chỉ:</strong>{" "}
+                                  {campaign.channels[0].address}
+                                </CardText>
+                                <CardText>
+                                  <strong>Liên hệ:</strong>{" "}
+                                  {campaign.channels[0].phone}
+                                </CardText>
+                              </>
+                            ) : (
+                              ""
+                            )}
                             <CardSubtitle>
                               <strong>Trạng thái:</strong>
                             </CardSubtitle>
@@ -132,20 +156,28 @@ const Post = () => {
                             <CardSubtitle>
                               <strong>Người tạo:</strong>
                             </CardSubtitle>
-                            <CardText>{campaign.user.username}</CardText>
+                            <CardText>
+                              {campaign.user !== undefined
+                                ? campaign.user.username
+                                : ""}
+                            </CardText>
                             <CardSubtitle>
                               <strong>Thời gian:</strong>
                             </CardSubtitle>
-                            <CardText>
-                              {"Từ " +
-                                new Date(
-                                  campaign.campaignTTL[0].open_datetime
-                                ).toLocaleDateString("en-GB") +
-                                " - Đến " +
-                                new Date(
-                                  campaign.campaignTTL[0].close_datetime
-                                ).toLocaleDateString("en-GB")}
-                            </CardText>
+                            {campaign.campaignTTL[0] !== undefined ? (
+                              <CardText>
+                                {"Từ " +
+                                  new Date(
+                                    campaign.campaignTTL[0].open_datetime
+                                  ).toLocaleDateString("en-GB") +
+                                  " - Đến " +
+                                  new Date(
+                                    campaign.campaignTTL[0].close_datetime
+                                  ).toLocaleDateString("en-GB")}
+                              </CardText>
+                            ) : (
+                              ""
+                            )}
                             <Button onClick={consoleLogger}>Tham gia</Button>
                           </CardBody>
                         </Card>
@@ -159,7 +191,7 @@ const Post = () => {
             </Container>
           </div>
         </div>
-      </Layout>
+
     );
   else return null;
 };

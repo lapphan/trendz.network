@@ -3,8 +3,6 @@ import classnames from "classnames";
 
 import { UserContext } from "../context/userContext";
 
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../components/layout"));
 import {
   Button,
   Card,
@@ -144,7 +142,7 @@ const RegisterPage = () => {
     } else
       try {
         await requestRegisterMutation();
-        Router.push("/dashboard");
+        Router.reload()
         return alert("Đăng ký thành công!");
         // enqueueSnackbar(
         //   'Đăng nhập thành công!',{variant: 'success'}
@@ -160,7 +158,7 @@ const RegisterPage = () => {
     Router.push("/dashboard");
   }, [state]);
   return (
-    <Layout>
+    <div>
       <div className="wrapper">
         <div className="page-header">
           <div className="page-header-image" />
@@ -387,7 +385,7 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

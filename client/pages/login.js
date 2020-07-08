@@ -3,10 +3,6 @@ import classnames from "classnames";
 
 import { UserContext } from "../context/userContext";
 
-import dynamic from "next/dynamic";
-const Layout = dynamic(() => import("../components/layout"));
-// import Layout from "../components/layout";
-
 // reactstrap components
 import {
   Button,
@@ -130,7 +126,7 @@ const LoginPage = () => {
     } else
       try {
         await requestLoginMutation();
-        Router.push("/dashboard");
+        Router.reload();
         return alert("Đăng nhập thành công!");
         // enqueueSnackbar(
         //   'Đăng nhập thành công!',{variant: 'success'}
@@ -146,7 +142,7 @@ const LoginPage = () => {
     Router.push("/dashboard");
   }, [state]);
   return (
-    <Layout>
+    <div>
       <div className="wrapper">
         <div className="page-header">
           <div className="page-header-image" />
@@ -297,7 +293,7 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
