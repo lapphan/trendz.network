@@ -1,27 +1,27 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from "react";
 
 // import Layout from '../components/layout'
-import { Container } from 'reactstrap';
+import { Container } from "reactstrap";
 import { useAuth } from "../context/userContext";
-import Router  from 'next/router';
+import Router, { withRouter } from "next/router";
 
 const Home = (props) => {
   useEffect(() => {
-    document.body.classList.toggle('index-page');
+    document.body.classList.toggle("index-page");
     return () => {
-      document.body.classList.toggle('index-page');
+      document.body.classList.toggle("index-page");
     };
   }, []);
 
-  const {state} = useAuth()
+  const { state } = useAuth();
 
-  useEffect(()=>{
-    if (state.jwt==="") return
-    Router.push("/dashboard")
-  },[state])
-  return(
-  <div>
-    <div className="page-header header-filter">
+  useEffect(() => {
+    if (state.jwt === "") return;
+    Router.push("/dashboard");
+  }, [state]);
+  return (
+    <div>
+      <div className="page-header header-filter">
         <div className="squares square1" />
         <div className="squares square2" />
         <div className="squares square3" />
@@ -36,7 +36,8 @@ const Home = (props) => {
           </div>
         </Container>
       </div>
-  </div>
-)}
+    </div>
+  );
+};
 
-export default Home
+export default withRouter(Home);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/userContext";
-import Router from "next/router";
+import Router, {withRouter} from "next/router";
 import axios from "axios";
 import classnames from "classnames";
 import Link from "next/link";
@@ -177,11 +177,11 @@ const Dashboard = () => {
                                         ).toLocaleString()}
                                     </small>
                                   </CardSubtitle>
-                                  <Button>
-                                    <Link href={`/campaign/${campaign.id}`}>
-                                      <p>Chi tiết</p>
+                                  
+                                    <Link href="/campaign/[cid]" as={`/campaign/${campaign.id}`}>
+                                      <Button>Chi tiết</Button>
                                     </Link>
-                                  </Button>
+                                  
                                 </CardBody>
                               </Card>
                             </Col>
@@ -262,4 +262,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default withRouter(Dashboard);

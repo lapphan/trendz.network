@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter, withRouter } from "next/router";
 import { useAuth } from "../../context/userContext";
 import React, { useEffect, useState } from "react";
 import Router from "next/router";
@@ -7,25 +7,10 @@ import axios from "axios";
 import {
   Button,
   Card,
-  CardHeader,
   CardBody,
   CardImg,
-  CardDeck,
   CardSubtitle,
-  Label,
-  FormGroup,
-  Input,
   Container,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Form,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
   CardTitle,
   CardText,
   Row,
@@ -54,6 +39,16 @@ const Post = () => {
 
   const consoleLogger = () => {
     // console.log(campaign.campaignTTL[0].open_datime);
+  };
+
+  const renderImage = () => {
+    if (campaign.picture[0] !== undefined) {
+      if (campaign.picture[0].formats.medium !== undefined) {
+        return API_URL+campaign.picture[0].formats.medium.url;
+      }
+      else return "/256x186.svg";  
+    }
+    else return "/256x186.svg";
   };
 
   useEffect(() => {
@@ -108,12 +103,7 @@ const Post = () => {
                   <Container>
                     <Card className="single-card">
                       <CardImg
-                        src={
-                          campaign.picture[0] !== undefined
-                            ? `
-                              ${API_URL}${campaign.picture[0].formats.medium.url}`
-                            : "/256x186.svg"
-                        }
+                        src={renderImage()}
                         alt="Card image cap"
                         className="campaign-detail-img"
                       />
@@ -204,4 +194,4 @@ const Post = () => {
   );
 };
 
-export default Post;
+export default withRouter(Post);

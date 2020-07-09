@@ -229,6 +229,7 @@ const Create = () => {
             setCategories({ categories: get_resolve.data });
           }
         };
+        fetchCategory();
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
@@ -236,7 +237,6 @@ const Create = () => {
           throw error;
         }
       }
-      fetchCategory();
       return function cleanup() {
         mounted = false;
         signal.cancel();

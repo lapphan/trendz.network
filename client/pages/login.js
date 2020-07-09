@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import classnames from "classnames";
-
+import {withRouter} from "next/router"
 import { UserContext } from "../context/userContext";
 
 // reactstrap components
@@ -41,7 +41,7 @@ import Router from "next/router";
 export const LOGIN = "LOGIN";
 /* END */
 
-const LoginPage = () => {
+const Login = () => {
   useEffect(() => {
     document.body.classList.toggle("login-page");
     document.documentElement.addEventListener("mousemove", followCursor);
@@ -297,4 +297,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default withRouter(Login);

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import Datetime from "react-datetime";
 import classnames from "classnames";
 import { useAuth } from "../context/userContext";
-import Router from "next/router";
+import Router, {withRouter} from "next/router";
 import PerfectScrollbar from "perfect-scrollbar";
 import axios from "axios";
 import moment from "moment";
@@ -453,7 +453,7 @@ const Profile = () => {
                       <Row>
                         <Label sm="5">Email</Label>
                         <Col sm="6">
-                          <h4>thaihieuhuynh1752@gmail.com</h4>
+                          <h4>{state.user.email}</h4>
                         </Col>
                       </Row>
                       <Row>
@@ -638,4 +638,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default withRouter(Profile);

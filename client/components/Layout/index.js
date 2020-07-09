@@ -8,6 +8,9 @@ import Transition from "../PageTransition";
 const Layout = (props) => {
   const { state } = useAuth();
   const router = useRouter()
+  console.log(router)
+  const {pathname} = router
+  console.log(pathname)
   const [isLoggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
     if (state.jwt !== "") {
@@ -18,7 +21,7 @@ const Layout = (props) => {
     return (
       <div>
         <Header />
-        <Transition location={router.pathname}>
+        <Transition location={pathname}>
         <main>
           <div className="section">{props.children}</div>
         </main>
@@ -29,7 +32,7 @@ const Layout = (props) => {
     return (
       <div>
         <Header />
-        <Transition location={router.pathname}>
+        <Transition location={pathname}>
           <main>
             <div>{props.children}</div>
           </main>

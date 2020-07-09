@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import classnames from "classnames";
-
+import {withRouter} from "next/router"
 import { UserContext } from "../context/userContext";
 
 import {
@@ -36,7 +36,7 @@ import Router from "next/router";
 export const LOGIN = "LOGIN";
 /* END */
 
-const RegisterPage = () => {
+const Register = () => {
   useEffect(() => {
     document.body.classList.toggle("register-page");
     document.documentElement.addEventListener("mousemove", followCursor);
@@ -389,4 +389,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default withRouter(Register);
