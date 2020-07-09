@@ -8,9 +8,7 @@ import Transition from "../PageTransition";
 const Layout = (props) => {
   const { state } = useAuth();
   const router = useRouter()
-  console.log(router)
   const {pathname} = router
-  console.log(pathname)
   const [isLoggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
     if (state.jwt !== "") {
