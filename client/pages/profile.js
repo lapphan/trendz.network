@@ -52,6 +52,8 @@ const Profile = () => {
     birthDay: "",
   });
 
+  const signal = axios.CancelToken.source();
+
   const [avatar, setAvatar] = useState({ preview: "", raw: "" });
 
   const [userAvatar, setUserAvatar] = useState({
@@ -203,14 +205,14 @@ const Profile = () => {
       };
     });
   };
-  
+
   useEffect(() => {
     if (userAvatar.avatar.id !== null) {
       updateUserAvatar();
-      alert('Cập nhật ảnh đại diện thành công!')
+      alert("Cập nhật ảnh đại diện thành công!");
     }
   }, [userAvatar]);
-  
+
   useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
       document.documentElement.className += " perfect-scrollbar-on";
@@ -234,386 +236,406 @@ const Profile = () => {
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
     else {
+      let mounted = true;
+      const url = API_URL + "/users/me";
       const fetchUser = async () => {
-        const get_resolve = await axios({
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${state.jwt}`,
-          },
-          url: `${API_URL}/users/me`,
-        });
-        if (
-          get_resolve.data.name !== undefined &&
-          get_resolve.data.address !== undefined &&
-          get_resolve.data.phoneNumber !== undefined &&
-          get_resolve.data.gender !== undefined &&
-          get_resolve.data.birthDay !== undefined
-        ) {
-          setUser({
-            name: get_resolve.data.name,
-            address: get_resolve.data.address,
-            phoneNumber: get_resolve.data.phoneNumber,
-            gender: get_resolve.data.gender,
-            birthDay: get_resolve.data.birthDay,
+        try {
+          const get_resolve = await axios.get(url, {
+            cancelToken: signal.token,
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
           });
-        }
-        if (get_resolve.data.avatar !== undefined) {
-          setAvatar({
-            preview: API_URL + get_resolve.data.avatar.formats.thumbnail.url,
-            raw: get_resolve.data.avatar.url,
-          });
+          if (mounted) {
+            if (
+              get_resolve.data.name !== undefined &&
+              get_resolve.data.address !== undefined &&
+              get_resolve.data.phoneNumber !== undefined &&
+              get_resolve.data.gender !== undefined &&
+              get_resolve.data.birthDay !== undefined
+            ) {
+              setUser({
+                name: get_resolve.data.name,
+                address: get_resolve.data.address,
+                phoneNumber: get_resolve.data.phoneNumber,
+                gender: get_resolve.data.gender,
+                birthDay: get_resolve.data.birthDay,
+              });
+            }
+            if (get_resolve.data.avatar !== undefined) {
+              setAvatar({
+                preview:
+                  API_URL + get_resolve.data.avatar.formats.thumbnail.url,
+                raw: get_resolve.data.avatar.url,
+              });
+            }
+          }
+        } catch (error) {
+          if (axios.isCancel(error) && error.message !== undefined) {
+            console.log("Error: ", error.message);
+          } else {
+            throw error;
+          }
         }
       };
       fetchUser().then(setLoading(false));
+
+      return function cleanup() {
+        mounted = false;
+        signal.cancel();
+      };
     }
   }, [state]);
 
-    return (
-      <div>
-        <div className="wrapper">
-          <div className="main">
-            <Container>
-              {!isLoading ? (
-                <Card className="card-coin card-plain">
-                  <CardHeader>
-                    <img
-                      className="img-center img-fluid rounded-circle"
-                      src={
-                        avatar.preview !== "" ? avatar.preview : "/256x186.svg"
-                      }
-                    />
-                    <h3 className="title">{state.user.username}</h3>
-                    <Button color="primary" onClick={toggleAvatarModal}>
-                      Cập nhật ảnh đại diện
-                    </Button>
-                    <Modal isOpen={avatarModal} toggle={toggleAvatarModal}>
-                      <div className="modal-header">
-                        <h4 className="modal-title" id="avatarModal">
-                          <strong>Cập nhật ảnh đại diện</strong>
-                        </h4>
-                        <button
-                          type="button"
-                          className="close"
-                          data-dismiss="modal"
-                          aria-hidden="true"
-                          onClick={toggleAvatarModal}
-                        >
-                          <i className="tim-icons icon-simple-remove" />
-                        </button>
-                      </div>
-                      <ModalBody>
-                        <label htmlFor="upload-button">
-                          {avatar.preview ? (
-                            <img
-                              src={avatar.preview}
-                              alt="dummy"
-                              width="300"
-                              height="300"
+  return (
+    <div>
+      <div className="wrapper">
+        <div className="main">
+          <Container>
+            {!isLoading ? (
+              <Card className="card-coin card-plain">
+                <CardHeader>
+                  <img
+                    className="img-center img-fluid rounded-circle"
+                    src={
+                      avatar.preview !== "" ? avatar.preview : "/256x186.svg"
+                    }
+                  />
+                  <h3 className="title">{state.user.username}</h3>
+                  <Button color="primary" onClick={toggleAvatarModal}>
+                    Cập nhật ảnh đại diện
+                  </Button>
+                  <Modal isOpen={avatarModal} toggle={toggleAvatarModal}>
+                    <div className="modal-header">
+                      <h4 className="modal-title" id="avatarModal">
+                        <strong>Cập nhật ảnh đại diện</strong>
+                      </h4>
+                      <button
+                        type="button"
+                        className="close"
+                        data-dismiss="modal"
+                        aria-hidden="true"
+                        onClick={toggleAvatarModal}
+                      >
+                        <i className="tim-icons icon-simple-remove" />
+                      </button>
+                    </div>
+                    <ModalBody>
+                      <label htmlFor="upload-button">
+                        {avatar.preview ? (
+                          <img
+                            src={avatar.preview}
+                            alt="dummy"
+                            width="300"
+                            height="300"
+                          />
+                        ) : (
+                          <>
+                            <input
+                              type="file"
+                              onChange={handleAvatarChange}
+                              id="upload-button"
                             />
-                          ) : (
-                            <>
-                              <input
-                                type="file"
-                                onChange={handleAvatarChange}
-                                id="upload-button"
-                              />
-                            </>
-                          )}
-                        </label>
-                        <input
-                          type="file"
-                          id="upload-button"
-                          onChange={handleAvatarChange}
-                        />
-                        <br />
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button color="secondary" onClick={toggleAvatarModal}>
-                          Hủy
-                        </Button>
-                        <Button color="primary" onClick={()=>{updateAvatar(); toggleAvatarModal()}}>
-                          Lưu
-                        </Button>
-                      </ModalFooter>
-                    </Modal>
-                  </CardHeader>
-                  <CardBody>
-                    <Nav
-                      className="nav-tabs-primary justify-content-center"
-                      tabs
-                    >
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: tabState.tabs === 1 || tabState.tabs === 3,
-                          })}
-                          onClick={(event) => toggleTabs(event, "tabs", 1)}
-                        >
-                          Hồ sơ
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: tabState.tabs === 2 || tabState.tabs === 4,
-                          })}
-                          onClick={(event) => toggleTabs(event, "tabs", 2)}
-                        >
-                          Tài khoản
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                    <TabContent
-                      className="tab-subcategories"
-                      activeTab={"tab" + tabState.tabs}
-                    >
-                      <TabPane tabId="tab1">
-                        <Row>
-                          <Label sm="5">Tên</Label>
-                          <Col sm="6">
-                            <h4>
-                              {user.name === ""
-                                ? "(Vui lòng cập nhật thông tin)"
-                                : user.name}
-                            </h4>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Ngày sinh</Label>
-                          <Col sm="6">
-                            <h4>
-                              {user.birthDay === ""
-                                ? "(Vui lòng cập nhật thông tin)"
-                                : new Date(user.birthDay).toLocaleDateString(
-                                    "en-GB"
-                                  )}
-                            </h4>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Số điện thoại</Label>
-                          <Col sm="6">
-                            <h4>
-                              {user.phoneNumber === ""
-                                ? "(Vui lòng cập nhật thông tin)"
-                                : user.phoneNumber}
-                            </h4>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Giới tính</Label>
-                          <Col sm="6">
-                            <h4>{renderGender()}</h4>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Địa chỉ</Label>
-                          <Col sm="6">
-                            <h4>
-                              {user.address === ""
-                                ? "(Vui lòng cập nhật thông tin)"
-                                : user.address}
-                            </h4>
-                          </Col>
-                        </Row>
+                          </>
+                        )}
+                      </label>
+                      <input
+                        type="file"
+                        id="upload-button"
+                        onChange={handleAvatarChange}
+                      />
+                      <br />
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="secondary" onClick={toggleAvatarModal}>
+                        Hủy
+                      </Button>
+                      <Button
+                        color="primary"
+                        onClick={() => {
+                          updateAvatar();
+                          toggleAvatarModal();
+                        }}
+                      >
+                        Lưu
+                      </Button>
+                    </ModalFooter>
+                  </Modal>
+                </CardHeader>
+                <CardBody>
+                  <Nav className="nav-tabs-primary justify-content-center" tabs>
+                    <NavItem>
+                      <NavLink
+                        className={classnames({
+                          active: tabState.tabs === 1 || tabState.tabs === 3,
+                        })}
+                        onClick={(event) => toggleTabs(event, "tabs", 1)}
+                      >
+                        Hồ sơ
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        className={classnames({
+                          active: tabState.tabs === 2 || tabState.tabs === 4,
+                        })}
+                        onClick={(event) => toggleTabs(event, "tabs", 2)}
+                      >
+                        Tài khoản
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                  <TabContent
+                    className="tab-subcategories"
+                    activeTab={"tab" + tabState.tabs}
+                  >
+                    <TabPane tabId="tab1">
+                      <Row>
+                        <Label sm="5">Tên</Label>
+                        <Col sm="6">
+                          <h4>
+                            {user.name === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.name}
+                          </h4>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Ngày sinh</Label>
+                        <Col sm="6">
+                          <h4>
+                            {user.birthDay === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : new Date(user.birthDay).toLocaleDateString(
+                                  "en-GB"
+                                )}
+                          </h4>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Số điện thoại</Label>
+                        <Col sm="6">
+                          <h4>
+                            {user.phoneNumber === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.phoneNumber}
+                          </h4>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Giới tính</Label>
+                        <Col sm="6">
+                          <h4>{renderGender()}</h4>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Địa chỉ</Label>
+                        <Col sm="6">
+                          <h4>
+                            {user.address === ""
+                              ? "(Vui lòng cập nhật thông tin)"
+                              : user.address}
+                          </h4>
+                        </Col>
+                      </Row>
+                      <Button
+                        onClick={(event) => {
+                          setUserUpdate(user);
+                          toggleTabs(event, "tabs", 3);
+                        }}
+                        className="btn-simple btn-icon btn-round float-right"
+                        color="warning"
+                      >
+                        <i className="tim-icons icon-pencil" />
+                      </Button>
+                    </TabPane>
+                    <TabPane tabId="tab2">
+                      <Row>
+                        <Label sm="5">Email</Label>
+                        <Col sm="6">
+                          <h4>thaihieuhuynh1752@gmail.com</h4>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Mật khẩu</Label>
+                        <Col sm="6">
+                          <Button
+                            className={classnames({
+                              active: tabState.tabs === 4,
+                            })}
+                            onClick={(event) => toggleTabs(event, "tabs", 4)}
+                          >
+                            Thay đổi mật khẩu
+                          </Button>
+                        </Col>
+                      </Row>
+                    </TabPane>
+                    <TabPane tabId="tab3">
+                      <Row>
+                        <Label sm="5">Tên</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <Input
+                              name="name"
+                              value={userUpdate.name}
+                              type="text"
+                              onChange={handleUserChange}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Ngày sinh</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <Datetime
+                              onChange={handleBirthdayChange}
+                              value={
+                                userUpdate.birthDay !== ""
+                                  ? new Date(
+                                      userUpdate.birthDay
+                                    ).toLocaleDateString("en-GB")
+                                  : ""
+                              }
+                              required
+                              isValidDate={validBirthDay}
+                              timeFormat={false}
+                              initialViewDate={
+                                user.birthDay !== ""
+                                  ? new Date(user.birthDay)
+                                  : new Date("1-1-1995")
+                              }
+                              locale="en-GB"
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Số điện thoại</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <Input
+                              name="phoneNumber"
+                              value={userUpdate.phoneNumber}
+                              type="text"
+                              onChange={handleUserChange}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Giới tính</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <UncontrolledDropdown group>
+                              <DropdownToggle
+                                caret
+                                data-toggle="dropdown"
+                                className="mydropdown"
+                              >
+                                {renderSetGender()}
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                <DropdownItem
+                                  name="gender"
+                                  value="male"
+                                  onClick={handleUserChange}
+                                >
+                                  Nam
+                                </DropdownItem>
+                                <DropdownItem
+                                  name="gender"
+                                  value="female"
+                                  onClick={handleUserChange}
+                                >
+                                  Nữ
+                                </DropdownItem>
+                                <DropdownItem
+                                  name="gender"
+                                  value="other"
+                                  onClick={handleUserChange}
+                                >
+                                  Khác
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Địa chỉ</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <Input
+                              name="address"
+                              value={userUpdate.address}
+                              type="text"
+                              onChange={handleUserChange}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5"></Label>
                         <Button
                           onClick={(event) => {
                             setUserUpdate(user);
-                            toggleTabs(event, "tabs", 3);
+                            toggleTabs(event, "tabs", 1);
                           }}
-                          className="btn-simple btn-icon btn-round float-right"
-                          color="warning"
                         >
-                          <i className="tim-icons icon-pencil" />
+                          Hủy
                         </Button>
-                      </TabPane>
-                      <TabPane tabId="tab2">
-                        <Row>
-                          <Label sm="5">Email</Label>
-                          <Col sm="6">
-                            <h4>thaihieuhuynh1752@gmail.com</h4>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Mật khẩu</Label>
-                          <Col sm="6">
-                            <Button
-                              className={classnames({
-                                active: tabState.tabs === 4,
-                              })}
-                              onClick={(event) => toggleTabs(event, "tabs", 4)}
-                            >
-                              Thay đổi mật khẩu
-                            </Button>
-                          </Col>
-                        </Row>
-                      </TabPane>
-                      <TabPane tabId="tab3">
-                        <Row>
-                          <Label sm="5">Tên</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <Input
-                                name="name"
-                                value={userUpdate.name}
-                                type="text"
-                                onChange={handleUserChange}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Ngày sinh</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <Datetime
-                                onChange={handleBirthdayChange}
-                                value={
-                                  userUpdate.birthDay !== ""
-                                    ? new Date(
-                                        userUpdate.birthDay
-                                      ).toLocaleDateString("en-GB")
-                                    : ""
-                                }
-                                required
-                                isValidDate={validBirthDay}
-                                timeFormat={false}
-                                initialViewDate={
-                                  user.birthDay !== ""
-                                    ? new Date(user.birthDay)
-                                    : new Date("1-1-1995")
-                                }
-                                locale="en-GB"
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Số điện thoại</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <Input
-                                name="phoneNumber"
-                                value={userUpdate.phoneNumber}
-                                type="text"
-                                onChange={handleUserChange}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Giới tính</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <UncontrolledDropdown group>
-                                <DropdownToggle
-                                  caret
-                                  data-toggle="dropdown"
-                                  className="mydropdown"
-                                >
-                                  {renderSetGender()}
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                  <DropdownItem
-                                    name="gender"
-                                    value="male"
-                                    onClick={handleUserChange}
-                                  >
-                                    Nam
-                                  </DropdownItem>
-                                  <DropdownItem
-                                    name="gender"
-                                    value="female"
-                                    onClick={handleUserChange}
-                                  >
-                                    Nữ
-                                  </DropdownItem>
-                                  <DropdownItem
-                                    name="gender"
-                                    value="other"
-                                    onClick={handleUserChange}
-                                  >
-                                    Khác
-                                  </DropdownItem>
-                                </DropdownMenu>
-                              </UncontrolledDropdown>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Địa chỉ</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <Input
-                                name="address"
-                                value={userUpdate.address}
-                                type="text"
-                                onChange={handleUserChange}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5"></Label>
-                          <Button
-                            onClick={(event) => {
-                              setUserUpdate(user);
-                              toggleTabs(event, "tabs", 1);
-                            }}
-                          >
-                            Hủy
-                          </Button>
-                          <Button
-                            color="primary"
-                            onClick={(event) => {
-                              updateUser();
-                              toggleTabs(event, "tabs", 1);
-                            }}
-                          >
-                            Lưu
-                          </Button>
-                        </Row>
-                      </TabPane>
-                      <TabPane tabId="tab4">
-                        <Row>
-                          <Label sm="5">Mật khẩu mới</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <Input type="password" />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5">Nhập lại mật khẩu mới</Label>
-                          <Col sm="4">
-                            <FormGroup>
-                              <Input type="password" />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Label sm="5"></Label>
-                          <Button
-                            onClick={(event) => toggleTabs(event, "tabs", 2)}
-                          >
-                            Hủy
-                          </Button>
-                          <Button color="primary" type="submit">
-                            Lưu
-                          </Button>
-                        </Row>
-                      </TabPane>
-                    </TabContent>
-                  </CardBody>
-                </Card>
-              ) : (
-                <Spinner />
-              )}
-            </Container>
-          </div>
+                        <Button
+                          color="primary"
+                          onClick={(event) => {
+                            updateUser();
+                            toggleTabs(event, "tabs", 1);
+                          }}
+                        >
+                          Lưu
+                        </Button>
+                      </Row>
+                    </TabPane>
+                    <TabPane tabId="tab4">
+                      <Row>
+                        <Label sm="5">Mật khẩu mới</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <Input type="password" />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5">Nhập lại mật khẩu mới</Label>
+                        <Col sm="4">
+                          <FormGroup>
+                            <Input type="password" />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Label sm="5"></Label>
+                        <Button
+                          onClick={(event) => toggleTabs(event, "tabs", 2)}
+                        >
+                          Hủy
+                        </Button>
+                        <Button color="primary" type="submit">
+                          Lưu
+                        </Button>
+                      </Row>
+                    </TabPane>
+                  </TabContent>
+                </CardBody>
+              </Card>
+            ) : (
+              <Spinner />
+            )}
+          </Container>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default Profile;

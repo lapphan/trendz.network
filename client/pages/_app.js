@@ -10,7 +10,7 @@ import "../assets/css/blk-design-system-react.css";
 import "../assets/css/demo.css";
 import "../assets/css/nucleo-icons.css";
 
-const App = ({ Component, pageProps, apolloClient }) => {
+const App = ({ Component, pageProps, apolloClient, router }) => {
   return (
     <ApolloProvider client={apolloClient}>
       <Head>
@@ -31,7 +31,7 @@ const App = ({ Component, pageProps, apolloClient }) => {
       </Head>
       <UserContextProvider>
         <Layout>
-          <Component {...pageProps} />
+          <Component {...pageProps} key={router.route}/>
         </Layout>
       </UserContextProvider>
     </ApolloProvider>

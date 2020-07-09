@@ -2,10 +2,11 @@
 require('dotenv').config()
 
 const withCSS = require('@zeit/next-css')
+const withSass = require('@zeit/next-sass')
 const withFonts = require('next-fonts')
 const withImages = require('next-images')
 
-module.exports=withCSS(withFonts(withImages({
+module.exports=withCSS(withSass(withFonts(withImages({
     webpack: function(config){
         config.module.rules.push({
             test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
@@ -23,4 +24,4 @@ module.exports=withCSS(withFonts(withImages({
         API_URL: process.env.API_URL
     },
     
-})))
+}))))

@@ -31,6 +31,8 @@ const { API_URL } = process.env;
 const Create = () => {
   const { state } = useAuth();
 
+  const signal = axios.CancelToken.source();
+
   const [campaignState, setCampaign] = useState({
     title: "",
     content: "",
@@ -213,210 +215,221 @@ const Create = () => {
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
     else {
-      const fetchCategory = async () => {
-        const get_resolve = await axios({
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${state.jwt}`,
-          },
-          url: `${API_URL}/categories`,
-        });
-        setCategories({ categories: get_resolve.data });
-      };
+      let mounted = true;
+      const url = API_URL + "/categories";
+      try {
+        const fetchCategory = async () => {
+          const get_resolve = await axios.get(url, {
+            cancelToken: signal.token,
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+          if (mounted) {
+            setCategories({ categories: get_resolve.data });
+          }
+        };
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log("Error: ", error.message);
+        } else {
+          throw error;
+        }
+      }
       fetchCategory();
+      return function cleanup() {
+        mounted = false;
+        signal.cancel();
+      };
     }
   }, [state]);
 
-    return (
-      <div>
-        <div className="wrapper">
-          <div className="main">
-            <Container>
-              <Card>
-                <CardHeader>
-                  <h3 className="title">Tạo campaign</h3>
-                </CardHeader>
-                <CardBody>
-                  <Form className="form">
-                    <FormGroup>
-                      <Label for="title">Tiêu đề</Label>
-                      <Input
-                        type="text"
-                        id="title"
-                        name="title"
-                        onChange={handleCampaignChange}
-                        value={campaignState.title}
-                        placeholder="Tiêu đề"
+  return (
+    <div>
+      <div className="wrapper">
+        <div className="main">
+          <Container>
+            <Card>
+              <CardHeader>
+                <h3 className="title">Tạo campaign</h3>
+              </CardHeader>
+              <CardBody>
+                <Form className="form">
+                  <FormGroup>
+                    <Label for="title">Tiêu đề</Label>
+                    <Input
+                      type="text"
+                      id="title"
+                      name="title"
+                      onChange={handleCampaignChange}
+                      value={campaignState.title}
+                      placeholder="Tiêu đề"
+                      required
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="content">Nội dung</Label>
+                    <Input
+                      type="textarea"
+                      id="content"
+                      placeholder="Nội dung..."
+                      name="content"
+                      onChange={handleCampaignChange}
+                      value={campaignState.content}
+                      required
+                    />
+                  </FormGroup>
+                  <div className="form-row">
+                    <FormGroup className="col-md-4">
+                      <Label for="startDate">Chọn Ngày bắt đầu</Label>
+                      <Datetime
+                        onChange={handleStartDateChange}
+                        value={campaignState.open_datetime.toISOString}
                         required
+                        isValidDate={validStartDate}
                       />
                     </FormGroup>
-                    <FormGroup>
-                      <Label for="content">Nội dung</Label>
-                      <Input
-                        type="textarea"
-                        id="content"
-                        placeholder="Nội dung..."
-                        name="content"
-                        onChange={handleCampaignChange}
-                        value={campaignState.content}
+                    <FormGroup className="col-md-4">
+                      <Label for="endDate">Chọn Ngày kết thúc</Label>
+                      <Datetime
+                        onChange={handleEndDateChange}
+                        value={campaignState.close_datetime.toISOString}
                         required
+                        isValidDate={valid}
                       />
                     </FormGroup>
-                    <div className="form-row">
-                      <FormGroup className="col-md-4">
-                        <Label for="startDate">Chọn Ngày bắt đầu</Label>
-                        <Datetime
-                          onChange={handleStartDateChange}
-                          value={
-                            campaignState.open_datetime.toISOString
-                          }
-                          required
-                          isValidDate={validStartDate}
-                        />
-                      </FormGroup>
-                      <FormGroup className="col-md-4">
-                        <Label for="endDate">Chọn Ngày kết thúc</Label>
-                        <Datetime
-                          onChange={handleEndDateChange}
-                          value={
-                            campaignState.close_datetime.toISOString
-                          }
-                          required
-                          isValidDate={valid}
-                        />
-                      </FormGroup>
-                    </div>
-                    <div className="form-row">
-                      <FormGroup className="col-md-4">
-                        <Label for="channel">Chọn Danh mục</Label>
-                        <br />
-                        <UncontrolledDropdown group>
-                          <DropdownToggle
-                            caret
-                            color="secondary"
-                            data-toggle="dropdown"
-                            className="mydropdown"
-                          >
-                            {campaignState.category === null
-                              ? "Chọn Danh mục..."
-                              : tempData.categoryName}
-                          </DropdownToggle>
+                  </div>
+                  <div className="form-row">
+                    <FormGroup className="col-md-4">
+                      <Label for="channel">Chọn Danh mục</Label>
+                      <br />
+                      <UncontrolledDropdown group>
+                        <DropdownToggle
+                          caret
+                          color="secondary"
+                          data-toggle="dropdown"
+                          className="mydropdown"
+                        >
+                          {campaignState.category === null
+                            ? "Chọn Danh mục..."
+                            : tempData.categoryName}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                          {categories.categories.map((category) => (
+                            <DropdownItem
+                              key={category.id}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                handleCategoryChange(
+                                  category.id,
+                                  category.name
+                                );
+                              }}
+                            >
+                              {category.name}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    </FormGroup>
+                    <FormGroup className="col-md-4">
+                      <Label for="channel">Chọn Kênh</Label>
+                      <br />
+                      <UncontrolledDropdown group>
+                        <DropdownToggle
+                          caret
+                          color="secondary"
+                          data-toggle="dropdown"
+                        >
+                          {campaignState.channels === null
+                            ? "Chọn Kênh..."
+                            : tempData.channelName}
+                        </DropdownToggle>
+                        {campaignState.category !== null ? (
                           <DropdownMenu>
-                            {categories.categories.map((category) => (
-                              <DropdownItem
-                                key={category.id}
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  handleCategoryChange(
-                                    category.id,
-                                    category.name
-                                  );
-                                }}
-                              >
-                                {category.name}
-                              </DropdownItem>
-                            ))}
+                            {categories.categories
+                              .find((x) => x.id === campaignState.category)
+                              .channels.map((channel) => (
+                                <DropdownItem
+                                  key={channel.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleChannelsChange(
+                                      channel.id,
+                                      channel.name
+                                    );
+                                  }}
+                                >
+                                  {channel.name}
+                                </DropdownItem>
+                              ))}
                           </DropdownMenu>
-                        </UncontrolledDropdown>
-                      </FormGroup>
-                      <FormGroup className="col-md-4">
-                        <Label for="channel">Chọn Kênh</Label>
-                        <br />
-                        <UncontrolledDropdown group>
-                          <DropdownToggle
-                            caret
-                            color="secondary"
-                            data-toggle="dropdown"
-                          >
-                            {campaignState.channels === null
-                              ? "Chọn Kênh..."
-                              : tempData.channelName}
-                          </DropdownToggle>
-                          {campaignState.category !== null ? (
-                            <DropdownMenu>
-                              {categories.categories
-                                .find((x) => x.id === campaignState.category)
-                                .channels.map((channel) => (
-                                  <DropdownItem
-                                    key={channel.id}
-                                    onClick={(event) => {
-                                      event.preventDefault();
-                                      handleChannelsChange(
-                                        channel.id,
-                                        channel.name
-                                      );
-                                    }}
-                                  >
-                                    {channel.name}
-                                  </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                          ) : (
-                            <div></div>
-                          )}
-                        </UncontrolledDropdown>
-                      </FormGroup>
-                      <FormGroup className="col-md-4">
-                        <Label for="channel">Trạng thái</Label>
-                        <br />
-                        <FormGroup>
-                          <FormGroup check inline className="form-check-radio">
-                            <Label className="form-check-label">
-                              <Input
-                                type="radio"
-                                name="status"
-                                id="status"
-                                value="true"
-                                checked={campaignState.status === true}
-                                onChange={handleRadioChange}
-                              />
-                              Active<span className="form-check-sign"></span>
-                            </Label>
-                          </FormGroup>
-                          <FormGroup check inline className="form-check-radio">
-                            <Label className="form-check-label">
-                              <Input
-                                type="radio"
-                                name="status"
-                                id="status"
-                                value="false"
-                                checked={campaignState.status === false}
-                                onChange={handleRadioChange}
-                              />
-                              Inactive
-                              <span className="form-check-sign"></span>
-                            </Label>
-                          </FormGroup>
+                        ) : (
+                          <div></div>
+                        )}
+                      </UncontrolledDropdown>
+                    </FormGroup>
+                    <FormGroup className="col-md-4">
+                      <Label for="channel">Trạng thái</Label>
+                      <br />
+                      <FormGroup>
+                        <FormGroup check inline className="form-check-radio">
+                          <Label className="form-check-label">
+                            <Input
+                              type="radio"
+                              name="status"
+                              id="status"
+                              value="true"
+                              checked={campaignState.status === true}
+                              onChange={handleRadioChange}
+                            />
+                            Active<span className="form-check-sign"></span>
+                          </Label>
+                        </FormGroup>
+                        <FormGroup check inline className="form-check-radio">
+                          <Label className="form-check-label">
+                            <Input
+                              type="radio"
+                              name="status"
+                              id="status"
+                              value="false"
+                              checked={campaignState.status === false}
+                              onChange={handleRadioChange}
+                            />
+                            Inactive
+                            <span className="form-check-sign"></span>
+                          </Label>
                         </FormGroup>
                       </FormGroup>
-                    </div>
-                  </Form>
-                  <br />
-                  <div className="FileUpload">
-                    <form onSubmit={handleImageSubmit}>
-                      <Label for="picture">Chọn ảnh...</Label>
-                      <br />
-                      <input type="file" onChange={handleImageChange} />
-                      <Button>Tải lên</Button>
-                    </form>
-                    {picture.loading ? <p>Đang tải lên...</p> : null}
+                    </FormGroup>
                   </div>
-                  {picture.submmited ? <p>Đã tải lên!</p> : <p></p>}
-                  <div className="form-button">
-                    <Button className="btn-neutral" color="primary">
-                      Hủy
-                    </Button>
-                    <Button color="primary" onClick={handleCampaignSubmit}>
-                      Tạo
-                    </Button>
-                  </div>
-                </CardBody>
-              </Card>
-            </Container>
-          </div>
+                </Form>
+                <br />
+                <div className="FileUpload">
+                  <form onSubmit={handleImageSubmit}>
+                    <Label for="picture">Chọn ảnh...</Label>
+                    <br />
+                    <input type="file" onChange={handleImageChange} />
+                    <Button>Tải lên</Button>
+                  </form>
+                  {picture.loading ? <p>Đang tải lên...</p> : null}
+                </div>
+                {picture.submmited ? <p>Đã tải lên!</p> : <p></p>}
+                <div className="form-button">
+                  <Button className="btn-neutral" color="primary">
+                    Hủy
+                  </Button>
+                  <Button color="primary" onClick={handleCampaignSubmit}>
+                    Tạo
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </Container>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default Create;
