@@ -126,8 +126,10 @@ const Login = () => {
     } else
       try {
         await requestLoginMutation();
+        
+        alert("Đăng nhập thành công!");
         Router.reload();
-        return alert("Đăng nhập thành công!");
+        return location.reload()
         // enqueueSnackbar(
         //   'Đăng nhập thành công!',{variant: 'success'}
         // )

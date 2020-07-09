@@ -106,6 +106,7 @@ function Header() {
     localStorage.removeItem("userInfo");
     dispatch({ type: LOGOUT });
     Router.reload();
+    location.reload()
   };
 
   const renderUnloggedInButton = (

@@ -142,8 +142,10 @@ const Register = () => {
     } else
       try {
         await requestRegisterMutation();
-        Router.reload()
-        return alert("Đăng ký thành công!");
+        
+        alert("Đăng ký thành công!");
+        Router.reload() 
+        return location.reload()
         // enqueueSnackbar(
         //   'Đăng nhập thành công!',{variant: 'success'}
         // )
