@@ -21317,6 +21317,9 @@ input.datetimepicker[data-color="yellow"]
 .card .card-title {
   margin-bottom: 0.75rem;
 }
+.dashboard-card-title{
+  margin-bottom: 0.75rem !important;
+}
 .card .card-body {
   padding: 15px;
 }
@@ -21328,12 +21331,29 @@ input.datetimepicker[data-color="yellow"]
   color: #ffffff;
   text-transform: uppercase;
   font-weight: 300;
-  margin-bottom: 5vh !important;
+  margin-bottom: 5vh;
   font-size: 17px;
   font-weight: bold;
   max-height: 5rem;
   min-height: 3rem;
 }
+
+@media(max-width:320px){
+  .card .card-body .card-title {
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 300;
+    margin-bottom: 5vh !important;
+    font-size: 17px;
+    font-weight: bold;
+    max-height: 5rem;
+    min-height: 3rem;
+  }
+  .dashboard-card-title{
+    margin-bottom: none !important;
+  }
+}
+
 .card .card-body .card-description,
 .card .card-body .card-category {
   color: rgba(255, 255, 255, 0.6);

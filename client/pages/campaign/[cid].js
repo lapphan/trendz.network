@@ -78,9 +78,6 @@ const Post = () => {
   };
 
   const renderButton = () => {
-    console.log(state.user.id);
-    console.log(campaign.channels[0].user);
-    console.log(campaign.user.id);
     if (state.user.id == campaign.channels[0].user) {
       return (
         <div className="form-button">
@@ -155,6 +152,121 @@ const Post = () => {
   };
 
   //creator edit campaign
+  const handleCampaignChange = (event) => {
+    event.preventDefault();
+    const { name, value } = event.target;
+    setTempCampaign((previousState) => {
+      return { ...previousState, [name]: value };
+    });
+  };
+
+  const handleStartDateChange = (event) => {
+    if (event._d !== undefined) {
+      const value = event._d.toISOString();
+      setTempCampaign((previousState) => {
+        return {
+          ...previousState,
+          campaignTTL: [
+            {
+              open_datetime: value,
+              close_datetime: previousState.campaignTTL[0].close_datetime,
+            },
+          ],
+        };
+      });
+      setDate(value);
+    } else return;
+  };
+
+  const handleEndDateChange = (event) => {
+    if (event._d !== undefined) {
+      const value = event._d.toISOString();
+      setTempCampaign((previousState) => {
+        return {
+          ...previousState,
+          campaignTTL: [
+            {
+              open_datetime: previousState.campaignTTL[0].open_datetime,
+              close_datetime: value,
+            },
+          ],
+        };
+      });
+    } else return;
+  };
+
+  const handleCategoryChange = (id, name) => {
+    setTempCampaign((previousState) => {
+      return { ...previousState, category: id };
+    });
+    setTempData({
+      categoryId: id,
+      categoryName: name,
+      channelId: "",
+      channelName: "",
+    });
+  };
+
+  const handleChannelsChange = (id, name) => {
+    setTempCampaign((previousState) => {
+      return { ...previousState, channels: [id] };
+    });
+    setTempData((previousState) => {
+      return {
+        ...previousState,
+        channelId: id,
+        channelName: name,
+      };
+    });
+  };
+
+  const handleEditSubmit = async () => {
+    setCampaign((previousState) => {
+      return {
+        ...previousState,
+        campaignTTL: tempCampaign.campaignTTL,
+        category: tempCampaign.category,
+        channels: tempCampaign.channels,
+        content: tempCampaign.content,
+        title: tempCampaign.title,
+      };
+    });
+    const upload_resolve = await axios({
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${state.jwt}`,
+      },
+      url: `${API_URL}/campaigns/${cid}`,
+      data: tempCampaign,
+    });
+  };
+
+  //creator delete campaign
+  const handleDelete = async () => {
+    try {
+      await axios({
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${state.jwt}`,
+        },
+        url: `${API_URL}/campaigns/${cid}`,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    return;
+  };
+
+  const renderImage = () => {
+    if (campaign.picture[0] !== undefined) {
+      if (campaign.picture[0].formats.medium !== undefined) {
+        return API_URL + campaign.picture[0].formats.medium.url;
+      } else if (campaign.picture[1].formats.medium !== undefined) {
+        return API_URL + campaign.picture[1].formats.medium.url;
+      } else return "/256x186.svg";
+    } else return "/256x186.svg";
+  };
+
   const renderEditModal = () => {
     return (
       <Modal isOpen={campaignModal} toggle={toggleCampaignModal}>
@@ -316,121 +428,6 @@ const Post = () => {
     );
   };
 
-  const handleCampaignChange = (event) => {
-    event.preventDefault();
-    const { name, value } = event.target;
-    setTempCampaign((previousState) => {
-      return { ...previousState, [name]: value };
-    });
-  };
-
-  const handleStartDateChange = (event) => {
-    if (event._d !== undefined) {
-      const value = event._d.toISOString();
-      setTempCampaign((previousState) => {
-        return {
-          ...previousState,
-          campaignTTL: [
-            {
-              open_datetime: value,
-              close_datetime: previousState.campaignTTL[0].close_datetime,
-            },
-          ],
-        };
-      });
-      setDate(value);
-    } else return;
-  };
-
-  const handleEndDateChange = (event) => {
-    if (event._d !== undefined) {
-      const value = event._d.toISOString();
-      setTempCampaign((previousState) => {
-        return {
-          ...previousState,
-          campaignTTL: [
-            {
-              open_datetime: previousState.campaignTTL[0].open_datetime,
-              close_datetime: value,
-            },
-          ],
-        };
-      });
-    } else return;
-  };
-
-  const handleCategoryChange = (id, name) => {
-    setTempCampaign((previousState) => {
-      return { ...previousState, category: id };
-    });
-    setTempData({
-      categoryId: id,
-      categoryName: name,
-      channelId: "",
-      channelName: "",
-    });
-  };
-
-  const handleChannelsChange = (id, name) => {
-    setTempCampaign((previousState) => {
-      return { ...previousState, channels: [id] };
-    });
-    setTempData((previousState) => {
-      return {
-        ...previousState,
-        channelId: id,
-        channelName: name,
-      };
-    });
-  };
-
-  const handleEditSubmit = async () => {
-    setCampaign((previousState) => {
-      return {
-        ...previousState,
-        campaignTTL: tempCampaign.campaignTTL,
-        category: tempCampaign.category,
-        channels: tempCampaign.channels,
-        content: tempCampaign.content,
-        title: tempCampaign.title,
-      };
-    });
-    const upload_resolve = await axios({
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${state.jwt}`,
-      },
-      url: `${API_URL}/campaigns/${cid}`,
-      data: tempCampaign,
-    });
-  };
-
-  //creator delete campaign
-  const handleDelete = async () => {
-    try {
-      await axios({
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${state.jwt}`,
-        },
-        url: `${API_URL}/campaigns/${cid}`,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-    return;
-  };
-
-  const renderImage = () => {
-    if (campaign.picture[0] !== undefined) {
-      if (campaign.picture[0].formats.medium !== undefined) {
-        return API_URL + campaign.picture[0].formats.medium.url;
-      } else if (campaign.picture[1].formats.medium !== undefined) {
-        return API_URL + campaign.picture[1].formats.medium.url;
-      } else return "/256x186.svg";
-    } else return "/256x186.svg";
-  };
-
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
     else {
@@ -488,11 +485,7 @@ const Post = () => {
         }
       }
 
-      return function cleanup() {
-        // mountedCampaign = false;
-        // mountedCategory = false;
-        // signal.cancel("cancelled");
-      };
+      return function cleanup() {};
     }
   }, [state]);
 

@@ -81,7 +81,6 @@ const Dashboard = () => {
             },
           });
           if(mounted){
-            console.log(get_resolve.data)
             setCampaigns({ campaigns: get_resolve.data.filter(function (campaign) {
               return campaign.channels[0].user == state.user.id;
             }), });
@@ -158,7 +157,7 @@ const Dashboard = () => {
                                   className="campaign-img"
                                 />
                                 <CardBody>
-                                  <CardTitle>{campaign.title}</CardTitle>
+                                  <CardTitle className="dashboard-card-title">{campaign.title}</CardTitle>
                                   <CardSubtitle>
                                     <strong>Người tạo:</strong>{" "}
                                     {campaign.user.username}
@@ -176,11 +175,11 @@ const Dashboard = () => {
                                     <small className="text-muted">
                                       {new Date(
                                         campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString() +
+                                      ).toLocaleString("en-GB") +
                                         " - " +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString()}
+                                        ).toLocaleString("en-GB")}
                                     </small>
                                   </CardSubtitle>
                                   
@@ -216,7 +215,7 @@ const Dashboard = () => {
                                   className="campaign-img"
                                 />
                                 <CardBody>
-                                  <CardTitle>{campaign.title}</CardTitle>
+                                  <CardTitle className="dashboard-card-title">{campaign.title}</CardTitle>
                                   <CardSubtitle>
                                     <strong>Người tạo:</strong>{" "}
                                     {campaign.user.username}
@@ -234,18 +233,18 @@ const Dashboard = () => {
                                     <small className="text-muted">
                                       {new Date(
                                         campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString() +
+                                      ).toLocaleString("en-GB") +
                                         " - " +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString()}
+                                        ).toLocaleString("en-GB")}
                                     </small>
                                   </CardSubtitle>
-                                  <Button>
-                                    <Link href={`/campaign/${campaign.id}`}>
-                                      <p>Chi tiết</p>
+                                  
+                                  <Link href="/campaign/[cid]" as={`/campaign/${campaign.id}`}>
+                                      <Button>Chi tiết</Button>
                                     </Link>
-                                  </Button>
+                                  
                                 </CardBody>
                               </Card>
                             </Col>
