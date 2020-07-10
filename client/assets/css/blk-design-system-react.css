@@ -263,6 +263,10 @@ label {
   margin-bottom: 0.5rem;
 }
 
+.modal-items{
+  color: black !important
+}
+
 button {
   border-radius: 0;
 }
@@ -4539,8 +4543,8 @@ input[type="button"].btn-block {
   background: linear-gradient(205deg, rgba(241,112,169,1) 40%, rgba(28,109,204,1) 85%);
   max-width: 350px;
   min-width: 350px;
-  max-height: 540px;
-  min-height: 540px;
+  max-height: 560px;
+  min-height: 560px;
 }
 
 @media(max-width: 425px){
@@ -4552,7 +4556,7 @@ input[type="button"].btn-block {
     background: rgb(241,112,169);
     background: linear-gradient(205deg, rgba(241,112,169,1) 40%, rgba(28,109,204,1) 85%);
     min-width: 270px;
-    max-height: 560px;
+    max-height: 580px;
   } 
   .campaign-detail-img{
     max-height: 500px;
@@ -14988,6 +14992,7 @@ p {
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 5px;
 }
+
 p.description {
   font-size: 1.14em;
 }
@@ -21323,7 +21328,7 @@ input.datetimepicker[data-color="yellow"]
   color: #ffffff;
   text-transform: uppercase;
   font-weight: 300;
-  margin-bottom: 0.75rem;
+  margin-bottom: 5vh !important;
   font-size: 17px;
   font-weight: bold;
   max-height: 5rem;
@@ -21748,6 +21753,64 @@ input.datetimepicker[data-color="yellow"]
   z-index: 1;
   text-align: center;
 }
+
+.card-login {
+  overflow: hidden;
+  text-align: left;
+  z-index: 2;
+}
+.card-login .card-header img {
+  position: absolute;
+  margin-left: -50px;
+  margin-top: -150px;
+  border-radius: 20%;
+  width: 250px;
+}
+.card-login .header {
+  margin-left: 20px;
+  margin-right: 20px;
+  padding: 30px 0;
+}
+.card-login .text-divider {
+  margin-top: 30px;
+  margin-bottom: 0px;
+  text-align: center;
+}
+.card-login .content {
+  padding: 0px 30px;
+}
+.card-login .form-check {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+.card-login .form-check label:not(.form-check-label) {
+  padding-left: 38px;
+}
+.card-login .card-header {
+  overflow: hidden;
+}
+
+.card-login .card-img {
+  position: absolute;
+  left: 0;
+  top: -15%;
+  width: 70%;
+}
+.card-login .social-line {
+  margin-top: 20px;
+  text-align: center;
+}
+.card-login .social-line .btn.btn-icon,
+.card-login .social-line .btn.btn-icon .btn-icon {
+  margin-left: 5px;
+  margin-right: 5px;
+  box-shadow: 0px 5px 50px 0px rgba(0, 0, 0, 0.2);
+}
+.card-login .card-footer {
+  margin-bottom: 10px;
+  margin-top: -20px;
+  align-self: center;
+}
 .card-register .card-header .card-title {
   position: relative;
   font-size: 30px;
@@ -21784,10 +21847,16 @@ input.datetimepicker[data-color="yellow"]
   .card.card-register .card-img {
     margin-left: -45px;
   }
+  .card.card-login .card-img {
+    margin-left: -45px;
+  }
 }
 
 @media (max-width: 575.98px) {
   .card.card-register {
+    margin-top: 50px;
+  }
+  .card.card-login {
     margin-top: 50px;
   }
 }

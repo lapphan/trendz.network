@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import classnames from "classnames";
-import {withRouter} from "next/router"
+import { withRouter } from "next/router";
 import { UserContext } from "../context/userContext";
 
 // reactstrap components
@@ -22,6 +22,7 @@ import {
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 
 import { isEmpty } from "lodash";
 
@@ -40,6 +41,7 @@ import Router from "next/router";
 /* TYPES */
 export const LOGIN = "LOGIN";
 /* END */
+const { API_URL } = process.env;
 
 const Login = () => {
   useEffect(() => {
@@ -126,10 +128,10 @@ const Login = () => {
     } else
       try {
         await requestLoginMutation();
-        
+
         alert("Đăng nhập thành công!");
         Router.reload();
-        return location.reload()
+        return location.reload();
         // enqueueSnackbar(
         //   'Đăng nhập thành công!',{variant: 'success'}
         // )
@@ -256,6 +258,20 @@ const Login = () => {
                       >
                         Đăng nhập
                       </Button>
+                      <br />
+                    </CardFooter>
+                    <CardFooter>
+                      <a href={`${API_URL}/connect/facebook`} className="link">
+                        <Button
+                          className="btn-round"
+                          color="info"
+                          size="lg"
+                          social="facebook"
+                        >
+                          <i />
+                          Đăng nhập bằng Facebook
+                        </Button>
+                      </a>
                     </CardFooter>
                   </Card>
                 </Col>

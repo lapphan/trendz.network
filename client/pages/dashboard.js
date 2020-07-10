@@ -58,9 +58,14 @@ const Dashboard = () => {
     });
   };
 
-  // useEffect(()=>{
-
-  // })
+  const renderStatus = (status) =>{
+    if(status !== null){
+      if(status){
+        return "Đang hoạt động"
+      } else return "Không hoạt động"
+    }
+    else return "Đang chờ kích hoạt"
+  }
 
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
@@ -76,7 +81,10 @@ const Dashboard = () => {
             },
           });
           if(mounted){
-            setCampaigns({ campaigns: get_resolve.data });
+            console.log(get_resolve.data)
+            setCampaigns({ campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.channels[0].user == state.user.id;
+            }), });
             setMyCampaigns({
               campaigns: get_resolve.data.filter(function (campaign) {
                 return campaign.user.id == state.user.id;
@@ -157,9 +165,7 @@ const Dashboard = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>Trạng thái:</strong>{" "}
-                                    {campaign.status
-                                      ? "Hoạt động"
-                                      : "Ngừng hoạt động"}
+                                    {renderStatus(campaign.status)}
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>
@@ -217,9 +223,7 @@ const Dashboard = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>Trạng thái:</strong>{" "}
-                                    {campaign.status
-                                      ? "Hoạt động"
-                                      : "Ngừng hoạt động"}
+                                    {renderStatus(campaign.status)}
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>

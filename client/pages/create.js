@@ -37,7 +37,7 @@ const Create = () => {
     title: "",
     content: "",
     picture: [],
-    status: true,
+    status: null,
     user: state.user.id,
     category: null,
     channels: [],
@@ -111,13 +111,6 @@ const Create = () => {
     setPicture({
       file: event.target.files[0],
       submmited: false,
-    });
-  };
-
-  const handleRadioChange = (event) => {
-    const status = event.currentTarget.value === "true" ? true : false;
-    setCampaign((previousState) => {
-      return { ...previousState, status };
     });
   };
 
@@ -368,39 +361,6 @@ const Create = () => {
                           <div></div>
                         )}
                       </UncontrolledDropdown>
-                    </FormGroup>
-                    <FormGroup className="col-md-4">
-                      <Label for="channel">Trạng thái</Label>
-                      <br />
-                      <FormGroup>
-                        <FormGroup check inline className="form-check-radio">
-                          <Label className="form-check-label">
-                            <Input
-                              type="radio"
-                              name="status"
-                              id="status"
-                              value="true"
-                              checked={campaignState.status === true}
-                              onChange={handleRadioChange}
-                            />
-                            Active<span className="form-check-sign"></span>
-                          </Label>
-                        </FormGroup>
-                        <FormGroup check inline className="form-check-radio">
-                          <Label className="form-check-label">
-                            <Input
-                              type="radio"
-                              name="status"
-                              id="status"
-                              value="false"
-                              checked={campaignState.status === false}
-                              onChange={handleRadioChange}
-                            />
-                            Inactive
-                            <span className="form-check-sign"></span>
-                          </Label>
-                        </FormGroup>
-                      </FormGroup>
                     </FormGroup>
                   </div>
                 </Form>

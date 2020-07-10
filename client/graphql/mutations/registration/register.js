@@ -5,16 +5,8 @@ export const REQUEST_REGISTER = gql`
     register(
       input: { username: $username, email: $email, password: $password }
     ) {
-      jwt
       user {
         id
-        username
-        email
-        role {
-          name
-          type
-          description
-        }
       }
     }
   }

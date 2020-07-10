@@ -32,10 +32,6 @@ import { REQUEST_REGISTER } from "../graphql/mutations/registration/register";
 import { useMutation } from "react-apollo";
 import Router from "next/router";
 
-/* TYPES */
-export const LOGIN = "LOGIN";
-/* END */
-
 const Register = () => {
   useEffect(() => {
     document.body.classList.toggle("register-page");
@@ -46,7 +42,7 @@ const Register = () => {
     };
   }, []);
 
-  const { state, dispatch } = useContext(UserContext);
+  const { state } = useContext(UserContext);
 
   const [accountValues, setAccountValues] = useState({
     username: "",
@@ -97,9 +93,6 @@ const Register = () => {
     requestRegisterMutation,
     { loading: requestRegisterLoading },
   ] = useMutation(REQUEST_REGISTER, {
-    update(proxy, { data: userData }) {
-      dispatch({ type: LOGIN, payload: userData.register });
-    },
     variables: accountValues,
   });
 
@@ -143,9 +136,8 @@ const Register = () => {
       try {
         await requestRegisterMutation();
         
-        alert("Đăng ký thành công!");
-        Router.reload() 
-        return location.reload()
+        alert("Đăng ký thành công! Vui lòng kiểm tra email của bạn!");
+        return Router.push('/login')
         // enqueueSnackbar(
         //   'Đăng nhập thành công!',{variant: 'success'}
         // )

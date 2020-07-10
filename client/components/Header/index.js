@@ -112,11 +112,9 @@ function Header() {
   const renderUnloggedInButton = (
     <Nav navbar>
       <NavItem>
-        <Button className="nav-link d-none d-lg-block" color="default">
           <Link href="/login">
-            <TestButton>Đăng nhập</TestButton>
+            <Button className="nav-link d-none d-lg-block" color="default">Đăng nhập</Button>
           </Link>
-        </Button>
         <NavLink
           className="nav-pills d-lg-none d-xl-none"
           onClick={toggleCollapse}
@@ -127,11 +125,10 @@ function Header() {
         </NavLink>
       </NavItem>
       <NavItem>
-        <Button className="nav-link d-none d-lg-block" color="primary">
+        
           <Link href="/register">
-            <TestButton>Đăng ký</TestButton>
+            <Button className="nav-link d-none d-lg-block" color="primary">Đăng ký</Button>
           </Link>
-        </Button>
         <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
           <Link href="/register">
             <TestButton>Đăng ký</TestButton>
@@ -144,45 +141,42 @@ function Header() {
   const renderLoggedInButton = (
     <Nav navbar>
       <NavItem>
-        <Button className="nav-link d-none d-lg-block" color="warning">
+        
           <Link href="/create">
-            <TestButton>Tạo campaign</TestButton>
+          <Button className="nav-link d-none d-lg-block" color="warning">Tạo campaign</Button>
           </Link>
-        </Button>
+        
+          <Link href="/create">
+          <NavLink
+          className="nav-pills d-lg-none d-xl-none"
+          onClick={toggleCollapse}
+        >Tạo campaign</NavLink>
+          </Link>
+
+      </NavItem>
+      <NavItem>     
+          <Link href="/profile">
+          <Button className="nav-link d-none d-lg-block" color="default">Hồ sơ</Button>
+          </Link>
         <NavLink
           className="nav-pills d-lg-none d-xl-none"
           onClick={toggleCollapse}
         >
-          <Link href="/create">
-            <TestButton>Tạo campaign</TestButton>
-          </Link>
-        </NavLink>
-      </NavItem>
-      <NavItem>
-        <Button className="nav-link d-none d-lg-block" color="default">
-          <Link href="/profile">
-            <TestButton>Hồ sơ</TestButton>
-          </Link>
-        </Button>
-        <NavLink
-          className="nav-pills d-lg-none d-xl-none"
-          onClick={toggleCollapse}
-        >
           <Link href="/profile">
             <TestButton>Hồ sơ</TestButton>
           </Link>
         </NavLink>
       </NavItem>
       <NavItem>
-        <Button
+        
+          <Link href="/">
+          <Button
           className="nav-link d-none d-lg-block"
           color="default"
           onClick={handleLogout}
-        >
-          <Link href="/">
-            <TestButton>Đăng xuất</TestButton>
+        >Đăng xuất</Button>
           </Link>
-        </Button>
+
         <NavLink
           className="nav-pills d-lg-none d-xl-none"
           onClick={() => {
