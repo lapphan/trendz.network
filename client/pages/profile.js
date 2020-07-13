@@ -6,6 +6,7 @@ import Router, {withRouter} from "next/router";
 import PerfectScrollbar from "perfect-scrollbar";
 import axios from "axios";
 import moment from "moment";
+import { useSnackbar } from 'notistack';
 import {
   Button,
   Card,
@@ -14,7 +15,6 @@ import {
   Label,
   FormGroup,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   Input,
@@ -39,6 +39,7 @@ const { API_URL } = process.env;
 
 const Profile = () => {
   const { state } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const [tabState, setTab] = useState({
     tabs: 1,
   });
@@ -164,6 +165,7 @@ const Profile = () => {
       url: `${API_URL}/users/${state.user.id}`,
       data: userUpdate,
     });
+    enqueueSnackbar("Cập nhật thông tin thành công!", {variant:'success'})
   };
 
   const renderSetGender = () => {
@@ -209,7 +211,7 @@ const Profile = () => {
   useEffect(() => {
     if (userAvatar.avatar.id !== null) {
       updateUserAvatar();
-      alert("Cập nhật ảnh đại diện thành công!");
+      enqueueSnackbar("Cập nhật ảnh đại diện thành công!",{variant:'success'});
     }
   }, [userAvatar]);
 

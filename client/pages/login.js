@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import classnames from "classnames";
 import { withRouter } from "next/router";
 import { UserContext } from "../context/userContext";
-
+import { useSnackbar } from 'notistack';
 // reactstrap components
 import {
   Button,
@@ -28,8 +28,6 @@ import { isEmpty } from "lodash";
 
 import { passwordCheck } from "../utils/functions/regEx";
 
-import { errorLog } from "../utils/functions/error-log-snackbar";
-
 import { REQUEST_LOGIN } from "../graphql/mutations/authentication/login";
 import { useMutation } from "react-apollo";
 
@@ -44,17 +42,8 @@ export const LOGIN = "LOGIN";
 const { API_URL } = process.env;
 
 const Login = () => {
-  useEffect(() => {
-    document.body.classList.toggle("login-page");
-    document.documentElement.addEventListener("mousemove", followCursor);
-    return () => {
-      document.body.classList.toggle("login-page");
-      document.documentElement.removeEventListener("mousemove", followCursor);
-    };
-  }, []);
-
   const { state, dispatch } = useContext(UserContext);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [accountValues, setAccountValues] = useState({
     identifier: "",
     password: "",
@@ -112,34 +101,35 @@ const Login = () => {
 
   const requestLogin = async () => {
     if (isEmpty(accountValues.identifier) && isEmpty(accountValues.password)) {
-      // enqueueSnackbar('Không được bỏ trống cả hai trường',{
-      //   variant: 'error'
-      // })
-      alert("Không được bỏ trống cả hai trường");
+      enqueueSnackbar('Không được bỏ trống cả hai trường',{
+        variant: 'error'
+      })
     }
     if (!passwordCheck.test(accountValues.password)) {
-      // enqueueSnackbar(
-      //   'Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)',
-      //   { variant: 'error' }
-      // )
-      alert(
-        "Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)"
-      );
+      enqueueSnackbar(
+        'Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)',
+        { variant: 'error' }
+      )
     } else
       try {
         await requestLoginMutation();
-
-        alert("Đăng nhập thành công!");
-        Router.reload();
-        return location.reload();
-        // enqueueSnackbar(
-        //   'Đăng nhập thành công!',{variant: 'success'}
-        // )
+        enqueueSnackbar(
+          'Đăng nhập thành công!',{variant: 'success'}
+        )
+        return Router.push('/dashboard');
       } catch (error) {
-        return alert(errorLog(error.message));
-        // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
+        return enqueueSnackbar("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại!", {variant: 'error'})
       }
   };
+
+  useEffect(() => {
+    document.body.classList.toggle("login-page");
+    document.documentElement.addEventListener("mousemove", followCursor);
+    return () => {
+      document.body.classList.toggle("login-page");
+      document.documentElement.removeEventListener("mousemove", followCursor);
+    };
+  }, []);
 
   useEffect(() => {
     if (state.jwt === "") return;

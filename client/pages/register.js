@@ -21,7 +21,7 @@ import {
 } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
-
+import { useSnackbar } from 'notistack';
 import { isEmpty } from "lodash";
 
 import { passwordCheck } from "../utils/functions/regEx";
@@ -33,17 +33,8 @@ import { useMutation } from "react-apollo";
 import Router from "next/router";
 
 const Register = () => {
-  useEffect(() => {
-    document.body.classList.toggle("register-page");
-    document.documentElement.addEventListener("mousemove", followCursor);
-    return () => {
-      document.body.classList.toggle("register-page");
-      document.documentElement.removeEventListener("mousemove", followCursor);
-    };
-  }, []);
-
   const { state } = useContext(UserContext);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [accountValues, setAccountValues] = useState({
     username: "",
     email: "",
@@ -116,36 +107,38 @@ const Register = () => {
       isEmpty(accountValues.password) &&
       isEmpty(accountValues.email)
     ) {
-      // enqueueSnackbar('Không được bỏ trống cả hai trường',{
-      //   variant: 'error'
-      // })
-      alert("Không được bỏ trống cả ba trường");
+      enqueueSnackbar('Không được bỏ trống cả hai trường',{
+        variant: 'error'
+      })
     }
     if (!passwordCheck.test(accountValues.password)) {
-      // enqueueSnackbar(
-      //   'Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)',
-      //   { variant: 'error' }
-      // )
-      alert(
-        "Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)"
-      );
+      enqueueSnackbar(
+        'Mật khẩu phải có tối thiểu 8 ký tự (Bao gồm: >=1 kí tự đặc biệt, >=1 chữ số, >=1 chữ cái in hoa)',
+        { variant: 'error' }
+      )
     }
     if (accountValues.password !== reTypePassword.rePassword) {
-      alert("Mật khẩu và Nhập lại mật khẩu không trùng khớp! Vui lòng thử lại");
+      enqueueSnackbar("Mật khẩu và Nhập lại mật khẩu không trùng khớp! Vui lòng thử lại", {variant:'success'});
     } else
       try {
         await requestRegisterMutation();
-        
-        alert("Đăng ký thành công! Vui lòng kiểm tra email của bạn!");
+        enqueueSnackbar(
+          'Đăng ký thành công! Vui lòng kiểm tra email của bạn',{variant: 'success'}
+        )
         return Router.push('/login')
-        // enqueueSnackbar(
-        //   'Đăng nhập thành công!',{variant: 'success'}
-        // )
       } catch (error) {
-        return alert(errorLog(error.message));
-        // enqueueSnackbar(errorLog(error.message), {variant: 'error'})
+        return enqueueSnackbar(errorLog(error.message),{variant:'error'});
       }
   };
+
+  useEffect(() => {
+    document.body.classList.toggle("register-page");
+    document.documentElement.addEventListener("mousemove", followCursor);
+    return () => {
+      document.body.classList.toggle("register-page");
+      document.documentElement.removeEventListener("mousemove", followCursor);
+    };
+  }, []);
 
   useEffect(() => {
     if (state.jwt === "") return;

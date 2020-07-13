@@ -4,6 +4,7 @@ import Head from "next/head";
 import withApollo from "../utils/ApolloSetup/withApollo";
 import { ApolloProvider } from "react-apollo";
 import { UserContextProvider } from "../context/userContext";
+import {SnackbarProvider} from 'notistack'
 import dynamic from "next/dynamic";
 const Layout = dynamic(() => import("../components/layout"));
 import "../assets/css/blk-design-system-react.css";
@@ -30,9 +31,11 @@ const App = ({ Component, pageProps, apolloClient, router }) => {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.2.0/js/uikit.js" />
       </Head>
       <UserContextProvider>
+        <SnackbarProvider>
         <Layout>
           <Component {...pageProps} key={router.route}/>
         </Layout>
+        </SnackbarProvider>
       </UserContextProvider>
     </ApolloProvider>
   );

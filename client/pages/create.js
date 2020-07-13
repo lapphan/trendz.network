@@ -17,7 +17,7 @@ import {
   DropdownItem,
   Form,
 } from "reactstrap";
-
+import { useSnackbar } from 'notistack';
 import { CREATE_CAMPAIGN } from "../graphql/mutations/campaign/create";
 import { useMutation } from "react-apollo";
 import { isEmpty } from "lodash";
@@ -30,7 +30,7 @@ const { API_URL } = process.env;
 
 const Create = () => {
   const { state } = useAuth();
-
+  const { enqueueSnackbar } = useSnackbar();
   const signal = axios.CancelToken.source();
 
   const [campaignState, setCampaign] = useState({
@@ -174,14 +174,19 @@ const Create = () => {
 
   const handleCampaignSubmit = async () => {
     if (isEmpty(campaignState.title) || isEmpty(campaignState.content)) {
-      alert("Không đủ thông tin! Vui lòng kiểm tra lại!");
+      enqueueSnackbar(
+        "Không đủ thông tin! Vui lòng kiểm tra lại!",
+        { variant: 'error' }
+      )
     } else
       try {
         await requestCreateCampaignMutation();
         Router.push("/dashboard");
-        return alert("Tạo campaign thành công!");
+        return enqueueSnackbar(
+          "Tạo campaign thành công!",{variant: 'success'}
+        )
       } catch (error) {
-        return alert(errorLog(error.message));
+        return enqueueSnackbar(errorLog(error.message),{variant:'error'});
       }
   };
 
