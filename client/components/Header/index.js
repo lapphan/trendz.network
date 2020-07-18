@@ -7,207 +7,98 @@ import Link from "next/link";
  *
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect} from "react";
 
 import {
+  makeStyles,
+  AppBar,
+  Toolbar,
+  IconButton,
   Button,
-  Collapse,
-  NavbarBrand,
-  Navbar,
-  NavItem,
-  Nav,
-  Container,
-  Row,
-  Col,
-  NavLink,
-} from "reactstrap";
+  Hidden,
+  Drawer,
+} from "@material-ui/core";
 
 import { useAuth } from "../../context/userContext";
 import Router from "next/router";
 
-// import StyledHeader from './StyledHeader';
-// import Link from '../Link';
-// import logo from '../../assets/img/logo.svg';
+// @material-ui/icons
+import Menu from "@material-ui/icons/Menu";
+// core components
+import styles from "../../assets/jss/nextjs-material-kit/components/headerStyle.js";
+
+const useStyles = makeStyles(styles);
 
 /* TYPES */
 export const LOGOUT = "LOGOUT";
 /* END */
 
-const TestButton = React.forwardRef(({ children, href, onClick }, ref) => (
-  <p ref={ref} href={href} onClick={onClick}>
-    {children}
-  </p>
-));
-
 function Header() {
   const { state, dispatch } = useAuth();
-  const [isOpen, toggleIsOpen] = useState(false);
-  const [navColor, setNavColor] = useState({
-    color: "navbar-transparent",
-  });
-  const [navCollapse, setNavCollapse] = useState({
-    collapseOut: "",
-  });
+  const classes = useStyles();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  
   const [isLoggedIn, setLoggedIn] = useState(false);
-  const changeColor = useCallback(() => {
-    if (
-      document.documentElement.scrollTop > 99 ||
-      document.body.scrollTop > 99
-    ) {
-      setNavColor((previousState) => {
-        return {
-          ...previousState,
-          color: "bg-navbar",
-        };
-      });
-    } else if (
-      document.documentElement.scrollTop < 100 ||
-      document.body.scrollTop < 100
-    ) {
-      setNavColor((previousState) => {
-        return {
-          ...previousState,
-          color: "navbar-transparent",
-        };
-      });
+  const headerColorChange = () => {
+    const { color, changeColorOnScroll } = props;
+    const windowsScrollTop = window.pageYOffset;
+    if (windowsScrollTop > changeColorOnScroll.height) {
+      document.body
+        .getElementsByTagName("header")[0]
+        .classList.remove(classes[color]);
+      document.body
+        .getElementsByTagName("header")[0]
+        .classList.add(classes[changeColorOnScroll.color]);
+    } else {
+      document.body
+        .getElementsByTagName("header")[0]
+        .classList.add(classes[color]);
+      document.body
+        .getElementsByTagName("header")[0]
+        .classList.remove(classes[changeColorOnScroll.color]);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    window.addEventListener("scroll", changeColor);
-    return () => {
-      window.removeEventListener("scroll", changeColor);
+    if (props.changeColorOnScroll) {
+      window.addEventListener("scroll", headerColorChange);
+    }
+    return function cleanup() {
+      if (props.changeColorOnScroll) {
+        window.removeEventListener("scroll", headerColorChange);
+      }
     };
-  }, [changeColor]);
+  }, [headerColorChange]);
 
-  const toggleCollapse = () => {
-    document.documentElement.classList.toggle("nav-open");
-    toggleIsOpen((isOpen) => !isOpen);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
-  const onCollapseExiting = () => {
-    setNavCollapse((previousState) => {
-      return {
-        ...previousState,
-        collapseOut: "collapsing-out",
-      };
-    });
-  };
-  const onCollapseExited = () => {
-    setNavCollapse((previousState) => {
-      return {
-        ...previousState,
-        collapseOut: "",
-      };
-    });
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    dispatch({ type: LOGOUT });
-    Router.reload();
-    location.reload()
-    Router.push("/")
-  };
-
-  const renderUnloggedInButton = (
-    <Nav navbar>
-      <NavItem>
-          <Link href="/login">
-            <Button className="nav-link d-none d-lg-block" color="default">Đăng nhập</Button>
-          </Link>
-        <NavLink
-          className="nav-pills d-lg-none d-xl-none"
-          onClick={toggleCollapse}
-        >
-          <Link href="/login">
-            <TestButton>Đăng nhập</TestButton>
-          </Link>
-        </NavLink>
-      </NavItem>
-      <NavItem>
-        
-          <Link href="/register">
-            <Button className="nav-link d-none d-lg-block" color="primary">Đăng ký</Button>
-          </Link>
-        <NavLink className="d-lg-none d-xl-none" onClick={toggleCollapse}>
-          <Link href="/register">
-            <TestButton>Đăng ký</TestButton>
-          </Link>
-        </NavLink>
-      </NavItem>
-    </Nav>
-  );
-
-  const renderLoggedInButton = (
-    <Nav navbar>
-      <NavItem>
-        
-          <Link href="/create">
-          <Button className="nav-link d-none d-lg-block" color="warning">Tạo campaign</Button>
-          </Link>
-        
-          <Link href="/create">
-          <NavLink
-          className="nav-pills d-lg-none d-xl-none"
-          onClick={toggleCollapse}
-        >Tạo campaign</NavLink>
-          </Link>
-
-      </NavItem>
-      <NavItem>     
-          <Link href="/profile">
-          <Button className="nav-link d-none d-lg-block" color="default">Hồ sơ</Button>
-          </Link>
-        <NavLink
-          className="nav-pills d-lg-none d-xl-none"
-          onClick={toggleCollapse}
-        >
-          <Link href="/profile">
-            <TestButton>Hồ sơ</TestButton>
-          </Link>
-        </NavLink>
-      </NavItem>
-      <NavItem>
-        
-          <Link href="/">
-          <Button
-          className="nav-link d-none d-lg-block"
-          color="default"
-          onClick={handleLogout}
-        >Đăng xuất</Button>
-          </Link>
-
-        <NavLink
-          className="nav-pills d-lg-none d-xl-none"
-          onClick={() => {
-            toggleCollapse();
-            handleLogout();
-          }}
-        >
-          <Link href="/">
-            <TestButton>Đăng xuất</TestButton>
-          </Link>
-        </NavLink>
-      </NavItem>
-    </Nav>
-  );
+  const { color, rightLinks, leftLinks, brand, fixed, absolute } = props;
+  const appBarClasses = classNames({
+    [classes.appBar]: true,
+    [classes[color]]: color,
+    [classes.absolute]: absolute,
+    [classes.fixed]: fixed
+  });
+    
+  const brandComponent = isLoggedIn ? renderLoggedBrand : renderUnloggedBrand;
 
   const renderUnloggedBrand = (
     <Link href="/">
-      <TestButton>
+      <Button className={classes.title}>
         <span>TRENDZ • </span>
         NETWORK
-      </TestButton>
+        </Button>
     </Link>
   );
 
   const renderLoggedBrand = (
     <Link href="/dashboard">
-      <TestButton>
+      <Button className={classes.title}>
         <span>TRENDZ • </span>
         NETWORK
-      </TestButton>
+        </Button>
     </Link>
   );
 
@@ -218,52 +109,92 @@ function Header() {
   }, [state.jwt]);
 
   return (
-    <Navbar
-      className={`fixed-top ${navColor.color}`}
-      color-on-scroll="100"
-      expand="lg"
-    >
-      <Container>
-        <div className="navbar-translate">
-          <NavbarBrand id="navbar-brand">
-            {!isLoggedIn ? renderUnloggedBrand : renderLoggedBrand}
-          </NavbarBrand>
-          <button
-            aria-expanded={isOpen}
-            className="navbar-toggler navbar-toggler"
-            onClick={toggleCollapse}
-          >
-            <span className="navbar-toggler-bar bar1" />
-            <span className="navbar-toggler-bar bar2" />
-            <span className="navbar-toggler-bar bar3" />
-          </button>
+    <AppBar className={appBarClasses}>
+      <Toolbar className={classes.container}>
+        {leftLinks !== undefined ? brandComponent : null}
+        <div className={classes.flex}>
+          {leftLinks !== undefined ? (
+            <Hidden smDown implementation="css">
+              {leftLinks}
+            </Hidden>
+          ) : (
+            brandComponent
+          )}
         </div>
-        <Collapse
-          className={`justify-content-end ${navCollapse.collapseOut}`}
-          navbar
-          isOpen={isOpen}
-          onExiting={onCollapseExiting}
-          onExited={onCollapseExited}
+        <Hidden smDown implementation="css">
+          {rightLinks}
+        </Hidden>
+        <Hidden mdUp>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerToggle}
+          >
+            <Menu />
+          </IconButton>
+        </Hidden>
+      </Toolbar>
+      <Hidden mdUp implementation="js">
+        <Drawer
+          variant="temporary"
+          anchor={"right"}
+          open={mobileOpen}
+          classes={{
+            paper: classes.drawerPaper
+          }}
+          onClose={handleDrawerToggle}
         >
-          <div className="navbar-collapse-header">
-            <Row>
-              <Col className="collapse-brand" xs="6"></Col>
-              <Col className="collapse-close text-right" xs="6">
-                <button
-                  aria-expanded={isOpen}
-                  className="navbar-toggler"
-                  onClick={toggleCollapse}
-                >
-                  <i className="tim-icons icon-simple-remove" />
-                </button>
-              </Col>
-            </Row>
+          <div className={classes.appResponsive}>
+            {leftLinks}
+            {rightLinks}
           </div>
-          {!isLoggedIn ? renderUnloggedInButton : renderLoggedInButton}
-        </Collapse>
-      </Container>
-    </Navbar>
+        </Drawer>
+      </Hidden>
+    </AppBar>
   );
 }
+
+Header.defaultProp = {
+  color: "white"
+};
+
+Header.propTypes = {
+  color: PropTypes.oneOf([
+    "primary",
+    "info",
+    "success",
+    "warning",
+    "danger",
+    "transparent",
+    "white",
+    "rose",
+    "dark"
+  ]),
+  rightLinks: PropTypes.node,
+  leftLinks: PropTypes.node,
+  brand: PropTypes.string,
+  fixed: PropTypes.bool,
+  absolute: PropTypes.bool,
+  // this will cause the sidebar to change the color from
+  // props.color (see above) to changeColorOnScroll.color
+  // when the window.pageYOffset is heigher or equal to
+  // changeColorOnScroll.height and then when it is smaller than
+  // changeColorOnScroll.height change it back to
+  // props.color (see above)
+  changeColorOnScroll: PropTypes.shape({
+    height: PropTypes.number.isRequired,
+    color: PropTypes.oneOf([
+      "primary",
+      "info",
+      "success",
+      "warning",
+      "danger",
+      "transparent",
+      "white",
+      "rose",
+      "dark"
+    ]).isRequired
+  })
+};
 
 export default Header;

@@ -6,135 +6,74 @@
 
 import React from 'react';
 //import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+// nodejs library that concatenates classes
+import classNames from "classnames";
+// material-ui core components
+import { List, ListItem } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTwitter,
-  faFacebook,
-  faInstagram,
-} from '@fortawesome/free-brands-svg-icons';
+// @material-ui/icons
+import Favorite from "@material-ui/icons/Favorite";
 
-import {
-  Button,
-  NavItem,
-  NavLink,
-  Nav,
-  Container,
-  Row,
-  Col,
-  UncontrolledTooltip,
-} from 'reactstrap';
+import styles from "../../assets/jss/nextjs-material-kit/components/footerStyle.js";
 
-function Footer() {
+const useStyles = makeStyles(styles);
+
+export default function Footer(props) {
+  const classes = useStyles();
+  const { whiteFont } = props;
+  const footerClasses = classNames({
+    [classes.footer]: true,
+    [classes.footerWhiteFont]: whiteFont
+  });
+  const aClasses = classNames({
+    [classes.a]: true,
+    [classes.footerWhiteFont]: whiteFont
+  });
   return (
-    <footer className="footer">
-      <Container>
-        <Row>
-          <Col md="3">
-            <h2 className="title">Trendz•Network</h2>
-          </Col>
-          <Col md="3">
-            <Nav>
-              <NavItem>
-                <NavLink>
-                  Home
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink>
-                  Landing
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink>
-                  Register
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink>
-                  Profile
-                </NavLink>
-              </NavItem>
-            </Nav>
-          </Col>
-          <Col md="3">
-            <Nav>
-              <NavItem>
-                <NavLink href="#">Contact Us</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="#">About Us</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="#">Blog</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="https://opensource.org/licenses/MIT">
-                  License
-                </NavLink>
-              </NavItem>
-            </Nav>
-          </Col>
-          <Col md="3">
-            <h3 className="title">Follow us:</h3>
-            <div className="btn-wrapper profile">
-              <Button
-                className="btn-icon btn-neutral btn-round btn-simple"
-                color="default"
+    <footer className={footerClasses}>
+      <div className={classes.container}>
+        <div className={classes.left}>
+          <List className={classes.list}>
+            <ListItem className={classes.inlineBlock}>
+              <a
                 href="#"
-                id="tooltip622135962"
+                className={classes.block}
                 target="_blank"
               >
-                <i className="fab">
-                  <FontAwesomeIcon icon={faTwitter} />{' '}
-                </i>
-              </Button>
-              <UncontrolledTooltip delay={0} target="tooltip622135962">
-                Follow us
-              </UncontrolledTooltip>
-              <Button
-                className="btn-icon btn-neutral btn-round btn-simple"
-                color="default"
+                VGS
+              </a>
+            </ListItem>
+            <ListItem className={classes.inlineBlock}>
+              <a
                 href="#"
-                id="tooltip230450801"
+                className={classes.block}
                 target="_blank"
               >
-                <i className="fab">
-                  <FontAwesomeIcon icon={faFacebook} />{' '}
-                </i>
-              </Button>
-              <UncontrolledTooltip delay={0} target="tooltip230450801">
-                Like us
-              </UncontrolledTooltip>
-              <Button
-                className="btn-icon btn-neutral btn-round btn-simple"
-                color="default"
+                Về chúng tôi
+              </a>
+            </ListItem>
+            <ListItem className={classes.inlineBlock}>
+              <a
                 href="#"
-                id="tooltip318450378"
+                className={classes.block}
                 target="_blank"
               >
-                <i className="fab">
-                  <FontAwesomeIcon icon={faInstagram} />{' '}
-                </i>
-              </Button>
-              <UncontrolledTooltip delay={0} target="tooltip318450378">
-                Follow us
-              </UncontrolledTooltip>
-            </div>
-          </Col>
-        </Row>
-      </Container>
+                Điều khoản
+              </a>
+            </ListItem>
+          </List>
+        </div>
+        <div className={classes.right}>
+          &copy; {1900 + new Date().getYear()} , TrendZ. Network
+        </div>
+      </div>
     </footer>
   );
 }
 
-// Footer.defaultProps = {
-//   // links: [],
-//   // onSubmit: e => e.preventDefault(),
-// };
-// Footer.propTypes = {
-//   // links: PropTypes.array,
-//   // onSubmit: PropTypes.func,
-// };
+Footer.propTypes = {
+  whiteFont: PropTypes.bool
+};
 
-export default Footer;
