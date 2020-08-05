@@ -116,7 +116,7 @@ const Login = () => {
         enqueueSnackbar(
           'Đăng nhập thành công!',{variant: 'success'}
         )
-        return Router.push('/dashboard');
+        Router.push('/dashboard');
       } catch (error) {
         return enqueueSnackbar("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại!", {variant: 'error'})
       }

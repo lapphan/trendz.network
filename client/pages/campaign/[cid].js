@@ -480,12 +480,13 @@ const Post = () => {
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
-        } else {
-          throw error;
-        }
+        } 
       }
 
-      return function cleanup() {};
+      return function cleanup() {
+        mounted = false;
+        signal.cancel();
+      };
     }
   }, [state]);
 

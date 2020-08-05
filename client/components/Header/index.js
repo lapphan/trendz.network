@@ -105,9 +105,10 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     dispatch({ type: LOGOUT });
-    Router.reload();
-    location.reload()
+    //Router.reload();
+    
     Router.push("/")
+    location.reload()
   };
 
   const renderUnloggedInButton = (
@@ -141,8 +142,7 @@ function Header() {
 
   const renderLoggedInButton = (
     <Nav navbar>
-      <NavItem>
-        
+      {/* <NavItem>
           <Link href="/create">
           <Button className="nav-link d-none d-lg-block" color="warning">Tạo campaign</Button>
           </Link>
@@ -153,11 +153,10 @@ function Header() {
           onClick={toggleCollapse}
         >Tạo campaign</NavLink>
           </Link>
-
-      </NavItem>
+      </NavItem> */}
       <NavItem>     
           <Link href="/profile">
-          <Button className="nav-link d-none d-lg-block" color="default">Hồ sơ</Button>
+          <Button className="nav-link d-none d-lg-block" color="warning">Hồ sơ</Button>
           </Link>
         <NavLink
           className="nav-pills d-lg-none d-xl-none"
