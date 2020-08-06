@@ -641,7 +641,15 @@ pre code {
     margin-bottom: 15px !important;
   }
 }
+
 @media(max-width:1024px){
+  .create-campaign-button{
+    margin-left: 77% !important;
+    margin-bottom: 15px !important;
+  }
+}
+
+@media(max-width:768px){
   .create-campaign-button{
     margin: 0 auto !important;
   }
@@ -1085,7 +1093,7 @@ pre code {
   }
   .col-md-4 {
     flex: 0 0 33.33333%;
-    max-width: 768px;
+    max-width: 400px;
   }
   .col-md-5 {
     flex: 0 0 41.66667%;
@@ -4741,6 +4749,15 @@ input[type="button"].btn-block {
   display: flex;
   flex-direction: column;
 }
+
+@media(max-width:425px){
+  .card-deck {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+  }
+}
+
 .card-deck .card {
   margin-bottom: 15px;
 }
@@ -4757,7 +4774,20 @@ input[type="button"].btn-block {
     margin-bottom: 0;
     margin-left: 15px;
   }
- 
+}
+@media (min-width: 1200px) {
+  .card-deck {
+    flex-flow: row wrap;
+    margin-left: -15px;
+  }
+  .card-deck .card {
+    display: flex;
+    flex: 1 0 0%;
+    flex-direction: column;
+    margin-bottom: 0;
+    margin-left: 15px;
+    margin-right: -35px;
+  }
 }
 
 .card-group {
