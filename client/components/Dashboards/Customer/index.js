@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../context/userContext";
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/userContext';
 
-import axios from "axios";
-import Link from "next/link";
-import classnames from "classnames";
+import axios from 'axios';
+import Link from 'next/link';
+import classnames from 'classnames';
 import {
   Button,
   Card,
@@ -20,7 +20,7 @@ import {
   Row,
   Col,
   Spinner,
-} from "reactstrap";
+} from 'reactstrap';
 
 const { API_URL } = process.env;
 
@@ -50,16 +50,16 @@ const Customer = () => {
   const renderStatus = (status) => {
     if (status !== null) {
       if (status) {
-        return "Đang hoạt động";
-      } else return "Không hoạt động";
-    } else return "Đang chờ kích hoạt";
+        return 'Đang hoạt động';
+      } else return 'Không hoạt động';
+    } else return 'Đang chờ kích hoạt';
   };
 
   useEffect(() => {
     let mountedCampaign = true;
     let mountedInfluencer = true;
-    const campaignUrl = API_URL + "/campaigns";
-    const influencersUrl = API_URL + "/users";
+    const campaignUrl = API_URL + '/campaigns';
+    const influencersUrl = API_URL + '/users';
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
@@ -81,7 +81,7 @@ const Customer = () => {
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+          console.log('Error: ', error.message);
         }
       }
     };
@@ -97,7 +97,7 @@ const Customer = () => {
           try {
             setInfluencers({
               influencers: get_resolve.data.filter(function (user) {
-                return user.role.name == "Influencer";
+                return user.role.name == 'Influencer';
               }),
             });
           } catch (error) {
@@ -106,7 +106,7 @@ const Customer = () => {
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+          console.log('Error: ', error.message);
         }
       }
     };
@@ -118,27 +118,20 @@ const Customer = () => {
       signal.cancel();
     };
   }, []);
-
   return (
-      <>
-    <div className="wrapper">
-      <div className="main">
+    <div className='wrapper'>
+      <div className='main'>
         <Card>
           <CardBody>
             <Row>
-              <Link href="/create">
-                <Button color="warning" className="create-campaign-button">Tạo campaign</Button>
-              </Link>
-            </Row>
-            <Row>
-              <Col md="2">
-                <Nav className="nav-pills-primary flex-column" pills>
+              <Col md='2'>
+                <Nav className='nav-pills-primary flex-column' pills>
                   <NavItem>
                     <NavLink
                       className={classnames({
                         active: navState.vertical === 1,
                       })}
-                      onClick={(e) => toggleTabs(e, "vertical", 1)}
+                      onClick={(e) => toggleTabs(e, 'vertical', 1)}
                     >
                       Influencers
                     </NavLink>
@@ -148,7 +141,7 @@ const Customer = () => {
                       className={classnames({
                         active: navState.vertical === 2,
                       })}
-                      onClick={(e) => toggleTabs(e, "vertical", 2)}
+                      onClick={(e) => toggleTabs(e, 'vertical', 2)}
                     >
                       My Campaigns
                     </NavLink>
@@ -156,30 +149,35 @@ const Customer = () => {
                 </Nav>
               </Col>
               <Col>
-                <TabContent activeTab={"vertical" + navState.vertical}>
-                  <TabPane tabId="vertical1">
+                <TabContent activeTab={'vertical' + navState.vertical}>
+                  <Link href='/create'>
+                    <Button color='primary' className='btn-create'>
+                      Tạo Campaign
+                    </Button>
+                  </Link>
+                  <TabPane tabId='vertical1'>
                     <Row>
                       <CardDeck>
                         {influencers.influencers.length !== 0 ? (
                           influencers.influencers.map((influencer) => (
                             <Col md={4} key={influencer.id}>
-                              <Card className="campaign-card">
+                              <Card className='campaign-card'>
                                 <CardImg
                                   src={
                                     influencer.avatar !== null
                                       ? `
                                         ${API_URL}${influencer.avatar.formats.thumbnail.url}`
-                                      : "/256x186.svg"
+                                      : '/256x186.svg'
                                   }
-                                  alt="Card image cap"
-                                  className="campaign-img"
+                                  alt='Card image cap'
+                                  className='campaign-img'
                                 />
                                 <CardBody>
-                                  <CardTitle className="dashboard-card-title">
+                                  <CardTitle className='dashboard-card-title'>
                                     {influencer.name}
                                   </CardTitle>
                                   <Link
-                                    href="/influencer/[uid]"
+                                    href='/influencer/[uid]'
                                     as={`/influencer/${influencer.id}`}
                                   >
                                     <Button>Chi tiết</Button>
@@ -189,38 +187,38 @@ const Customer = () => {
                             </Col>
                           ))
                         ) : (
-                          <Spinner color="light" />
+                          <Spinner color='light' />
                         )}
                       </CardDeck>
                     </Row>
                   </TabPane>
-                  <TabPane tabId="vertical2">
+                  <TabPane tabId='vertical2'>
                     <Row>
                       <CardDeck>
                         {myCampaigns.campaigns.length !== 0 ? (
                           myCampaigns.campaigns.map((campaign) => (
                             <Col md={4} key={campaign.id}>
-                              <Card className="campaign-card">
+                              <Card className='campaign-card'>
                                 <CardImg
                                   src={
                                     campaign.picture[0] !== undefined
                                       ? `
                                         ${API_URL}${campaign.picture[0].formats.thumbnail.url}`
-                                      : "/256x186.svg"
+                                      : '/256x186.svg'
                                   }
-                                  alt="Card image cap"
-                                  className="campaign-img"
+                                  alt='Card image cap'
+                                  className='campaign-img'
                                 />
                                 <CardBody>
-                                  <CardTitle className="dashboard-card-title">
+                                  <CardTitle className='dashboard-card-title'>
                                     {campaign.title}
                                   </CardTitle>
                                   <CardSubtitle>
-                                    <strong>Người tạo:</strong>{" "}
+                                    <strong>Người tạo:</strong>{' '}
                                     {campaign.user.username}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>Trạng thái:</strong>{" "}
+                                    <strong>Trạng thái:</strong>{' '}
                                     {renderStatus(campaign.status)}
                                   </CardSubtitle>
                                   <CardSubtitle>
@@ -229,19 +227,19 @@ const Customer = () => {
                                     </strong>
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <small className="text-muted">
+                                    <small className='text-muted'>
                                       {new Date(
                                         campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString("en-GB") +
-                                        " - " +
+                                      ).toLocaleString('en-GB') +
+                                        ' - ' +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")}
+                                        ).toLocaleString('en-GB')}
                                     </small>
                                   </CardSubtitle>
 
                                   <Link
-                                    href="/campaign/[cid]"
+                                    href='/campaign/[cid]'
                                     as={`/campaign/${campaign.id}`}
                                   >
                                     <Button>Chi tiết</Button>
@@ -251,7 +249,7 @@ const Customer = () => {
                             </Col>
                           ))
                         ) : (
-                          <Spinner color="light" />
+                          <Spinner color='light' />
                         )}
                       </CardDeck>
                     </Row>
@@ -263,7 +261,6 @@ const Customer = () => {
         </Card>
       </div>
     </div>
-    </>
   );
 };
 
