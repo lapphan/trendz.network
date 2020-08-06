@@ -635,9 +635,19 @@ pre code {
   margin-left: -15px;
 }
 
-.create-campaign-button{
-  margin-left: 85% !important;
-  margin-bottom: 15px !important;
+@media(min-width:1024px){
+  .create-campaign-button{
+    margin-left: 85% !important;
+    margin-bottom: 15px !important;
+  }
+}
+@media(max-width:1024px){
+  .create-campaign-button{
+    margin: 0 auto !important;
+  }
+  .row{
+    margin-bottom: 15px !important;
+  }
 }
 
 .no-gutters {
