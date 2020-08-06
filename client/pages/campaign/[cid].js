@@ -484,7 +484,8 @@ const Post = () => {
       }
 
       return function cleanup() {
-        mounted = false;
+        mountedCampaign = false;
+        mountedCategory = false;
         signal.cancel();
       };
     }
@@ -508,7 +509,7 @@ const Post = () => {
                       />
                       <CardBody>
                         <CardTitle>{campaign.title}</CardTitle>
-                        <CardText>{campaign.content}</CardText>
+                        <CardText dangerouslySetInnerHTML={{ __html: campaign.content}}></CardText>
                         <CardSubtitle>
                           <strong>Thể loại:</strong>
                         </CardSubtitle>

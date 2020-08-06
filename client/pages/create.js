@@ -17,13 +17,14 @@ import {
   DropdownItem,
   Form,
 } from "reactstrap";
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack";
 import { CREATE_CAMPAIGN } from "../graphql/mutations/campaign/create";
 import { useMutation } from "react-apollo";
 import { isEmpty } from "lodash";
 import axios from "axios";
 import { errorLog } from "../utils/functions/error-log-snackbar";
 import Datetime from "react-datetime";
+import { Editor } from "@tinymce/tinymce-react";
 
 let ps = null;
 const { API_URL } = process.env;
@@ -79,6 +80,12 @@ const Create = () => {
     const { name, value } = event.target;
     setCampaign((previousState) => {
       return { ...previousState, [name]: value };
+    });
+  };
+
+  const handleContentChange = (content, editor) => {
+    setCampaign((previousState) => {
+      return { ...previousState, content };
     });
   };
 
@@ -174,19 +181,18 @@ const Create = () => {
 
   const handleCampaignSubmit = async () => {
     if (isEmpty(campaignState.title) || isEmpty(campaignState.content)) {
-      enqueueSnackbar(
-        "Không đủ thông tin! Vui lòng kiểm tra lại!",
-        { variant: 'error' }
-      )
+      enqueueSnackbar("Không đủ thông tin! Vui lòng kiểm tra lại!", {
+        variant: "error",
+      });
     } else
       try {
         await requestCreateCampaignMutation();
         Router.push("/dashboard");
-        return enqueueSnackbar(
-          "Tạo campaign thành công!",{variant: 'success'}
-        )
+        return enqueueSnackbar("Tạo campaign thành công!", {
+          variant: "success",
+        });
       } catch (error) {
-        return enqueueSnackbar(errorLog(error.message),{variant:'error'});
+        return enqueueSnackbar(errorLog(error.message), { variant: "error" });
       }
   };
 
@@ -267,12 +273,11 @@ const Create = () => {
                   </FormGroup>
                   <FormGroup>
                     <Label for="content">Nội dung</Label>
-                    <Input
-                      type="textarea"
+                    <Editor
+                      apiKey="awf8d12nkj02oekbnk7t8xx283a5kexhscdfvpj9sd8h22ox"
                       id="content"
                       placeholder="Nội dung..."
-                      name="content"
-                      onChange={handleCampaignChange}
+                      onEditorChange={handleContentChange}
                       value={campaignState.content}
                       required
                     />
