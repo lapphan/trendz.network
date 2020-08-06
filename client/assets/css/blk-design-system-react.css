@@ -635,6 +635,11 @@ pre code {
   margin-left: -15px;
 }
 
+.create-campaign-button{
+  margin-left: 85% !important;
+  margin-bottom: 15px !important;
+}
+
 .no-gutters {
   margin-right: 0;
   margin-left: 0;

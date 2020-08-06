@@ -76,58 +76,60 @@ const Customer = () => {
               }),
             });
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
-        } 
+        }
       }
     };
     const fetchInfluencers = async () => {
-        try {
-          const get_resolve = await axios.get(influencersUrl, {
-            cancelToken: signal.token,
-            headers: {
-              Authorization: `Bearer ${state.jwt}`,
-            },
-          });
-          if (mountedInfluencer) {
-            try {
-              setInfluencers({
-                influencers: get_resolve.data.filter(function (user) {
-                  return user.role.name == "Influencer";
-                }),
-              });
-            } catch (error) {
-              console.log(error)
-            }
+      try {
+        const get_resolve = await axios.get(influencersUrl, {
+          cancelToken: signal.token,
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+        });
+        if (mountedInfluencer) {
+          try {
+            setInfluencers({
+              influencers: get_resolve.data.filter(function (user) {
+                return user.role.name == "Influencer";
+              }),
+            });
+          } catch (error) {
+            console.log(error);
           }
-        } catch (error) {
-          if (axios.isCancel(error) && error.message !== undefined) {
-            console.log("Error: ", error.message);
-          } 
         }
-      };
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log("Error: ", error.message);
+        }
+      }
+    };
     fetchCampaign();
     fetchInfluencers();
     return function cleanup() {
       mountedCampaign = false;
-        mountedInfluencer = false;
+      mountedInfluencer = false;
       signal.cancel();
     };
-  },[]);
+  }, []);
 
   return (
+      <>
     <div className="wrapper">
       <div className="main">
         <Card>
-        <Link href="/create">
-          <Button className="nav-link d-none d-lg-block" color="warning">Tạo campaign</Button>
-          </Link>
           <CardBody>
-            
+            <Row>
+              <Link href="/create">
+                <Button color="warning" className="create-campaign-button">Tạo campaign</Button>
+              </Link>
+            </Row>
             <Row>
               <Col md="2">
                 <Nav className="nav-pills-primary flex-column" pills>
@@ -261,6 +263,7 @@ const Customer = () => {
         </Card>
       </div>
     </div>
+    </>
   );
 };
 

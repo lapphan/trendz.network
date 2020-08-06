@@ -107,9 +107,10 @@ const Post = () => {
           <Button color="primary" onClick={handleDelete}>
             Xóa
           </Button>
+          <Button color="success">Liên hệ TrendZ</Button>
         </div>
       );
-    } else return <p></p>;
+    } else return <Button color="success">Liên hệ TrendZ</Button>;
   };
 
   //influencer reject campaign
@@ -481,7 +482,7 @@ const Post = () => {
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
-        } 
+        }
       }
 
       return function cleanup() {
@@ -510,7 +511,9 @@ const Post = () => {
                       />
                       <CardBody>
                         <CardTitle>{campaign.title}</CardTitle>
-                        <CardText dangerouslySetInnerHTML={{ __html: campaign.content}}></CardText>
+                        <CardText
+                          dangerouslySetInnerHTML={{ __html: campaign.content }}
+                        ></CardText>
                         <CardSubtitle>
                           <strong>Thể loại:</strong>
                         </CardSubtitle>
