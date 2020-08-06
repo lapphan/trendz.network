@@ -56,7 +56,8 @@ const Customer = () => {
   };
 
   useEffect(() => {
-    let mounted = true;
+    let mountedCampaign = true;
+    let mountedInfluencer = true;
     const campaignUrl = API_URL + "/campaigns";
     const influencersUrl = API_URL + "/users";
     const fetchCampaign = async () => {
@@ -67,7 +68,7 @@ const Customer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mounted) {
+        if (mountedCampaign) {
           try {
             setMyCampaigns({
               campaigns: get_resolve.data.filter(function (campaign) {
@@ -92,8 +93,7 @@ const Customer = () => {
               Authorization: `Bearer ${state.jwt}`,
             },
           });
-          console.log(get_resolve.data)
-          if (mounted) {
+          if (mountedInfluencer) {
             try {
               setInfluencers({
                 influencers: get_resolve.data.filter(function (user) {
@@ -113,8 +113,8 @@ const Customer = () => {
     fetchCampaign();
     fetchInfluencers();
     return function cleanup() {
-        console.log(influencers)
-      mounted = false;
+      mountedCampaign = false;
+        mountedInfluencer = false;
       signal.cancel();
     };
   },[]);

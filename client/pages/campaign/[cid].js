@@ -35,6 +35,7 @@ const Post = () => {
   const { cid } = router.query;
   const { state } = useAuth();
   const [isLoading, setLoading] = useState(true);
+  const signal = axios.CancelToken.source();
   const [campaign, setCampaign] = useState({
     campaignTTL: [
       {
