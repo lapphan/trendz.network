@@ -21904,6 +21904,10 @@ input.datetimepicker[data-color="yellow"]
   font-size: 16px;
   line-height: 1.4em;
 }
+.dropdown-menu {
+  max-height: 200px;
+  overflow-y: scroll;
+}
 .card-stats .card-footer {
   padding: 0px 15px 15px;
 }

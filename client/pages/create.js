@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/userContext";
-import Router from "next/router";
-import PerfectScrollbar from "perfect-scrollbar";
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../context/userContext';
+import Router from 'next/router';
+import PerfectScrollbar from 'perfect-scrollbar';
 import {
   Button,
   Card,
@@ -16,15 +16,15 @@ import {
   DropdownMenu,
   DropdownItem,
   Form,
-} from "reactstrap";
-import { useSnackbar } from "notistack";
-import { CREATE_CAMPAIGN } from "../graphql/mutations/campaign/create";
-import { useMutation } from "react-apollo";
-import { isEmpty } from "lodash";
-import axios from "axios";
-import { errorLog } from "../utils/functions/error-log-snackbar";
-import Datetime from "react-datetime";
-import { Editor } from "@tinymce/tinymce-react";
+} from 'reactstrap';
+import { useSnackbar } from 'notistack';
+import { CREATE_CAMPAIGN } from '../graphql/mutations/campaign/create';
+import { useMutation } from 'react-apollo';
+import { isEmpty } from 'lodash';
+import axios from 'axios';
+import { errorLog } from '../utils/functions/error-log-snackbar';
+import Datetime from 'react-datetime';
+import { Editor } from '@tinymce/tinymce-react';
 
 let ps = null;
 const { API_URL } = process.env;
@@ -35,8 +35,8 @@ const Create = () => {
   const signal = axios.CancelToken.source();
 
   const [campaignState, setCampaign] = useState({
-    title: "",
-    content: "",
+    title: '',
+    content: '',
     picture: [],
     status: null,
     user: state.user.id,
@@ -51,10 +51,10 @@ const Create = () => {
   });
 
   const [tempData, setTempData] = useState({
-    categoryId: "",
-    categoryName: "",
-    channelId: "",
-    channelName: "",
+    categoryId: '',
+    categoryName: '',
+    channelId: '',
+    channelName: '',
   });
 
   const [picture, setPicture] = useState({
@@ -63,13 +63,13 @@ const Create = () => {
     submmited: false,
   });
 
-  const [date, setDate] = useState(Datetime.moment().subtract(1, "day"));
+  const [date, setDate] = useState(Datetime.moment().subtract(1, 'day'));
   var valid = function (current) {
     return current.isAfter(date);
   };
 
   var validStartDate = function (current) {
-    return current.isAfter(Datetime.moment().subtract(1, "day"));
+    return current.isAfter(Datetime.moment().subtract(1, 'day'));
   };
 
   const [requestCreateCampaignMutation] = useMutation(CREATE_CAMPAIGN, {
@@ -128,8 +128,8 @@ const Create = () => {
     setTempData({
       categoryId: id,
       categoryName: name,
-      channelId: "",
-      channelName: "",
+      channelId: '',
+      channelName: '',
     });
   };
 
@@ -155,9 +155,9 @@ const Create = () => {
       };
     });
     const data = new FormData();
-    data.append("files", picture.file);
+    data.append('files', picture.file);
     const upload_resolve = await axios({
-      method: "POST",
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${state.jwt}`,
       },
@@ -181,46 +181,46 @@ const Create = () => {
 
   const handleCampaignSubmit = async () => {
     if (isEmpty(campaignState.title) || isEmpty(campaignState.content)) {
-      enqueueSnackbar("Không đủ thông tin! Vui lòng kiểm tra lại!", {
-        variant: "error",
+      enqueueSnackbar('Không đủ thông tin! Vui lòng kiểm tra lại!', {
+        variant: 'error',
       });
     } else
       try {
         await requestCreateCampaignMutation();
-        Router.push("/dashboard");
-        return enqueueSnackbar("Tạo campaign thành công!", {
-          variant: "success",
+        Router.push('/dashboard');
+        return enqueueSnackbar('Tạo campaign thành công!', {
+          variant: 'success',
         });
       } catch (error) {
-        return enqueueSnackbar(errorLog(error.message), { variant: "error" });
+        return enqueueSnackbar(errorLog(error.message), { variant: 'error' });
       }
   };
 
   useEffect(() => {
-    if (navigator.platform.indexOf("Win") > -1) {
-      document.documentElement.className += " perfect-scrollbar-on";
-      document.documentElement.classList.remove("perfect-scrollbar-off");
-      let tables = document.querySelectorAll(".table-responsive");
+    if (navigator.platform.indexOf('Win') > -1) {
+      document.documentElement.className += ' perfect-scrollbar-on';
+      document.documentElement.classList.remove('perfect-scrollbar-off');
+      let tables = document.querySelectorAll('.table-responsive');
       for (let i = 0; i < tables.length; i++) {
         ps = new PerfectScrollbar(tables[i]);
       }
     }
-    document.body.classList.toggle("create-page");
+    document.body.classList.toggle('create-page');
     return () => {
-      if (navigator.platform.indexOf("Win") > 1) {
+      if (navigator.platform.indexOf('Win') > 1) {
         ps.destroy();
-        document.documentElement.className += " perfect-scrollbar-off";
-        document.documentElement.classList.remove("perfect-scrollbar-on");
+        document.documentElement.className += ' perfect-scrollbar-off';
+        document.documentElement.classList.remove('perfect-scrollbar-on');
       }
-      document.body.classList.toggle("create-page");
+      document.body.classList.toggle('create-page');
     };
   });
 
   useEffect(() => {
-    if (state.jwt === "") Router.push("/login");
+    if (state.jwt === '') Router.push('/login');
     else {
       let mounted = true;
-      const url = API_URL + "/categories";
+      const url = API_URL + '/categories';
       try {
         const fetchCategory = async () => {
           const get_resolve = await axios.get(url, {
@@ -236,7 +236,7 @@ const Create = () => {
         fetchCategory();
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+          console.log('Error: ', error.message);
         } else {
           throw error;
         }
@@ -250,41 +250,41 @@ const Create = () => {
 
   return (
     <div>
-      <div className="wrapper">
-        <div className="main">
+      <div className='wrapper'>
+        <div className='main'>
           <Container>
             <Card>
               <CardHeader>
-                <h3 className="title">Tạo campaign</h3>
+                <h3 className='title'>Tạo campaign</h3>
               </CardHeader>
               <CardBody>
-                <Form className="form">
+                <Form className='form'>
                   <FormGroup>
-                    <Label for="title">Tiêu đề</Label>
+                    <Label for='title'>Tiêu đề</Label>
                     <Input
-                      type="text"
-                      id="title"
-                      name="title"
+                      type='text'
+                      id='title'
+                      name='title'
                       onChange={handleCampaignChange}
                       value={campaignState.title}
-                      placeholder="Tiêu đề"
+                      placeholder='Tiêu đề'
                       required
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label for="content">Nội dung</Label>
+                    <Label for='content'>Nội dung</Label>
                     <Editor
-                      apiKey="awf8d12nkj02oekbnk7t8xx283a5kexhscdfvpj9sd8h22ox"
-                      id="content"
-                      placeholder="Nội dung..."
+                      apiKey='awf8d12nkj02oekbnk7t8xx283a5kexhscdfvpj9sd8h22ox'
+                      id='content'
+                      placeholder='Nội dung...'
                       onEditorChange={handleContentChange}
                       value={campaignState.content}
                       required
                     />
                   </FormGroup>
-                  <div className="form-row">
-                    <FormGroup className="col-md-4">
-                      <Label for="startDate">Chọn Ngày bắt đầu</Label>
+                  <div className='form-row'>
+                    <FormGroup className='col-md-4'>
+                      <Label for='startDate'>Chọn Ngày bắt đầu</Label>
                       <Datetime
                         onChange={handleStartDateChange}
                         value={campaignState.open_datetime.toISOString}
@@ -292,8 +292,8 @@ const Create = () => {
                         isValidDate={validStartDate}
                       />
                     </FormGroup>
-                    <FormGroup className="col-md-4">
-                      <Label for="endDate">Chọn Ngày kết thúc</Label>
+                    <FormGroup className='col-md-4'>
+                      <Label for='endDate'>Chọn Ngày kết thúc</Label>
                       <Datetime
                         onChange={handleEndDateChange}
                         value={campaignState.close_datetime.toISOString}
@@ -302,22 +302,22 @@ const Create = () => {
                       />
                     </FormGroup>
                   </div>
-                  <div className="form-row">
-                    <FormGroup className="col-md-4">
-                      <Label for="channel">Chọn Danh mục</Label>
+                  <div className='form-row'>
+                    <FormGroup className='col-md-4'>
+                      <Label for='channel'>Chọn Danh mục</Label>
                       <br />
                       <UncontrolledDropdown group>
                         <DropdownToggle
                           caret
-                          color="secondary"
-                          data-toggle="dropdown"
-                          className="mydropdown"
+                          color='secondary'
+                          data-toggle='dropdown'
+                          className='mydropdown'
                         >
                           {campaignState.category === null
-                            ? "Chọn Danh mục..."
+                            ? 'Chọn Danh mục...'
                             : tempData.categoryName}
                         </DropdownToggle>
-                        <DropdownMenu>
+                        <DropdownMenu className='dropdown-menu'>
                           {categories.categories.map((category) => (
                             <DropdownItem
                               key={category.id}
@@ -335,17 +335,17 @@ const Create = () => {
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     </FormGroup>
-                    <FormGroup className="col-md-4">
-                      <Label for="channel">Chọn Kênh</Label>
+                    <FormGroup className='col-md-4'>
+                      <Label for='channel'>Chọn Kênh</Label>
                       <br />
                       <UncontrolledDropdown group>
                         <DropdownToggle
                           caret
-                          color="secondary"
-                          data-toggle="dropdown"
+                          color='secondary'
+                          data-toggle='dropdown'
                         >
                           {campaignState.channels === null
-                            ? "Chọn Kênh..."
+                            ? 'Chọn Kênh...'
                             : tempData.channelName}
                         </DropdownToggle>
                         {campaignState.category !== null ? (
@@ -375,21 +375,21 @@ const Create = () => {
                   </div>
                 </Form>
                 <br />
-                <div className="FileUpload">
+                <div className='FileUpload'>
                   <form onSubmit={handleImageSubmit}>
-                    <Label for="picture">Chọn ảnh...</Label>
+                    <Label for='picture'>Chọn ảnh...</Label>
                     <br />
-                    <input type="file" onChange={handleImageChange} />
+                    <input type='file' onChange={handleImageChange} />
                     <Button>Tải lên</Button>
                   </form>
                   {picture.loading ? <p>Đang tải lên...</p> : null}
                 </div>
                 {picture.submmited ? <p>Đã tải lên!</p> : <p></p>}
-                <div className="form-button">
-                  <Button className="btn-neutral" color="primary">
+                <div className='form-button'>
+                  <Button className='btn-neutral' color='primary'>
                     Hủy
                   </Button>
-                  <Button color="primary" onClick={handleCampaignSubmit}>
+                  <Button color='primary' onClick={handleCampaignSubmit}>
                     Tạo
                   </Button>
                 </div>
