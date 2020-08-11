@@ -3,9 +3,7 @@ import { useAuth } from "../../context/userContext";
 import React, { useEffect, useState } from "react";
 import Router from "next/router";
 import axios from "axios";
-import Datetime from "react-datetime";
 import {
-  Button,
   Card,
   CardBody,
   CardImg,
@@ -14,18 +12,7 @@ import {
   CardTitle,
   CardText,
   Row,
-  Modal,
-  ModalBody,
-  ModalFooter,
   Spinner,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
 } from "reactstrap";
 
 const { API_URL } = process.env;
@@ -66,7 +53,7 @@ const Influencer = () => {
             });
           }
         };
-        fetchInfluencer().then(setLoading(false));;
+        fetchInfluencer().then(setLoading(false));
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
@@ -101,23 +88,27 @@ const Influencer = () => {
                         <CardSubtitle>
                           <strong>Thể loại:</strong>
                         </CardSubtitle>
-                        
-                          <CardText>
-                            {influencer.info.categoryDetail} -{" "}
-                            {influencer.info.categoryDescription}
-                          </CardText>
-                        
+
+                        <CardText>
+                          {influencer.info.categoryDetail} -{" "}
+                          {influencer.info.categoryDescription}
+                        </CardText>
+
                         <CardSubtitle>
                           <strong>Kênh:</strong>
                         </CardSubtitle>
                         {influencer.info.channels !== undefined ? (
                           <>
                             <CardText>
-                              <strong>{influencer.info.channels[0].name}</strong>
+                              <strong>
+                                {influencer.info.channels[0].name}
+                              </strong>
                             </CardText>
                             <CardText>
                               <strong>Website:</strong>{" "}
-                              <a href="##">{influencer.info.channels[0].website}</a>
+                              <a href="##">
+                                {influencer.info.channels[0].website}
+                              </a>
                             </CardText>
                             <CardText>
                               <strong>Địa chỉ:</strong>{" "}
@@ -131,7 +122,6 @@ const Influencer = () => {
                         ) : (
                           ""
                         )}
-                        
                       </CardBody>
                     </Card>
                   </Container>
