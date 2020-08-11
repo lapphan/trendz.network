@@ -1116,12 +1116,12 @@ const Post = () => {
                               </TimelineSeparator>
                               <TimelineContent>
                                 <Paper elevation={3} className={classes.paper}>
-                                  <Typography variant="h6">
+                                  <p>
                                     Kiểm duyệt
-                                  </Typography>
-                                  <Typography>
+                                  </p>
+                                  <p>
                                     Hệ thống TrendZ đã duyệt yêu cầu
-                                  </Typography>
+                                  </p>
                                 </Paper>
                               </TimelineContent>
                             </TimelineItem>
@@ -1201,12 +1201,12 @@ const Post = () => {
                               </TimelineSeparator>
                               <TimelineContent>
                                 <Paper elevation={3} className={classes.paper}>
-                                  <Typography variant="h6">
+                                  <p>
                                     Thông tin đến Influencer
-                                  </Typography>
-                                  <Typography>
+                                  </p>
+                                  <p>
                                     Influencer đang xem xét yêu cầu
-                                  </Typography>
+                                  </p>
                                 </Paper>
                               </TimelineContent>
                             </TimelineItem>
@@ -1224,12 +1224,12 @@ const Post = () => {
                               </TimelineSeparator>
                               <TimelineContent>
                                 <Paper elevation={3} className={classes.paper}>
-                                  <Typography variant="h6">
+                                  <p>
                                     Thông tin từ Influencer
-                                  </Typography>
-                                  <Typography>
+                                  </p>
+                                  <p>
                                     Influencer đã từ chối yêu cầu
-                                  </Typography>
+                                  </p>
                                 </Paper>
                               </TimelineContent>
                             </TimelineItem>
@@ -1244,12 +1244,12 @@ const Post = () => {
                               </TimelineSeparator>
                               <TimelineContent>
                                 <Paper elevation={3} className={classes.paper}>
-                                  <Typography variant="h6">
+                                  <p>
                                     Thông tin từ Influencer
-                                  </Typography>
-                                  <Typography>
+                                  </p>
+                                  <p>
                                     Influencer đã chấp thuận yêu cầu
-                                  </Typography>
+                                  </p>
                                 </Paper>
                               </TimelineContent>
                             </TimelineItem>
@@ -1265,9 +1265,9 @@ const Post = () => {
                               </TimelineSeparator>
                               <TimelineContent>
                                 <Paper elevation={3} className={classes.paper}>
-                                  <Typography variant="h6">
+                                  <p>
                                     (Dự kiến) Kết thúc
-                                  </Typography>
+                                  </p>
                                 </Paper>
                               </TimelineContent>
                             </TimelineItem>
@@ -1299,12 +1299,12 @@ const Post = () => {
                                     elevation={3}
                                     className={classes.paper}
                                   >
-                                    <Typography variant="h6">
+                                    <p>
                                       Thực thi
-                                    </Typography>
-                                    <Typography>
+                                    </p>
+                                    <p>
                                       Influencer đang thực hiện
-                                    </Typography>
+                                    </p>
                                   </Paper>
                                 </TimelineContent>
                               </TimelineItem>
@@ -1330,9 +1330,9 @@ const Post = () => {
                                     elevation={3}
                                     className={classes.paper}
                                   >
-                                    <Typography variant="h6">
+                                    <p>
                                       (Dự kiến) Kết thúc
-                                    </Typography>
+                                    </p>
                                   </Paper>
                                 </TimelineContent>
                               </TimelineItem>
@@ -1365,12 +1365,12 @@ const Post = () => {
                                     elevation={3}
                                     className={classes.paper}
                                   >
-                                    <Typography variant="h6">
+                                    <p>
                                       Thực thi
-                                    </Typography>
-                                    <Typography>
+                                    </p>
+                                    <p>
                                       Influencer đã hoàn tất yêu cầu
-                                    </Typography>
+                                    </p>
                                   </Paper>
                                 </TimelineContent>
                               </TimelineItem>
@@ -1396,13 +1396,13 @@ const Post = () => {
                                     elevation={3}
                                     className={classes.paper}
                                   >
-                                    <Typography variant="h6">
+                                    <p>
                                       Hoàn thành
-                                    </Typography>
-                                    <Typography>
+                                    </p>
+                                    <p>
                                       Influencer đã hoàn thành yêu cầu, dự án
                                       kết thúc!
-                                    </Typography>
+                                    </p>
                                   </Paper>
                                 </TimelineContent>
                               </TimelineItem>
