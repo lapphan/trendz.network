@@ -57,11 +57,11 @@ const Post = () => {
 
   const RenderRole = () => {
     if (state.user.id == campaign.channels[0].user) {
-      return <InfluencerCampaignPage categories={categories} campaign={campaign} />;
+      return <InfluencerCampaignPage categories={categories} campaign={campaign} cid={cid}/>;
     } else if (state.user.id == campaign.user.id) {
-      return <CustomerCampaignPage campaign={campaign} />;
+      return <CustomerCampaignPage campaign={campaign} cid={cid}/>;
     } else if (state.user.role.name == "Employee") {
-      return <EmployeeCampaignPage campaign={campaign} influencer={influencer} />;
+      return <EmployeeCampaignPage campaign={campaign} influencer={influencer} cid={cid}/>;
     } else
       return (
           <Row>

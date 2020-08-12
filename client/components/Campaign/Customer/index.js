@@ -29,7 +29,7 @@ import { useSnackbar } from "notistack";
 
 const { API_URL } = process.env;
 
-const CustomerCampaignPage = ({ campaign, categories }) => {
+const CustomerCampaignPage = ({ campaign, categories, cid }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state } = useAuth();
 

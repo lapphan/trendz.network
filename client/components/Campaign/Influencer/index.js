@@ -17,7 +17,7 @@ import { Skeleton } from "@material-ui/lab";
 
 const { API_URL } = process.env;
 
-const InfluencerCampaignPage = ({ campaign }) => {
+const InfluencerCampaignPage = ({ campaign, cid }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state } = useAuth();
 

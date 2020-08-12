@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EmployeeCampaignPage = ({ campaign, influencer }) => {
+const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const classes = useStyles();
