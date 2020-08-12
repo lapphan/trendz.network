@@ -44,6 +44,8 @@ const Create = () => {
     channels: [],
     open_datetime: new Date().toISOString(),
     close_datetime: new Date().toISOString(),
+    approve: null,
+    completed: null
   });
 
   const [categories, setCategories] = useState({

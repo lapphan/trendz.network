@@ -11,6 +11,8 @@ export const CREATE_CAMPAIGN = gql`
     $channels: [ID]
     $open_datetime: DateTime
     $close_datetime: DateTime
+    $approve: Boolean
+  	$completed: Boolean
   ) {
     createCampaign(
       input: {
@@ -19,6 +21,8 @@ export const CREATE_CAMPAIGN = gql`
           content: $content
           picture: $picture
           status: $status
+          completed: $completed
+          approve: $approve
           user: $user
           category: $category
           channels: $channels
