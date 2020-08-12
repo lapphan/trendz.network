@@ -22,6 +22,8 @@ import {
   Spinner,
 } from 'reactstrap';
 
+import Skeleton from "@material-ui/lab/Skeleton";
+
 const { API_URL } = process.env;
 
 const Customer = () => {
@@ -162,19 +164,22 @@ const Customer = () => {
                           influencers.influencers.map((influencer) => (
                             <Col md={4} key={influencer.id}>
                               <Card className='campaign-card'>
-                                <CardImg
-                                  src={
-                                    influencer.avatar !== null
-                                      ? `
-                                        ${API_URL}${influencer.avatar.formats.thumbnail.url}`
-                                      : '/256x186.svg'
-                                  }
-                                  alt='Card image cap'
-                                  className='campaign-img'
-                                />
+                              {campaign.picture[0] !== undefined ? (
+                                  <CardImg
+                                    src={`${API_URL}${influencer.avatar.formats.thumbnail.url}`}
+                                    alt="Card image cap"
+                                    className="campaign-img"
+                                  />
+                                ) : (
+                                  <Skeleton
+                                    variant="rect"
+                                    width={256}
+                                    height={186}
+                                  />
+                                )}
                                 <CardBody>
                                   <CardTitle className='dashboard-card-title'>
-                                    {influencer.name}
+                                    {influencer.name !== null ? influencer.name : <Skeleton variant="text"/>}
                                   </CardTitle>
                                   <Link
                                     href='/influencer/[uid]'

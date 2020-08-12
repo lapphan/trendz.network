@@ -22,6 +22,8 @@ import {
   Spinner,
 } from "reactstrap";
 
+import Skeleton from "@material-ui/lab/Skeleton";
+
 const { API_URL } = process.env;
 
 const Employee = () => {
@@ -52,22 +54,21 @@ const Employee = () => {
   };
 
   const renderStatus = (approvalStatus, influencerStatus, status) => {
-    if(approvalStatus==null){
+    if (approvalStatus == null) {
       return "Đang chờ cấp phép";
     }
-    if(!approvalStatus){
-      return "Không được cấp phép"
+    if (!approvalStatus) {
+      return "Không được cấp phép";
     }
     if (approvalStatus && influencerStatus == null) {
-        return "Đã được cấp phép - Đang chờ influencer xác nhận"; 
+      return "Đã được cấp phép - Đang chờ influencer xác nhận";
     }
-    if(approvalStatus && !influencerStatus){
-      return "Đã được cấp phép - Influencer đã từ chối"; 
+    if (approvalStatus && !influencerStatus) {
+      return "Đã được cấp phép - Influencer đã từ chối";
     }
-    if(approvalStatus && influencerStatus && status == null){
-      return "Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động"; 
-    }
-    else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc"
+    if (approvalStatus && influencerStatus && status == null) {
+      return "Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động";
+    } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
   };
 
   useEffect(() => {
@@ -164,27 +165,42 @@ const Employee = () => {
                           onHoldCampaigns.campaigns.map((campaign) => (
                             <Col md={4} key={campaign.id}>
                               <Card className="campaign-card">
-                                <CardImg
-                                  src={
-                                    campaign.picture[0] !== undefined
-                                      ? `
-                                          ${API_URL}${campaign.picture[0].formats.thumbnail.url}`
-                                      : "/256x186.svg"
-                                  }
-                                  alt="Card image cap"
-                                  className="campaign-img"
-                                />
+                                {campaign.picture[0] !== undefined ? (
+                                  <CardImg
+                                    src={`${API_URL}${campaign.picture[0].formats.thumbnail.url}`}
+                                    alt="Card image cap"
+                                    className="campaign-img"
+                                  />
+                                ) : (
+                                  <Skeleton
+                                    variant="rect"
+                                    width={256}
+                                    height={186}
+                                  />
+                                )}
                                 <CardBody>
                                   <CardTitle className="dashboard-card-title">
-                                    {campaign.title}
+                                    {campaign.title !== undefined ? (
+                                      campaign.title
+                                    ) : (
+                                      <Skeleton variant="text" />
+                                    )}
                                   </CardTitle>
                                   <CardSubtitle>
                                     <strong>Người tạo:</strong>{" "}
-                                    {campaign.user.username}
+                                    {campaign.user !== null ? (
+                                      campaign.user.username
+                                    ) : (
+                                      <Skeleton variant="text" />
+                                    )}
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>Trạng thái:</strong>{" "}
-                                    {renderStatus(campaign.approve,campaign.status, campaign.completed)}
+                                    {renderStatus(
+                                      campaign.approve,
+                                      campaign.status,
+                                      campaign.completed
+                                    )}
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>
@@ -193,13 +209,18 @@ const Employee = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <small className="text-muted">
-                                      {new Date(
-                                        campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString("en-GB") +
+                                      {campaign.campaignTTL[0] !==
+                                      undefined ? (
+                                        new Date(
+                                          campaign.campaignTTL[0].open_datetime
+                                        ).toLocaleString("en-GB") +
                                         " - " +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")}
+                                        ).toLocaleString("en-GB")
+                                      ) : (
+                                        <Skeleton variant="text" />
+                                      )}
                                     </small>
                                   </CardSubtitle>
                                   <Link
@@ -245,7 +266,11 @@ const Employee = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>Trạng thái:</strong>{" "}
-                                    {renderStatus(campaign.approve,campaign.status, campaign.completed)}
+                                    {renderStatus(
+                                      campaign.approve,
+                                      campaign.status,
+                                      campaign.completed
+                                    )}
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>
@@ -307,7 +332,11 @@ const Employee = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>Trạng thái:</strong>{" "}
-                                    {renderStatus(campaign.approve,campaign.status, campaign.completed)}
+                                    {renderStatus(
+                                      campaign.approve,
+                                      campaign.status,
+                                      campaign.completed
+                                    )}
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <strong>

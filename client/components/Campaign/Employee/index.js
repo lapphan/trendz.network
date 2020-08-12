@@ -30,6 +30,7 @@ import {
   TimelineContent,
   TimelineOppositeContent,
   TimelineDot,
+  Skeleton,
 } from "@material-ui/lab";
 
 //import { Paper, Typography } from "@material-ui/core";
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EmployeeCampaignPage = ({ cid }) => {
+const EmployeeCampaignPage = ({ campaign, influencer }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const classes = useStyles();
@@ -68,32 +69,6 @@ const EmployeeCampaignPage = ({ cid }) => {
 
   const [navState, setNav] = useState({
     vertical: 1,
-  });
-
-  const signal = axios.CancelToken.source();
-
-  const [campaign, setCampaign] = useState({
-    campaignTTL: [
-      {
-        open_datetime: "",
-        close_datetime: "",
-      },
-    ],
-    approve: null,
-    completed: null,
-    category: {},
-    channels: [],
-    content: "",
-    picture: [],
-    user: {},
-    title: "",
-    status: null,
-    created_at: "",
-    updated_at: "",
-  });
-
-  const [influencer, setInfluencer] = useState({
-    user: {},
   });
 
   const toggleTabs = (event, stateName, index) => {
@@ -132,7 +107,7 @@ const EmployeeCampaignPage = ({ cid }) => {
   };
 
   const renderImage = () => {
-    if (campaign.picture[0] !== undefined) {
+    if (campaign.picture[0].formats !== undefined) {
       if (campaign.picture[0].formats.medium !== undefined) {
         return API_URL + campaign.picture[0].formats.medium.url;
       } else if (campaign.picture[1].formats.medium !== undefined) {
@@ -150,8 +125,14 @@ const EmployeeCampaignPage = ({ cid }) => {
   };
 
   const renderInfluencerImage = () => {
-    if (influencer.user.avatar !== undefined) {
-      if (influencer.user.avatar !== undefined) {
+    if (
+      influencer.user.avatar !== undefined ||
+      influencer.user.avatar !== null
+    ) {
+      if (
+        influencer.user.avatar.formats !== undefined ||
+        influencer.user.avatar.formats !== null
+      ) {
         return API_URL + influencer.user.avatar.formats.thumbnail.url;
       } else return "/256x186.svg";
     } else return "/256x186.svg";
@@ -174,64 +155,6 @@ const EmployeeCampaignPage = ({ cid }) => {
       return "Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động";
     } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
   };
-
-  useEffect(() => {
-    if (cid === undefined) return;
-    else {
-      let mountedCampaign = true;
-      try {
-        const fetchCampaign = async () => {
-          const url = API_URL + `/campaigns/${cid}`;
-          const get_resolve = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${state.jwt}`,
-            },
-          });
-          if (mountedCampaign) {
-            setCampaign({
-              user: get_resolve.data.user,
-              campaignTTL: get_resolve.data.campaignTTL,
-              category: get_resolve.data.category,
-              channels: get_resolve.data.channels,
-              picture: get_resolve.data.picture,
-              status: get_resolve.data.status,
-              title: get_resolve.data.title,
-              content: get_resolve.data.content,
-              approve: get_resolve.data.approve,
-              completed: get_resolve.data.completed,
-              created_at: get_resolve.data.created_at,
-              updated_at: get_resolve.data.updated_at,
-            });
-            try {
-              const fetchInfluencer = async () => {
-                const url =
-                  API_URL + `/users/${get_resolve.data.channels[0].user}`;
-                const get_influencer = await axios.get(url, {
-                  headers: {
-                    Authorization: `Bearer ${state.jwt}`,
-                  },
-                });
-                setInfluencer({
-                  user: get_influencer.data,
-                });
-              };
-              fetchInfluencer();
-            } catch (error) {}
-          }
-        };
-        fetchCampaign().then(setLoading(false));
-      } catch (error) {
-        if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
-        }
-      }
-
-      return function cleanup() {
-        mountedCampaign = false;
-        signal.cancel();
-      };
-    }
-  }, [state]);
 
   return (
     <Row>
@@ -449,11 +372,15 @@ const EmployeeCampaignPage = ({ cid }) => {
               <Col md={6}>
                 <h3>Thông tin Influencer</h3>
                 <Card className="single-card">
-                  <CardImg
-                    src={renderInfluencerImage()}
-                    alt="Card image cap"
-                    className="campaign-detail-img"
-                  />
+                  {influencer.avatar !== undefined ? (
+                    <CardImg
+                      src={renderInfluencerImage()}
+                      alt="Card image cap"
+                      className="campaign-detail-img"
+                    />
+                  ) : (
+                    <Skeleton variant="rect" width={256} height={186} />
+                  )}
                   <CardBody>
                     <CardTitle>{influencer.user.name}</CardTitle>
                     <CardSubtitle>

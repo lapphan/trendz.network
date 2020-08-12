@@ -29,36 +29,11 @@ import { useSnackbar } from "notistack";
 
 const { API_URL } = process.env;
 
-const CustomerCampaignPage = (cid) => {
+const CustomerCampaignPage = ({ campaign, categories }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state } = useAuth();
 
-  const [isLoading, setLoading] = useState(true);
-  const signal = axios.CancelToken.source();
-  const [campaign, setCampaign] = useState({
-    campaignTTL: [
-      {
-        open_datetime: "",
-        close_datetime: "",
-      },
-    ],
-    approve: null,
-    completed: null,
-    category: {},
-    channels: [],
-    content: "",
-    picture: [],
-    user: {},
-    title: "",
-    status: null,
-    created_at: "",
-    updated_at: "",
-  });
   const [date, setDate] = useState(Datetime.moment().subtract(1, "day"));
-
-  const [categories, setCategories] = useState({
-    categories: [],
-  });
 
   const [tempData, setTempData] = useState({
     categoryId: "",
@@ -221,51 +196,51 @@ const CustomerCampaignPage = (cid) => {
     } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
   };
 
-  const renderDeleteModal = () =>{
+  const renderDeleteModal = () => {
     <Modal isOpen={deleteModal} toggle={toggleDeleteModal}>
-        <div className="modal-header">
-          <h4 className="modal-title" id="avatarModal">
-            <strong>Xóa Campaign</strong>
-          </h4>
-          <button
-            type="button"
-            className="close"
-            data-dismiss="modal"
-            aria-hidden="true"
-            onClick={toggleDeleteModal}
-          >
-            <i className="tim-icons icon-simple-remove" />
-          </button>
-        </div>
-        <ModalBody>
-            <Label>Bạn có thật sự muốn xóa Campaign này?</Label>
-        </ModalBody>
-        <ModalFooter>
+      <div className="modal-header">
+        <h4 className="modal-title" id="avatarModal">
+          <strong>Xóa Campaign</strong>
+        </h4>
+        <button
+          type="button"
+          className="close"
+          data-dismiss="modal"
+          aria-hidden="true"
+          onClick={toggleDeleteModal}
+        >
+          <i className="tim-icons icon-simple-remove" />
+        </button>
+      </div>
+      <ModalBody>
+        <Label>Bạn có thật sự muốn xóa Campaign này?</Label>
+      </ModalBody>
+      <ModalFooter>
         <Button color="secondary" onClick={toggleDeleteModal}>
-            Hủy
-          </Button>
-          <Button
-            color="primary"
-            onClick={() => {
-              try {
-                handleDelete();
-                enqueueSnackbar("Xóa campaign thành công!", {
-                  variant: "success",
-                });
-                Router.push('/dashboard');
-              } catch (error) {
-                enqueueSnackbar("Xóa campaign không thành công!", {
-                  variant: "error",
-                });
-              }
-              toggleDeleteModal();
-            }}
-          >
-            Xóa
-          </Button>
-        </ModalFooter>
-    </Modal>
-  }
+          Hủy
+        </Button>
+        <Button
+          color="primary"
+          onClick={() => {
+            try {
+              handleDelete();
+              enqueueSnackbar("Xóa campaign thành công!", {
+                variant: "success",
+              });
+              Router.push("/dashboard");
+            } catch (error) {
+              enqueueSnackbar("Xóa campaign không thành công!", {
+                variant: "error",
+              });
+            }
+            toggleDeleteModal();
+          }}
+        >
+          Xóa
+        </Button>
+      </ModalFooter>
+    </Modal>;
+  };
 
   const renderEditModal = () => {
     return (
@@ -437,82 +412,8 @@ const CustomerCampaignPage = (cid) => {
     );
   };
 
-  useEffect(() => {
-    if (cid===undefined) return;
-    else {
-      let mountedCampaign = true;
-      let mountedCategory = true;
-      try {
-        const fetchCampaign = async () => {
-          const url = API_URL + `/campaigns/${cid}`;
-          const get_resolve = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${state.jwt}`,
-            },
-          });
-          if (mountedCampaign) {
-            setCampaign({
-              user: get_resolve.data.user,
-              campaignTTL: get_resolve.data.campaignTTL,
-              category: get_resolve.data.category,
-              channels: get_resolve.data.channels,
-              picture: get_resolve.data.picture,
-              status: get_resolve.data.status,
-              title: get_resolve.data.title,
-              content: get_resolve.data.content,
-              approve: get_resolve.data.approve,
-              completed: get_resolve.data.completed,
-              created_at: get_resolve.data.created_at,
-              updated_at: get_resolve.data.updated_at,
-            });
-            setTempCampaign({
-              user: get_resolve.data.user,
-              campaignTTL: get_resolve.data.campaignTTL,
-              category: get_resolve.data.category,
-              channels: get_resolve.data.channels,
-              picture: get_resolve.data.picture,
-              status: get_resolve.data.status,
-              title: get_resolve.data.title,
-              content: get_resolve.data.content,
-              approve: get_resolve.data.approve,
-              completed: get_resolve.data.completed,
-              created_at: get_resolve.data.created_at,
-              updated_at: get_resolve.data.updated_at,
-            });
-          }
-        };
-        const fetchCategory = async () => {
-          const url = API_URL + "/categories";
-          const get_resolve = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${state.jwt}`,
-            },
-          });
-          if (mountedCategory) {
-            setCategories({ categories: get_resolve.data });
-          }
-        };
-
-        fetchCategory();
-        fetchCampaign().then(setLoading(false));
-      } catch (error) {
-        if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
-        }
-      }
-
-      return function cleanup() {
-        mountedCampaign = false;
-        mountedCategory = false;
-        signal.cancel();
-      };
-    }
-  }, [state]);
-
   return (
     <Row>
-      {isLoading === false ? (
-        <>
           {tempCampaign.title !== "" ? renderEditModal() : ""}
           {tempCampaign.title !== "" ? renderDeleteModal() : ""}
           <Card className="single-card">
@@ -608,12 +509,8 @@ const CustomerCampaignPage = (cid) => {
               </div>
             </CardBody>
           </Card>
-        </>
-      ) : (
-        <Spinner />
-      )}
     </Row>
   );
 };
 
-export default CustomerCampaignPage
+export default CustomerCampaignPage;

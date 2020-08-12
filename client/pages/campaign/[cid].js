@@ -25,7 +25,7 @@ const Post = () => {
   const router = useRouter();
   const { cid } = router.query;
   const { state } = useAuth();
-  const [isLoading, setLoading] = useState(true);
+  
   const signal = axios.CancelToken.source();
   const [campaign, setCampaign] = useState({
     campaignTTL: [
@@ -47,13 +47,21 @@ const Post = () => {
     updated_at: "",
   });
 
+  const [categories, setCategories] = useState({
+    categories: [],
+  });
+
+  const [influencer, setInfluencer] = useState({
+    user: {},
+  });
+
   const RenderRole = () => {
     if (state.user.id == campaign.channels[0].user) {
-      return <InfluencerCampaignPage cid={cid} />;
+      return <InfluencerCampaignPage categories={categories} campaign={campaign} />;
     } else if (state.user.id == campaign.user.id) {
-      return <CustomerCampaignPage cid={cid} />;
+      return <CustomerCampaignPage campaign={campaign} />;
     } else if (state.user.role.name == "Employee") {
-      return <EmployeeCampaignPage cid={cid} />;
+      return <EmployeeCampaignPage campaign={campaign} influencer={influencer} />;
     } else
       return (
           <Row>
@@ -180,6 +188,7 @@ const Post = () => {
     if (state.jwt === "") Router.push("/login");
     else {
       let mountedCampaign = true;
+      let mountedCategory = true;
       try {
         const fetchCampaign = async () => {
           const url = API_URL + `/campaigns/${cid}`;
@@ -203,9 +212,37 @@ const Post = () => {
               created_at: get_resolve.data.created_at,
               updated_at: get_resolve.data.updated_at,
             });
+            try {
+              const fetchInfluencer = async () => {
+                const url =
+                  API_URL + `/users/${get_resolve.data.channels[0].user}`;
+                const get_influencer = await axios.get(url, {
+                  headers: {
+                    Authorization: `Bearer ${state.jwt}`,
+                  },
+                });
+                setInfluencer({
+                  user: get_influencer.data,
+                });
+              };
+              fetchInfluencer();
+            } catch (error) {}
           }
         };
-        fetchCampaign();
+        const fetchCategory = async () => {
+          const url = API_URL + "/categories";
+          const get_resolve = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+          if (mountedCategory) {
+            setCategories({ categories: get_resolve.data });
+          }
+        };
+
+        fetchCategory();
+        fetchCampaign().then(setLoading(false));
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
@@ -214,6 +251,7 @@ const Post = () => {
 
       return function cleanup() {
         mountedCampaign = false;
+        mountedCategory = false;
         signal.cancel();
       };
     }
