@@ -22,7 +22,7 @@ import {
   Spinner,
 } from 'reactstrap';
 
-import Skeleton from "@material-ui/lab/Skeleton";
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const { API_URL } = process.env;
 
@@ -164,22 +164,26 @@ const Customer = () => {
                           influencers.influencers.map((influencer) => (
                             <Col md={4} key={influencer.id}>
                               <Card className='campaign-card'>
-                              {campaign.picture[0] !== undefined ? (
+                                {influencer.avatar !== null ? (
                                   <CardImg
                                     src={`${API_URL}${influencer.avatar.formats.thumbnail.url}`}
-                                    alt="Card image cap"
-                                    className="campaign-img"
+                                    alt='Card image cap'
+                                    className='campaign-img'
                                   />
                                 ) : (
                                   <Skeleton
-                                    variant="rect"
+                                    variant='rect'
                                     width={256}
                                     height={186}
                                   />
                                 )}
                                 <CardBody>
                                   <CardTitle className='dashboard-card-title'>
-                                    {influencer.name !== null ? influencer.name : <Skeleton variant="text"/>}
+                                    {influencer.name !== null ? (
+                                      influencer.name
+                                    ) : (
+                                      <Skeleton variant='text' />
+                                    )}
                                   </CardTitle>
                                   <Link
                                     href='/influencer/[uid]'
