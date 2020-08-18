@@ -29,6 +29,9 @@ import {
 
 import Skeleton from "@material-ui/lab/Skeleton";
 
+import { campaignStatuses } from "../../../utils/filters/campaignStatus";
+import { sortBy } from "../../../utils/filters/sortBy";
+
 const { API_URL } = process.env;
 
 const Customer = () => {
@@ -40,53 +43,6 @@ const Customer = () => {
   const [categories, setCategories] = useState({
     categories: [],
   });
-
-  const campaignStatuses = [
-    {
-      id: 1,
-      status: "Đang chờ kiểm duyệt",
-      value: "approve_null=true",
-    },
-    {
-      id: 2,
-      status: "Đang chờ Influencer xác nhận",
-      value: "approve=true&status_null=true",
-    },
-    {
-      id: 3,
-      status: "Influencer đã từ chối",
-      value: "approve=true&status=false",
-    },
-    {
-      id: 4,
-      status: "Đang được thực hiện",
-      value: "approve=true&status=true&completed=false",
-    },
-    {
-      id: 5,
-      status: "Đã hoàn thành",
-      value: "approve=true&status=true&completed=true",
-    },
-  ];
-
-  const sortBy = [
-    {
-      id: 1,
-      type: "Ngày tháng tạo (Mới nhất)",
-      value: "_sort=created_at:desc",
-    },
-    {
-      id: 2,
-      type: "Ngày tháng tạo (Cũ nhất)",
-      value: "_sort=created_at:asc",
-    },
-    { id: 3, type: "Tên campaign (A-Z)", value: "_sort=title:asc" },
-    {
-      id: 4,
-      type: "Tên campaign (Z-A)",
-      value: "_sort=title:desc",
-    },
-  ];
 
   const [query, setQuery] = useState("?");
 
@@ -153,9 +109,9 @@ const Customer = () => {
   useEffect(() => {
     let query = "?";
     if (filterItems.search !== "" && query === "?") {
-      query += "title=" + filterItems.search;
+      query += "title_contains=" + filterItems.search;
     } else if (filterItems.search !== "" && query !== "?")
-      query += "&title=" + filterItems.search;
+      query += "&title_contains=" + filterItems.search;
     if (filterItems.category !== "" && query === "?") {
       query += "_where[category.id]=" + filterItems.category;
     } else if (filterItems.category !== "" && query !== "?")
@@ -511,7 +467,11 @@ const Customer = () => {
                           <CardSubtitle></CardSubtitle>
                         </Row>
                         <Row>
-                          <Button onClick={handleClearFilter} color="warning" style={{marginTop: '19px'}}>
+                          <Button
+                            onClick={handleClearFilter}
+                            color="warning"
+                            style={{ marginTop: "19px" }}
+                          >
                             Làm sạch bộ lọc
                           </Button>
                         </Row>

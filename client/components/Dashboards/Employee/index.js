@@ -20,9 +20,16 @@ import {
   Row,
   Col,
   Spinner,
+  Input,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 
 import Skeleton from "@material-ui/lab/Skeleton";
+
+import { sortBy } from "../../../utils/filters/sortBy";
 
 const { API_URL } = process.env;
 
@@ -30,6 +37,10 @@ const Employee = () => {
   const { state } = useAuth();
   const [navState, setNav] = useState({
     vertical: 1,
+  });
+
+  const [categories, setCategories] = useState({
+    categories: [],
   });
 
   const [onHoldCampaigns, setOnHoldCampaigns] = useState({
@@ -44,12 +55,53 @@ const Employee = () => {
     campaigns: [],
   });
 
+  const [filterItems, setFilterItems] = useState({
+    category: "",
+    sort: "",
+    search: "",
+  });
+
+  const [query, setQuery] = useState("?");
+
   const signal = axios.CancelToken.source();
 
   const toggleTabs = (event, stateName, index) => {
     event.preventDefault();
     setNav((previousState) => {
       return { ...previousState, [stateName]: index };
+    });
+    setQuery("?");
+    setFilterItems({
+      category: "",
+      sort: "",
+      search: "",
+    });
+  };
+
+  const handleSearchChange = (event) => {
+    const { name, value } = event.target;
+    setFilterItems((previousState) => {
+      return {
+        ...previousState,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleFilterItemsChange = (name, value) => {
+    setFilterItems((previousState) => {
+      return {
+        ...previousState,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleClearFilter = () => {
+    setFilterItems({
+      category: "",
+      sort: "",
+      search: "",
     });
   };
 
@@ -72,8 +124,32 @@ const Employee = () => {
   };
 
   useEffect(() => {
+    let query = "?";
+    if (filterItems.search !== "" && query === "?") {
+      query += "title_contains=" + filterItems.search;
+    } else if (filterItems.search !== "" && query !== "?")
+      query += "&title_contains=" + filterItems.search;
+    if (filterItems.category !== "" && query === "?") {
+      query += "_where[category.id]=" + filterItems.category;
+    } else if (filterItems.category !== "" && query !== "?")
+      query += "&_where[category.id]=" + filterItems.category;
+    if (filterItems.sort !== "" && query === "?") {
+      query += filterItems.sort;
+    } else if (filterItems.sort !== "" && query !== "?")
+      query += "&" + filterItems.sort;
+    setQuery(query);
+  }, [filterItems]);
+
+  useEffect(() => {
     let mountedCampaign = true;
-    const campaignUrl = API_URL + "/campaigns";
+    let campaignUrl;
+    if(query!== "?undefined"){
+      campaignUrl = API_URL + "/campaigns"+query;
+    } else campaignUrl = API_URL+"/campaigns";
+    console.log(campaignUrl)
+    console.log(onHoldCampaigns)
+    console.log(approvedCampaigns)
+    console.log(unapprovedCampaigns)
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
@@ -114,7 +190,80 @@ const Employee = () => {
       mountedCampaign = false;
       signal.cancel();
     };
+  }, [query]);
+
+  useEffect(() => {
+    let mountedCampaign = true;
+    let mountedCategory = true;
+    const campaignUrl = API_URL + "/campaigns";
+    const categoryUrl = API_URL + "/categories";
+    const fetchCampaign = async () => {
+      try {
+        const get_resolve = await axios.get(campaignUrl, {
+          cancelToken: signal.token,
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+        });
+        if (mountedCampaign) {
+          try {
+            setOnHoldCampaigns({
+              campaigns: get_resolve.data.filter(function (campaign) {
+                return campaign.approve == null;
+              }),
+            });
+            setApprovedCampaigns({
+              campaigns: get_resolve.data.filter(function (campaign) {
+                return campaign.approve == true;
+              }),
+            });
+            setUnapprovedCampaigns({
+              campaigns: get_resolve.data.filter(function (campaign) {
+                return campaign.approve == false;
+              }),
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log("Error: ", error.message);
+        }
+      }
+    };
+    const fetchCategories = async () => {
+      try {
+        const get_resolve = await axios.get(categoryUrl, {
+          cancelToken: signal.token,
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+        });
+        if (mountedCategory) {
+          try {
+            setCategories({
+              categories: get_resolve.data,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log("Error: ", error.message);
+        }
+      }
+    };
+    fetchCampaign();
+    fetchCategories();
+    return function cleanup() {
+      mountedCampaign = false;
+      mountedCategory = false;
+      signal.cancel();
+    };
   }, []);
+
 
   return (
     <div className="wrapper">
@@ -159,6 +308,108 @@ const Employee = () => {
               <Col>
                 <TabContent activeTab={"vertical" + navState.vertical}>
                   <TabPane tabId="vertical1">
+                    <Row style={{marginTop:'30px'}}>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Tìm kiếm</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <Input
+                            type="text"
+                            value={filterItems.search}
+                            name="search"
+                            id="search"
+                            onChange={handleSearchChange}
+                          />
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Danh mục</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <UncontrolledDropdown group>
+                            <DropdownToggle
+                              caret
+                              color="secondary"
+                              data-toggle="dropdown"
+                              className="mydropdown"
+                            >
+                              {filterItems.category === ""
+                                ? "Chọn Danh mục..."
+                                : categories.categories.find(
+                                    (category) =>
+                                      category.id === filterItems.category
+                                  ).name}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu">
+                              {categories.categories.map((category) => (
+                                <DropdownItem
+                                  key={category.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleFilterItemsChange(
+                                      "category",
+                                      category.id
+                                    );
+                                  }}
+                                >
+                                  {category.name}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Sắp xếp theo</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <UncontrolledDropdown group>
+                            <DropdownToggle
+                              caret
+                              color="secondary"
+                              data-toggle="dropdown"
+                              className="mydropdown"
+                            >
+                              {filterItems.sort === ""
+                                ? "Sắp xếp theo..."
+                                : sortBy.find(
+                                    (sort) => sort.value === filterItems.sort
+                                  ).type}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu">
+                              {sortBy.map((sort) => (
+                                <DropdownItem
+                                  key={sort.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleFilterItemsChange("sort", sort.value);
+                                  }}
+                                >
+                                  {sort.type}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle></CardSubtitle>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={handleClearFilter}
+                            color="warning"
+                            style={{ marginTop: "19px" }}
+                          >
+                            Làm sạch bộ lọc
+                          </Button>
+                        </Row>
+                      </Col>
+                    </Row>
                     <Row>
                       <CardDeck>
                         {onHoldCampaigns.campaigns.length !== 0 ? (
@@ -209,8 +460,7 @@ const Employee = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <small className="text-muted">
-                                      {campaign.campaignTTL[0] !==
-                                      undefined ? (
+                                      {campaign.campaignTTL[0] !== undefined ? (
                                         new Date(
                                           campaign.campaignTTL[0].open_datetime
                                         ).toLocaleString("en-GB") +
@@ -240,6 +490,108 @@ const Employee = () => {
                     </Row>
                   </TabPane>
                   <TabPane tabId="vertical2">
+                  <Row style={{marginTop:'30px'}}>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Tìm kiếm</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <Input
+                            type="text"
+                            value={filterItems.search}
+                            name="search"
+                            id="search"
+                            onChange={handleSearchChange}
+                          />
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Danh mục</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <UncontrolledDropdown group>
+                            <DropdownToggle
+                              caret
+                              color="secondary"
+                              data-toggle="dropdown"
+                              className="mydropdown"
+                            >
+                              {filterItems.category === ""
+                                ? "Chọn Danh mục..."
+                                : categories.categories.find(
+                                    (category) =>
+                                      category.id === filterItems.category
+                                  ).name}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu">
+                              {categories.categories.map((category) => (
+                                <DropdownItem
+                                  key={category.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleFilterItemsChange(
+                                      "category",
+                                      category.id
+                                    );
+                                  }}
+                                >
+                                  {category.name}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Sắp xếp theo</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <UncontrolledDropdown group>
+                            <DropdownToggle
+                              caret
+                              color="secondary"
+                              data-toggle="dropdown"
+                              className="mydropdown"
+                            >
+                              {filterItems.sort === ""
+                                ? "Sắp xếp theo..."
+                                : sortBy.find(
+                                    (sort) => sort.value === filterItems.sort
+                                  ).type}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu">
+                              {sortBy.map((sort) => (
+                                <DropdownItem
+                                  key={sort.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleFilterItemsChange("sort", sort.value);
+                                  }}
+                                >
+                                  {sort.type}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle></CardSubtitle>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={handleClearFilter}
+                            color="warning"
+                            style={{ marginTop: "19px" }}
+                          >
+                            Làm sạch bộ lọc
+                          </Button>
+                        </Row>
+                      </Col>
+                    </Row>
                     <Row>
                       <CardDeck>
                         {approvedCampaigns.campaigns.length !== 0 ? (
@@ -306,6 +658,108 @@ const Employee = () => {
                     </Row>
                   </TabPane>
                   <TabPane tabId="vertical3">
+                  <Row style={{marginTop:'30px'}}>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Tìm kiếm</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <Input
+                            type="text"
+                            value={filterItems.search}
+                            name="search"
+                            id="search"
+                            onChange={handleSearchChange}
+                          />
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Danh mục</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <UncontrolledDropdown group>
+                            <DropdownToggle
+                              caret
+                              color="secondary"
+                              data-toggle="dropdown"
+                              className="mydropdown"
+                            >
+                              {filterItems.category === ""
+                                ? "Chọn Danh mục..."
+                                : categories.categories.find(
+                                    (category) =>
+                                      category.id === filterItems.category
+                                  ).name}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu">
+                              {categories.categories.map((category) => (
+                                <DropdownItem
+                                  key={category.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleFilterItemsChange(
+                                      "category",
+                                      category.id
+                                    );
+                                  }}
+                                >
+                                  {category.name}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle>Sắp xếp theo</CardSubtitle>
+                        </Row>
+                        <Row>
+                          <UncontrolledDropdown group>
+                            <DropdownToggle
+                              caret
+                              color="secondary"
+                              data-toggle="dropdown"
+                              className="mydropdown"
+                            >
+                              {filterItems.sort === ""
+                                ? "Sắp xếp theo..."
+                                : sortBy.find(
+                                    (sort) => sort.value === filterItems.sort
+                                  ).type}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu">
+                              {sortBy.map((sort) => (
+                                <DropdownItem
+                                  key={sort.id}
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    handleFilterItemsChange("sort", sort.value);
+                                  }}
+                                >
+                                  {sort.type}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Row>
+                      </Col>
+                      <Col>
+                        <Row>
+                          <CardSubtitle></CardSubtitle>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={handleClearFilter}
+                            color="warning"
+                            style={{ marginTop: "19px" }}
+                          >
+                            Làm sạch bộ lọc
+                          </Button>
+                        </Row>
+                      </Col>
+                    </Row>
                     <Row>
                       <CardDeck>
                         {unapprovedCampaigns.campaigns.length !== 0 ? (
