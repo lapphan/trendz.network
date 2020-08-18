@@ -15,7 +15,7 @@ import {
   Modal,
   ModalBody,
   ModalFooter,
-  Spinner,
+  Container,
   Form,
   FormGroup,
   Label,
@@ -360,7 +360,8 @@ const CustomerCampaignPage = ({ campaign, categories, cid }) => {
                       ? "Chọn Kênh..."
                       : tempData.channelName}
                   </DropdownToggle>
-                  {tempCampaign.category !== null ? (
+                  {tempCampaign.category !== null &&
+                  tempCampaign.channels[0] !== undefined ? (
                     <DropdownMenu>
                       {categories.categories
                         .find((x) => x.id === tempCampaign.category.id)
@@ -414,101 +415,103 @@ const CustomerCampaignPage = ({ campaign, categories, cid }) => {
 
   return (
     <Row>
-          {tempCampaign.title !== "" ? renderEditModal() : ""}
-          {tempCampaign.title !== "" ? renderDeleteModal() : ""}
-          <Card className="single-card">
-            <CardImg
-              src={renderImage()}
-              alt="Card image cap"
-              className="campaign-detail-img"
-            />
-            <CardBody>
-              <CardTitle>{campaign.title}</CardTitle>
-              <CardText
-                dangerouslySetInnerHTML={{
-                  __html: campaign.content,
-                }}
-              ></CardText>
-              <CardSubtitle>
-                <strong>Thể loại:</strong>
-              </CardSubtitle>
-              {campaign.category !== undefined ? (
-                <CardText>
-                  {campaign.category.name} - {campaign.category.description}
-                </CardText>
-              ) : (
-                ""
-              )}
-              <CardSubtitle>
-                <strong>Kênh:</strong>
-              </CardSubtitle>
-              {campaign.channels[0] !== undefined ? (
-                <>
-                  <CardText>
-                    <strong>{campaign.channels[0].name}</strong>
-                  </CardText>
-                  <CardText>
-                    <strong>Website:</strong>{" "}
-                    <a href="##">{campaign.channels[0].website}</a>
-                  </CardText>
-                  <CardText>
-                    <strong>Địa chỉ:</strong> {campaign.channels[0].address}
-                  </CardText>
-                  <CardText>
-                    <strong>Liên hệ:</strong> {campaign.channels[0].phone}
-                  </CardText>
-                </>
-              ) : (
-                ""
-              )}
-              <CardSubtitle>
-                <strong>Trạng thái:</strong>
-              </CardSubtitle>
+      {tempCampaign.title !== "" ? renderEditModal() : ""}
+      {tempCampaign.title !== "" ? renderDeleteModal() : ""}
+      <Container>
+        <Card className="single-card">
+          <CardImg
+            src={renderImage()}
+            alt="Card image cap"
+            className="campaign-detail-img"
+          />
+          <CardBody>
+            <CardTitle>{campaign.title}</CardTitle>
+            <CardText
+              dangerouslySetInnerHTML={{
+                __html: campaign.content,
+              }}
+            ></CardText>
+            <CardSubtitle>
+              <strong>Thể loại:</strong>
+            </CardSubtitle>
+            {campaign.category !== undefined ? (
               <CardText>
-                {renderStatus(
-                  campaign.approve,
-                  campaign.status,
-                  campaign.completed
-                )}
+                {campaign.category.name} - {campaign.category.description}
               </CardText>
-              <CardSubtitle>
-                <strong>Người tạo:</strong>
-              </CardSubtitle>
-              <CardText>
-                {campaign.user !== undefined ? campaign.user.username : ""}
-              </CardText>
-              <CardSubtitle>
-                <strong>Thời gian:</strong>
-              </CardSubtitle>
-              {campaign.campaignTTL[0] !== undefined ? (
+            ) : (
+              ""
+            )}
+            <CardSubtitle>
+              <strong>Kênh:</strong>
+            </CardSubtitle>
+            {campaign.channels[0] !== undefined ? (
+              <>
                 <CardText>
-                  {"Từ " +
-                    new Date(
-                      campaign.campaignTTL[0].open_datetime
-                    ).toLocaleDateString("en-GB") +
-                    " - Đến " +
-                    new Date(
-                      campaign.campaignTTL[0].close_datetime
-                    ).toLocaleDateString("en-GB")}
+                  <strong>{campaign.channels[0].name}</strong>
                 </CardText>
-              ) : (
-                ""
+                <CardText>
+                  <strong>Website:</strong>{" "}
+                  <a href="##">{campaign.channels[0].website}</a>
+                </CardText>
+                <CardText>
+                  <strong>Địa chỉ:</strong> {campaign.channels[0].address}
+                </CardText>
+                <CardText>
+                  <strong>Liên hệ:</strong> {campaign.channels[0].phone}
+                </CardText>
+              </>
+            ) : (
+              ""
+            )}
+            <CardSubtitle>
+              <strong>Trạng thái:</strong>
+            </CardSubtitle>
+            <CardText>
+              {renderStatus(
+                campaign.approve,
+                campaign.status,
+                campaign.completed
               )}
-              <div className="form-button">
-                <Button
-                  className="btn-neutral"
-                  color="primary"
-                  onClick={toggleCampaignModal}
-                >
-                  Chỉnh sửa
-                </Button>
-                <Button color="primary" onClick={toggleDeleteModal}>
-                  Xóa
-                </Button>
-                <Button color="success">Liên hệ TrendZ</Button>
-              </div>
-            </CardBody>
-          </Card>
+            </CardText>
+            <CardSubtitle>
+              <strong>Người tạo:</strong>
+            </CardSubtitle>
+            <CardText>
+              {campaign.user !== undefined ? campaign.user.username : ""}
+            </CardText>
+            <CardSubtitle>
+              <strong>Thời gian:</strong>
+            </CardSubtitle>
+            {campaign.campaignTTL[0] !== undefined ? (
+              <CardText>
+                {"Từ " +
+                  new Date(
+                    campaign.campaignTTL[0].open_datetime
+                  ).toLocaleDateString("en-GB") +
+                  " - Đến " +
+                  new Date(
+                    campaign.campaignTTL[0].close_datetime
+                  ).toLocaleDateString("en-GB")}
+              </CardText>
+            ) : (
+              ""
+            )}
+            <div className="form-button">
+              <Button
+                className="btn-neutral"
+                color="primary"
+                onClick={toggleCampaignModal}
+              >
+                Chỉnh sửa
+              </Button>
+              <Button color="primary" onClick={toggleDeleteModal}>
+                Xóa
+              </Button>
+              <Button color="success">Liên hệ TrendZ</Button>
+            </div>
+          </CardBody>
+        </Card>
+      </Container>
     </Row>
   );
 };

@@ -59,7 +59,7 @@ const Post = () => {
     if (state.user.id == campaign.channels[0].user) {
       return <InfluencerCampaignPage categories={categories} campaign={campaign} cid={cid}/>;
     } else if (state.user.id == campaign.user.id) {
-      return <CustomerCampaignPage campaign={campaign} cid={cid}/>;
+      return <CustomerCampaignPage campaign={campaign} categories={categories} cid={cid}/>;
     } else if (state.user.role.name == "Employee") {
       return <EmployeeCampaignPage campaign={campaign} influencer={influencer} cid={cid}/>;
     } else
