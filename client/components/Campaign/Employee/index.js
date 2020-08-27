@@ -113,7 +113,6 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
       note: note.note
     };
     try {
-      console.log(status);
       await axios({
         method: "PUT",
         headers: {
@@ -266,7 +265,6 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
   };
 
   const renderImage = () => {
-    console.log(campaign);
     if (campaign.picture[0] !== undefined) {
       if (campaign.picture[0].formats.medium !== undefined) {
         return API_URL + campaign.picture[0].formats.medium.url;

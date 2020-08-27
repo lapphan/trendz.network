@@ -214,10 +214,6 @@ const Influencer = () => {
     if (query !== '?undefined') {
       campaignUrl = API_URL + '/campaigns' + query;
     } else campaignUrl = API_URL + '/campaigns';
-    console.log(campaignUrl);
-    console.log(onHoldCampaigns);
-    console.log(approvedCampaigns);
-    console.log(unapprovedCampaigns);
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {

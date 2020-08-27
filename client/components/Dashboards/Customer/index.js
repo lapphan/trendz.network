@@ -130,8 +130,6 @@ const Customer = () => {
   useEffect(() => {
     let mountedCampaign = true;
     const campaignUrl = API_URL + "/campaigns" + query;
-    console.log(query);
-    console.log(filterItems);
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
