@@ -20,16 +20,26 @@ import {
   Row,
   Col,
   Spinner,
+  Input,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from 'reactstrap';
 
-import Skeleton from '@material-ui/lab/Skeleton'
+import Skeleton from '@material-ui/lab/Skeleton';
 
+import { sortBy } from '../../../utils/filters/sortBy';
 const { API_URL } = process.env;
 
 const Influencer = () => {
   const { state } = useAuth();
   const [navState, setNav] = useState({
     vertical: 1,
+  });
+
+  const [categories, setCategories] = useState({
+    categories: [],
   });
 
   const [onHoldCampaigns, setOnHoldCampaigns] = useState({
@@ -46,10 +56,51 @@ const Influencer = () => {
 
   const signal = axios.CancelToken.source();
 
+  const [filterItems, setFilterItems] = useState({
+    category: '',
+    sort: '',
+    search: '',
+  });
+
+  const [query, setQuery] = useState('?');
+
   const toggleTabs = (event, stateName, index) => {
     event.preventDefault();
     setNav((previousState) => {
       return { ...previousState, [stateName]: index };
+    });
+    setQuery('?');
+    setFilterItems({
+      category: '',
+      sort: '',
+      search: '',
+    });
+  };
+
+  const handleSearchChange = (event) => {
+    const { name, value } = event.target;
+    setFilterItems((previousState) => {
+      return {
+        ...previousState,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleFilterItemsChange = (name, value) => {
+    setFilterItems((previousState) => {
+      return {
+        ...previousState,
+        [name]: value,
+      };
+    });
+  };
+
+  const handleClearFilter = () => {
+    setFilterItems({
+      category: '',
+      sort: '',
+      search: '',
     });
   };
 
@@ -69,8 +120,104 @@ const Influencer = () => {
   };
 
   useEffect(() => {
+    let query = '?';
+    if (filterItems.search !== '' && query === '?') {
+      query += 'title_contains=' + filterItems.search;
+    } else if (filterItems.search !== '' && query !== '?')
+      query += '&title_contains=' + filterItems.search;
+    if (filterItems.category !== '' && query === '?') {
+      query += '_where[category.id]=' + filterItems.category;
+    } else if (filterItems.category !== '' && query !== '?')
+      query += '&_where[category.id]=' + filterItems.category;
+    if (filterItems.sort !== '' && query === '?') {
+      query += filterItems.sort;
+    } else if (filterItems.sort !== '' && query !== '?')
+      query += '&' + filterItems.sort;
+    setQuery(query);
+  }, [filterItems]);
+
+  useEffect(() => {
     let mountedCampaign = true;
+    let mountedCategory = true;
     const campaignUrl = API_URL + '/campaigns';
+    const categoryUrl = API_URL + '/categories';
+    const fetchCampaign = async () => {
+      try {
+        const get_resolve = await axios.get(campaignUrl, {
+          cancelToken: signal.token,
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+        });
+        if (mountedCampaign) {
+          try {
+            setOnHoldCampaigns({
+              campaigns: get_resolve.data.filter(function (campaign) {
+                return campaign.approve == true && campaign.status == null;
+              }),
+            });
+            setApprovedCampaigns({
+              campaigns: get_resolve.data.filter(function (campaign) {
+                return campaign.approve && campaign.status == true;
+              }),
+            });
+            setUnapprovedCampaigns({
+              campaigns: get_resolve.data.filter(function (campaign) {
+                return campaign.approve == true && campaign.status == false;
+              }),
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log('Error: ', error.message);
+        }
+      }
+    };
+    const fetchCategories = async () => {
+      try {
+        const get_resolve = await axios.get(categoryUrl, {
+          cancelToken: signal.token,
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+        });
+        if (mountedCategory) {
+          try {
+            setCategories({
+              categories: get_resolve.data,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log('Error: ', error.message);
+        }
+      }
+    };
+    fetchCampaign();
+    fetchCategories();
+    return function cleanup() {
+      mountedCampaign = false;
+      signal.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    let mountedCampaign = true;
+    let campaignUrl;
+
+    if (query !== '?undefined') {
+      campaignUrl = API_URL + '/campaigns' + query;
+    } else campaignUrl = API_URL + '/campaigns';
+    console.log(campaignUrl);
+    console.log(onHoldCampaigns);
+    console.log(approvedCampaigns);
+    console.log(unapprovedCampaigns);
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
@@ -111,7 +258,7 @@ const Influencer = () => {
       mountedCampaign = false;
       signal.cancel();
     };
-  }, []);
+  }, [query]);
 
   return (
     <div className='wrapper'>
@@ -155,6 +302,108 @@ const Influencer = () => {
               </Col>
               <Col>
                 <TabContent activeTab={'vertical' + navState.vertical}>
+                  <Row style={{ marginTop: '30px' }}>
+                    <Col>
+                      <Row>
+                        <CardSubtitle>Tìm kiếm</CardSubtitle>
+                      </Row>
+                      <Row>
+                        <Input
+                          type='text'
+                          value={filterItems.search}
+                          name='search'
+                          id='search'
+                          onChange={handleSearchChange}
+                        />
+                      </Row>
+                    </Col>
+                    <Col>
+                      <Row>
+                        <CardSubtitle>Danh mục</CardSubtitle>
+                      </Row>
+                      <Row>
+                        <UncontrolledDropdown group>
+                          <DropdownToggle
+                            caret
+                            color='secondary'
+                            data-toggle='dropdown'
+                            className='mydropdown'
+                          >
+                            {filterItems.category === ''
+                              ? 'Chọn Danh mục...'
+                              : categories.categories.find(
+                                  (category) =>
+                                    category.id === filterItems.category
+                                ).name}
+                          </DropdownToggle>
+                          <DropdownMenu className='dropdown-menu'>
+                            {categories.categories.map((category) => (
+                              <DropdownItem
+                                key={category.id}
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  handleFilterItemsChange(
+                                    'category',
+                                    category.id
+                                  );
+                                }}
+                              >
+                                {category.name}
+                              </DropdownItem>
+                            ))}
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </Row>
+                    </Col>
+                    <Col>
+                      <Row>
+                        <CardSubtitle>Sắp xếp theo</CardSubtitle>
+                      </Row>
+                      <Row>
+                        <UncontrolledDropdown group>
+                          <DropdownToggle
+                            caret
+                            color='secondary'
+                            data-toggle='dropdown'
+                            className='mydropdown'
+                          >
+                            {filterItems.sort === ''
+                              ? 'Sắp xếp theo...'
+                              : sortBy.find(
+                                  (sort) => sort.value === filterItems.sort
+                                ).type}
+                          </DropdownToggle>
+                          <DropdownMenu className='dropdown-menu'>
+                            {sortBy.map((sort) => (
+                              <DropdownItem
+                                key={sort.id}
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  handleFilterItemsChange('sort', sort.value);
+                                }}
+                              >
+                                {sort.type}
+                              </DropdownItem>
+                            ))}
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </Row>
+                    </Col>
+                    <Col>
+                      <Row>
+                        <CardSubtitle></CardSubtitle>
+                      </Row>
+                      <Row>
+                        <Button
+                          onClick={handleClearFilter}
+                          color='warning'
+                          style={{ marginTop: '19px' }}
+                        >
+                          Làm sạch bộ lọc
+                        </Button>
+                      </Row>
+                    </Col>
+                  </Row>
                   <TabPane tabId='vertical1'>
                     <Row>
                       <CardDeck>
@@ -162,25 +411,25 @@ const Influencer = () => {
                           onHoldCampaigns.campaigns.map((campaign) => (
                             <Col md={4} key={campaign.id}>
                               <Card className='campaign-card'>
-                              {campaign.picture[0] !== undefined ? (
+                                {campaign.picture[0] !== undefined ? (
                                   <CardImg
                                     src={`${API_URL}${campaign.picture[0].formats.thumbnail.url}`}
-                                    alt="Card image cap"
-                                    className="campaign-img"
+                                    alt='Card image cap'
+                                    className='campaign-img'
                                   />
                                 ) : (
                                   <Skeleton
-                                    variant="rect"
+                                    variant='rect'
                                     width={256}
                                     height={186}
                                   />
                                 )}
                                 <CardBody>
                                   <CardTitle className='dashboard-card-title'>
-                                  {campaign.title !== undefined ? (
+                                    {campaign.title !== undefined ? (
                                       campaign.title
                                     ) : (
-                                      <Skeleton variant="text" />
+                                      <Skeleton variant='text' />
                                     )}
                                   </CardTitle>
                                   <CardSubtitle>
@@ -188,7 +437,7 @@ const Influencer = () => {
                                     {campaign.user !== null ? (
                                       campaign.user.username
                                     ) : (
-                                      <Skeleton variant="text" />
+                                      <Skeleton variant='text' />
                                     )}
                                   </CardSubtitle>
                                   <CardSubtitle>
@@ -206,17 +455,16 @@ const Influencer = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <small className='text-muted'>
-                                    {campaign.campaignTTL[0] !==
-                                      undefined ? (
+                                      {campaign.campaignTTL[0] !== undefined ? (
                                         new Date(
                                           campaign.campaignTTL[0].open_datetime
-                                        ).toLocaleString("en-GB") +
-                                        " - " +
+                                        ).toLocaleString('en-GB') +
+                                        ' - ' +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")
+                                        ).toLocaleString('en-GB')
                                       ) : (
-                                        <Skeleton variant="text" />
+                                        <Skeleton variant='text' />
                                       )}
                                     </small>
                                   </CardSubtitle>
