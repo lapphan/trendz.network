@@ -104,7 +104,7 @@ const InfluencerCampaignPage = ({ campaign, cid }) => {
   };
   const renderUserImage = () => {
     if (campaign.user.avatar !== undefined) {
-      if (campaign.user.avatar !== undefined) {
+      if (campaign.user.avatar.formats !== undefined) {
         return API_URL + campaign.user.avatar.formats.thumbnail.url;
       } else return '/256x186.svg';
     } else return '/256x186.svg';

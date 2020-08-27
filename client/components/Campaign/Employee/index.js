@@ -1,7 +1,7 @@
-import { useAuth } from '../../../context/userContext';
-import React, { useEffect, useState } from 'react';
-import Router from 'next/router';
-import axios from 'axios';
+import { useAuth } from "../../../context/userContext";
+import React, { useEffect, useState } from "react";
+import Router from "next/router";
+import axios from "axios";
 import {
   Button,
   Card,
@@ -18,10 +18,16 @@ import {
   NavItem,
   TabContent,
   TabPane,
-} from 'reactstrap';
-import classnames from 'classnames';
-import { useSnackbar } from 'notistack';
-import { makeStyles, Typography, Paper } from '@material-ui/core';
+  Modal,
+  ModalBody,
+  ModalFooter,
+  Label,
+  FormGroup,
+  Input
+} from "reactstrap";
+import classnames from "classnames";
+import { useSnackbar } from "notistack";
+import { makeStyles, Typography, Paper } from "@material-ui/core";
 import {
   Timeline,
   TimelineItem,
@@ -31,32 +37,32 @@ import {
   TimelineOppositeContent,
   TimelineDot,
   Skeleton,
-} from '@material-ui/lab';
+} from "@material-ui/lab";
 
 //import { Paper, Typography } from "@material-ui/core";
-import CheckIcon from '@material-ui/icons/Check';
-import CloseIcon from '@material-ui/icons/Close';
-import SyncIcon from '@material-ui/icons/Sync';
-import LockIcon from '@material-ui/icons/Lock';
+import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from "@material-ui/icons/Close";
+import SyncIcon from "@material-ui/icons/Sync";
+import LockIcon from "@material-ui/icons/Lock";
 
 const { API_URL } = process.env;
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: '6px 16px',
-    backgroundColor: '#1f2251',
+    padding: "6px 16px",
+    backgroundColor: "#1f2251",
   },
   success: {
-    backgroundColor: '#009688',
+    backgroundColor: "#009688",
   },
   processing: {
-    backgroundColor: '#2196f3',
+    backgroundColor: "#2196f3",
   },
   error: {
-    backgroundColor: '#f44336',
+    backgroundColor: "#f44336",
   },
   inactive: {
-    backgroundColor: '#bdbdbd',
+    backgroundColor: "#bdbdbd",
   },
 }));
 
@@ -71,6 +77,20 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
     vertical: 1,
   });
 
+  const [note, setNote] = useState({
+    note: null,
+  });
+
+  const [approveModal, setApproveModal] = useState(false);
+  const toggleApproveModal = () => {
+    setApproveModal(!approveModal);
+  };
+
+  const [unApproveModal, setUnApproveModal] = useState(false);
+  const toggleUnApproveModal = () => {
+    setUnApproveModal(!unApproveModal);
+  };
+
   const toggleTabs = (event, stateName, index) => {
     event.preventDefault();
     setNav((previousState) => {
@@ -78,15 +98,24 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
     });
   };
 
+  const handleNoteChange = (event) => {
+    event.preventDefault();
+    const { value } = event.target;
+    setNote((previousState) => {
+      return { ...previousState, note: value };
+    });
+  };
+
   //employee approve/unapprove campaign
   const handleEmployeeApproval = async (approved) => {
     const status = {
       approve: approved,
+      note: note.note
     };
     try {
       console.log(status);
       await axios({
-        method: 'PUT',
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${state.jwt}`,
         },
@@ -94,34 +123,165 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
         data: status,
       });
       if (approved) {
-        enqueueSnackbar('Đã chấp thuận campaign!', { variant: 'success' });
-      } else enqueueSnackbar('Đã từ chối campaign!', { variant: 'success' });
-      Router.push('/dashboard');
+        enqueueSnackbar("Đã chấp thuận campaign!", { variant: "success" });
+      } else enqueueSnackbar("Đã từ chối campaign!", { variant: "success" });
+      Router.push("/dashboard");
     } catch (e) {
       console.log(e);
-      enqueueSnackbar('Đã có lỗi xảy ra, vui lòng thử lại!', {
-        variant: 'error',
+      enqueueSnackbar("Đã có lỗi xảy ra, vui lòng thử lại!", {
+        variant: "error",
       });
     }
     return;
   };
 
+  const renderApproveModal = () => {
+    return (
+      <Modal isOpen={approveModal} toggle={toggleApproveModal}>
+        <div className="modal-header">
+          <h4 className="modal-title" id="avatarModal">
+            <strong>Duyệt Campaign</strong>
+          </h4>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+            onClick={() => {
+              setNote({ note: null });
+              toggleApproveModal();
+            }}
+          >
+            <i className="tim-icons icon-simple-remove" />
+          </button>
+        </div>
+        <ModalBody>
+          <FormGroup className="modal-items">
+          <Label>
+            Bạn có thật sự muốn duyệt Campaign này? Hãy để lại nhận xét:
+          </Label>
+            <Input
+              type="textarea"
+              id="content"
+              placeholder="Nhận xét..."
+              name="content"
+              onChange={handleNoteChange}
+              value={note.note != null ? note.note : ""}
+              required
+              className="modal-items"
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => {
+              setNote({ note: null });
+              toggleApproveModal();
+            }}>
+            Hủy
+          </Button>
+          <Button
+            color="primary"
+            disabled={note.note == null ? true : false}
+            onClick={() => {
+              try {
+                handleEmployeeApproval(true);
+              } catch (error) {
+                enqueueSnackbar("Đã có lỗi xảy ra, vui lòng thử lại!", {
+                  variant: "error",
+                });
+              }
+              toggleApproveModal();
+            }}
+          >
+            Xác nhận
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
+  };
+
+  const renderUnApproveModal = () => {
+    return (
+      <Modal isOpen={unApproveModal} toggle={toggleUnApproveModal}>
+        <div className="modal-header">
+          <h4 className="modal-title" id="avatarModal">
+            <strong>Từ chối Campaign</strong>
+          </h4>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-hidden="true"
+            onClick={() => {
+              setNote({ note: null });
+              toggleUnApproveModal();
+            }}
+          >
+            <i className="tim-icons icon-simple-remove" />
+          </button>
+        </div>
+        <ModalBody>
+          <FormGroup className="modal-items">
+          <Label>
+            Bạn có thật sự muốn từ chối Campaign này? Hãy để lại nhận xét:
+          </Label>
+            <Input
+              type="textarea"
+              id="content"
+              placeholder="Nhận xét..."
+              name="content"
+              onChange={handleNoteChange}
+              value={note.note != null ? note.note : ""}
+              required
+              className="modal-items"
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => {
+              setNote({ note: null });
+              toggleApproveModal();
+            }}>
+            Hủy
+          </Button>
+          <Button
+            color="primary"
+            disabled={note.note == null ? true : false}
+            onClick={() => {
+              try {
+                handleEmployeeApproval(false);
+              } catch (error) {
+                enqueueSnackbar("Đã có lỗi xảy ra, vui lòng thử lại!", {
+                  variant: "error",
+                });
+              }
+              toggleUnApproveModal();
+            }}
+          >
+            Xác nhận
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
+  };
+
   const renderImage = () => {
-    if (campaign.picture[0].formats !== undefined) {
+    console.log(campaign);
+    if (campaign.picture[0] !== undefined) {
       if (campaign.picture[0].formats.medium !== undefined) {
         return API_URL + campaign.picture[0].formats.medium.url;
-      } else if (campaign.picture[1].formats.medium !== undefined) {
-        return API_URL + campaign.picture[1].formats.medium.url;
-      } else return '/256x186.svg';
-    } else return '/256x186.svg';
+      } else if (campaign.picture[0].formats.thumbnail !== undefined) {
+        return API_URL + campaign.picture[0].formats.thumbnail.url;
+      } else return "/256x186.svg";
+    } else return "/256x186.svg";
   };
 
   const renderUserImage = () => {
     if (campaign.user.avatar !== undefined) {
       if (campaign.user.avatar !== undefined) {
         return API_URL + campaign.user.avatar.formats.thumbnail.url;
-      } else return '/256x186.svg';
-    } else return '/256x186.svg';
+      } else return "/256x186.svg";
+    } else return "/256x186.svg";
   };
 
   const renderInfluencerImage = () => {
@@ -134,38 +294,39 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
         influencer.user.avatar.formats !== null
       ) {
         return API_URL + influencer.user.avatar.formats.thumbnail.url;
-      } else return '/256x186.svg';
-    } else return '/256x186.svg';
+      } else return "/256x186.svg";
+    } else return "/256x186.svg";
   };
 
   const renderStatus = (approvalStatus, influencerStatus, status) => {
     if (approvalStatus == null) {
-      return 'Đang chờ cấp phép';
+      return "Đang chờ cấp phép";
     }
     if (!approvalStatus) {
-      return 'Không được cấp phép';
+      return "Không được cấp phép";
     }
     if (approvalStatus && influencerStatus == null) {
-      return 'Đã được cấp phép - Đang chờ influencer xác nhận';
+      return "Đã được cấp phép - Đang chờ influencer xác nhận";
     }
     if (approvalStatus && !influencerStatus) {
-      return 'Đã được cấp phép - Influencer đã từ chối';
+      return "Đã được cấp phép - Influencer đã từ chối";
     }
     if (approvalStatus && influencerStatus && status == null) {
-      return 'Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động';
-    } else return 'Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc';
+      return "Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động";
+    } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
   };
 
   return (
     <Row>
-      <Col md='2'>
-        <Nav className='nav-pills-primary flex-column' pills>
+      {renderApproveModal()} {renderUnApproveModal()}
+      <Col md="2">
+        <Nav className="nav-pills-primary flex-column" pills>
           <NavItem>
             <NavLink
               className={classnames({
                 active: navState.vertical === 1,
               })}
-              onClick={(e) => toggleTabs(e, 'vertical', 1)}
+              onClick={(e) => toggleTabs(e, "vertical", 1)}
             >
               Campaign details
             </NavLink>
@@ -175,7 +336,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
               className={classnames({
                 active: navState.vertical === 2,
               })}
-              onClick={(e) => toggleTabs(e, 'vertical', 2)}
+              onClick={(e) => toggleTabs(e, "vertical", 2)}
             >
               Stakeholders info
             </NavLink>
@@ -185,7 +346,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
               className={classnames({
                 active: navState.vertical === 3,
               })}
-              onClick={(e) => toggleTabs(e, 'vertical', 3)}
+              onClick={(e) => toggleTabs(e, "vertical", 3)}
             >
               Campaign tracking
             </NavLink>
@@ -193,15 +354,15 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
         </Nav>
       </Col>
       <Col>
-        <TabContent activeTab={'vertical' + navState.vertical}>
-          <TabPane tabId='vertical1'>
+        <TabContent activeTab={"vertical" + navState.vertical}>
+          <TabPane tabId="vertical1">
             <Row>
               <Container>
-                <Card className='single-card'>
+                <Card className="single-card">
                   <CardImg
                     src={renderImage()}
-                    alt='Card image cap'
-                    className='campaign-detail-img'
+                    alt="Card image cap"
+                    className="campaign-detail-img"
                   />
                   <CardBody>
                     <CardTitle>{campaign.title}</CardTitle>
@@ -215,11 +376,11 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </CardSubtitle>
                     {campaign.category !== undefined ? (
                       <CardText>
-                        {campaign.category.name} -{' '}
+                        {campaign.category.name} -{" "}
                         {campaign.category.description}
                       </CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Kênh:</strong>
@@ -230,11 +391,11 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                           <strong>{campaign.channels[0].name}</strong>
                         </CardText>
                         <CardText>
-                          <strong>Website:</strong>{' '}
-                          <a href='##'>{campaign.channels[0].website}</a>
+                          <strong>Website:</strong>{" "}
+                          <a href="##">{campaign.channels[0].website}</a>
                         </CardText>
                         <CardText>
-                          <strong>Địa chỉ:</strong>{' '}
+                          <strong>Địa chỉ:</strong>{" "}
                           {campaign.channels[0].address}
                         </CardText>
                         <CardText>
@@ -242,7 +403,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                         </CardText>
                       </>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Trạng thái:</strong>
@@ -260,36 +421,36 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     <CardText>
                       {campaign.user !== undefined
                         ? campaign.user.username
-                        : ''}
+                        : ""}
                     </CardText>
                     <CardSubtitle>
                       <strong>Thời gian:</strong>
                     </CardSubtitle>
                     {campaign.campaignTTL[0] !== undefined ? (
                       <CardText>
-                        {'Từ ' +
+                        {"Từ " +
                           new Date(
                             campaign.campaignTTL[0].open_datetime
-                          ).toLocaleDateString('en-GB') +
-                          ' - Đến ' +
+                          ).toLocaleDateString("en-GB") +
+                          " - Đến " +
                           new Date(
                             campaign.campaignTTL[0].close_datetime
-                          ).toLocaleDateString('en-GB')}
+                          ).toLocaleDateString("en-GB")}
                       </CardText>
                     ) : (
-                      ''
+                      ""
                     )}
-                    <div className='form-button'>
+                    <div className="form-button">
                       <Button
-                        className='btn-neutral'
-                        color='primary'
-                        onClick={() => handleEmployeeApproval(false)}
+                        className="btn-neutral"
+                        color="primary"
+                        onClick={toggleUnApproveModal}
                       >
                         Từ chối
                       </Button>
                       <Button
-                        color='primary'
-                        onClick={() => handleEmployeeApproval(true)}
+                        color="primary"
+                        onClick={toggleApproveModal}
                       >
                         Xác nhận
                       </Button>
@@ -299,15 +460,15 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
               </Container>
             </Row>
           </TabPane>
-          <TabPane tabId='vertical2'>
+          <TabPane tabId="vertical2">
             <Row>
               <Col md={6}>
                 <h3>Thông tin người tạo</h3>
-                <Card className='single-card'>
+                <Card className="single-card">
                   <CardImg
                     src={renderUserImage()}
-                    alt='Card image cap'
-                    className='campaign-detail-img'
+                    alt="Card image cap"
+                    className="campaign-detail-img"
                   />
                   <CardBody>
                     <CardTitle>{campaign.user.name}</CardTitle>
@@ -316,10 +477,10 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </CardSubtitle>
                     {campaign.user.gender !== undefined ? (
                       <CardText>
-                        {campaign.user.gender === 'male' ? 'Nam' : 'Nữ'}
+                        {campaign.user.gender === "male" ? "Nam" : "Nữ"}
                       </CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Ngày sinh:</strong>
@@ -327,11 +488,11 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {campaign.user.birthDay !== undefined ? (
                       <CardText>
                         {new Date(campaign.user.birthDay).toLocaleDateString(
-                          'en-GB'
+                          "en-GB"
                         )}
                       </CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Email:</strong>
@@ -339,7 +500,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {campaign.user.email !== undefined ? (
                       <CardText>{campaign.user.email}</CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Địa chỉ:</strong>
@@ -347,7 +508,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {campaign.user.address !== undefined ? (
                       <CardText>{campaign.user.address}</CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Số điện thoại:</strong>
@@ -355,7 +516,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {campaign.user.phoneNumber !== undefined ? (
                       <CardText>{campaign.user.phoneNumber}</CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <br /> <br />
                     <br />
@@ -363,23 +524,23 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     <br />
                     <br />
                     <br />
-                    <div className='form-button'>
-                      <Button color='primary'>Liên hệ ngay!</Button>
+                    <div className="form-button">
+                      <Button color="primary">Liên hệ ngay!</Button>
                     </div>
                   </CardBody>
                 </Card>
               </Col>
               <Col md={6}>
                 <h3>Thông tin Influencer</h3>
-                <Card className='single-card'>
+                <Card className="single-card">
                   {influencer.avatar !== undefined ? (
                     <CardImg
                       src={renderInfluencerImage()}
-                      alt='Card image cap'
-                      className='campaign-detail-img'
+                      alt="Card image cap"
+                      className="campaign-detail-img"
                     />
                   ) : (
-                    <Skeleton variant='rect' width={256} height={186} />
+                    <Skeleton variant="rect" width={256} height={186} />
                   )}
                   <CardBody>
                     <CardTitle>{influencer.user.name}</CardTitle>
@@ -388,10 +549,10 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </CardSubtitle>
                     {influencer.user.gender !== undefined ? (
                       <CardText>
-                        {influencer.user.gender === 'male' ? 'Nam' : 'Nữ'}
+                        {influencer.user.gender === "male" ? "Nam" : "Nữ"}
                       </CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Ngày sinh:</strong>
@@ -399,11 +560,11 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {influencer.user.birthDay !== undefined ? (
                       <CardText>
                         {new Date(influencer.user.birthDay).toLocaleDateString(
-                          'en-GB'
+                          "en-GB"
                         )}
                       </CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Email:</strong>
@@ -411,7 +572,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {influencer.user.email !== undefined ? (
                       <CardText>{influencer.user.email}</CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Địa chỉ:</strong>
@@ -419,7 +580,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {influencer.user.address !== undefined ? (
                       <CardText>{influencer.user.address}</CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Số điện thoại:</strong>
@@ -427,7 +588,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     {influencer.user.phoneNumber !== undefined ? (
                       <CardText>{influencer.user.phoneNumber}</CardText>
                     ) : (
-                      ''
+                      ""
                     )}
                     <CardSubtitle>
                       <strong>Kênh:</strong>
@@ -438,11 +599,11 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                           <strong>{campaign.channels[0].name}</strong>
                         </CardText>
                         <CardText>
-                          <strong>Website:</strong>{' '}
-                          <a href='##'>{campaign.channels[0].website}</a>
+                          <strong>Website:</strong>{" "}
+                          <a href="##">{campaign.channels[0].website}</a>
                         </CardText>
                         <CardText>
-                          <strong>Địa chỉ:</strong>{' '}
+                          <strong>Địa chỉ:</strong>{" "}
                           {campaign.channels[0].address}
                         </CardText>
                         <CardText>
@@ -450,23 +611,23 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                         </CardText>
                       </>
                     ) : (
-                      ''
+                      ""
                     )}
-                    <div className='form-button'>
-                      <Button color='primary'>Liên hệ ngay!</Button>
+                    <div className="form-button">
+                      <Button color="primary">Liên hệ ngay!</Button>
                     </div>
                   </CardBody>
                 </Card>
               </Col>
             </Row>
           </TabPane>
-          <TabPane tabId='vertical3'>
+          <TabPane tabId="vertical3">
             <Row>
-              <Timeline align='alternate'>
+              <Timeline align="alternate">
                 <TimelineItem>
                   <TimelineOppositeContent>
-                    <Typography variant='body2' color='textSecondary'>
-                      {new Date(campaign.created_at).toLocaleString('en-GB')}
+                    <Typography variant="body2" color="textSecondary">
+                      {new Date(campaign.created_at).toLocaleString("en-GB")}
                     </Typography>
                   </TimelineOppositeContent>
                   <TimelineSeparator>
@@ -500,7 +661,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.approve == true ? (
                   <TimelineItem>
@@ -518,7 +679,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.approve == false ? (
                   <TimelineItem>
@@ -536,7 +697,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.status == false && campaign.approve == null ? (
                   <TimelineItem>
@@ -553,7 +714,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.status == null && campaign.approve == null ? (
                   <TimelineItem>
@@ -570,7 +731,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.status == null && campaign.approve == true ? (
                   <TimelineItem>
@@ -588,7 +749,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.status == false && campaign.approve == true ? (
                   <TimelineItem>
@@ -606,7 +767,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.status == true ? (
                   <TimelineItem>
@@ -624,7 +785,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.completed == null && campaign.status == null ? (
                   <TimelineItem>
@@ -641,16 +802,16 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineContent>
                   </TimelineItem>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.completed == false && campaign.status == true ? (
                   <>
                     <TimelineItem>
                       <TimelineOppositeContent>
-                        <Typography variant='body2' color='textSecondary'>
+                        <Typography variant="body2" color="textSecondary">
                           {new Date(
                             campaign.campaignTTL[0].open_datetime
-                          ).toLocaleString('en-GB')}
+                          ).toLocaleString("en-GB")}
                         </Typography>
                       </TimelineOppositeContent>
                       <TimelineSeparator>
@@ -668,10 +829,10 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineItem>
                     <TimelineItem>
                       <TimelineOppositeContent>
-                        <Typography variant='body2' color='textSecondary'>
+                        <Typography variant="body2" color="textSecondary">
                           {new Date(
                             campaign.campaignTTL[0].close_datetime
-                          ).toLocaleString('en-GB')}
+                          ).toLocaleString("en-GB")}
                         </Typography>
                       </TimelineOppositeContent>
                       <TimelineSeparator>
@@ -688,16 +849,16 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineItem>
                   </>
                 ) : (
-                  ''
+                  ""
                 )}
                 {campaign.completed == true && campaign.status == true ? (
                   <>
                     <TimelineItem>
                       <TimelineOppositeContent>
-                        <Typography variant='body2' color='textSecondary'>
+                        <Typography variant="body2" color="textSecondary">
                           {new Date(
                             campaign.campaignTTL[0].open_datetime
-                          ).toLocaleString('en-GB')}
+                          ).toLocaleString("en-GB")}
                         </Typography>
                       </TimelineOppositeContent>
                       <TimelineSeparator>
@@ -715,10 +876,10 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineItem>
                     <TimelineItem>
                       <TimelineOppositeContent>
-                        <Typography variant='body2' color='textSecondary'>
+                        <Typography variant="body2" color="textSecondary">
                           {new Date(
                             campaign.campaignTTL[0].close_datetime
-                          ).toLocaleString('en-GB')}
+                          ).toLocaleString("en-GB")}
                         </Typography>
                       </TimelineOppositeContent>
                       <TimelineSeparator>
@@ -738,7 +899,7 @@ const EmployeeCampaignPage = ({ campaign, influencer, cid }) => {
                     </TimelineItem>
                   </>
                 ) : (
-                  ''
+                  ""
                 )}
               </Timeline>
             </Row>
