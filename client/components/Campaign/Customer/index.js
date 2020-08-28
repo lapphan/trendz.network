@@ -236,7 +236,7 @@ const CustomerCampaignPage = ({ campaign, categories, cid }) => {
     if (approvalStatus && !influencerStatus) {
       return "Đã được cấp phép - Influencer đã từ chối";
     }
-    if (approvalStatus && influencerStatus && status == null) {
+    if (approvalStatus && influencerStatus && status == false) {
       return "Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động";
     } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
   };
@@ -497,8 +497,8 @@ const CustomerCampaignPage = ({ campaign, categories, cid }) => {
         <TabContent activeTab={"vertical" + navState.vertical}>
           <TabPane tabId="vertical1">
             <Row>
-              {tempCampaign.title !== "" ? renderEditModal() : ""}
-              {tempCampaign.title !== "" ? renderDeleteModal() : ""}
+              {campaign.completed === null ? renderEditModal() : ""}
+              {campaign.completed === null ? renderDeleteModal() : ""}
               <Container>
                 <Card className="single-card">
                   <CardImg
@@ -587,10 +587,15 @@ const CustomerCampaignPage = ({ campaign, categories, cid }) => {
                         className="btn-neutral"
                         color="primary"
                         onClick={toggleCampaignModal}
+                        disabled={campaign.completed === null ? false : true}
                       >
                         Chỉnh sửa
                       </Button>
-                      <Button color="primary" onClick={toggleDeleteModal}>
+                      <Button
+                        color="primary"
+                        onClick={toggleDeleteModal}
+                        disabled={campaign.completed === null ? false : true}
+                      >
                         Xóa
                       </Button>
                       <Button color="success">Liên hệ TrendZ</Button>

@@ -119,7 +119,7 @@ const InfluencerCampaignPage = ({ campaign, cid }) => {
     if (approvalStatus == true && influencerStatus == false) {
       return 'Đã được cấp phép - Influencer đã từ chối';
     }
-    if (approvalStatus && influencerStatus && status == null) {
+    if (approvalStatus && influencerStatus && status == false) {
       return 'Chưa được cấp phép';
     } else return 'Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc';
   };
