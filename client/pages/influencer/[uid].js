@@ -21,7 +21,6 @@ const Influencer = () => {
   const router = useRouter();
   const { uid } = router.query;
   const { state } = useAuth();
-  const [isLoading, setLoading] = useState(true);
   const signal = axios.CancelToken.source();
   const [influencer, setInfluencer] = useState({
     info: {},
@@ -58,7 +57,7 @@ const Influencer = () => {
             });
           }
         };
-        fetchInfluencer().then(setLoading(false));
+        fetchInfluencer()
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
@@ -77,8 +76,6 @@ const Influencer = () => {
       <div className="main">
         <Container>
           <Card>
-
-                {isLoading === false ? (
                   <Container>
                     <Card className="single-card">
                       <CardImg
@@ -130,11 +127,6 @@ const Influencer = () => {
                       </CardBody>
                     </Card>
                   </Container>
-                ) : (
-                  <Spinner />
-                )}
-
-
           </Card>
         </Container>
       </div>
