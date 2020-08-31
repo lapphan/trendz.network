@@ -25,7 +25,7 @@ const Post = () => {
   const router = useRouter();
   const { cid } = router.query;
   const { state } = useAuth();
-  
+
   const signal = axios.CancelToken.source();
   const [campaign, setCampaign] = useState({
     campaignTTL: [
@@ -51,108 +51,129 @@ const Post = () => {
     categories: [],
   });
 
+  const [campaignDetails, setCampaignDetails] = useState({
+    details: [],
+  });
+
   const [influencer, setInfluencer] = useState({
     user: {},
   });
 
   const RenderRole = () => {
     if (state.user.id == campaign.channels[0].user) {
-      return <InfluencerCampaignPage categories={categories} campaign={campaign} cid={cid}/>;
+      return (
+        <InfluencerCampaignPage
+          categories={categories}
+          campaign={campaign}
+          cid={cid}
+          details = {campaignDetails}
+        />
+      );
     } else if (state.user.id == campaign.user.id) {
-      return <CustomerCampaignPage campaign={campaign} categories={categories} cid={cid}/>;
+      return (
+        <CustomerCampaignPage
+          campaign={campaign}
+          categories={categories}
+          cid={cid}
+          details = {campaignDetails}
+        />
+      );
     } else if (state.user.role.name == "Employee") {
-      return <EmployeeCampaignPage campaign={campaign} influencer={influencer} cid={cid}/>;
+      return (
+        <EmployeeCampaignPage
+          campaign={campaign}
+          influencer={influencer}
+          cid={cid}
+          details = {campaignDetails}
+        />
+      );
     } else
       return (
-          <Row>
-                <Card className="single-card">
-                  <CardImg
-                    src={renderImage()}
-                    alt="Card image cap"
-                    className="campaign-detail-img"
-                  />
-                  <CardBody>
-                    <CardTitle>{campaign.title}</CardTitle>
-                    <CardText
-                      dangerouslySetInnerHTML={{
-                        __html: campaign.content,
-                      }}
-                    ></CardText>
-                    <CardSubtitle>
-                      <strong>Thể loại:</strong>
-                    </CardSubtitle>
-                    {campaign.category !== undefined ? (
-                      <CardText>
-                        {campaign.category.name} -{" "}
-                        {campaign.category.description}
-                      </CardText>
-                    ) : (
-                      ""
-                    )}
-                    <CardSubtitle>
-                      <strong>Kênh:</strong>
-                    </CardSubtitle>
-                    {campaign.channels[0] !== undefined ? (
-                      <>
-                        <CardText>
-                          <strong>{campaign.channels[0].name}</strong>
-                        </CardText>
-                        <CardText>
-                          <strong>Website:</strong>{" "}
-                          <a href="##">{campaign.channels[0].website}</a>
-                        </CardText>
-                        <CardText>
-                          <strong>Địa chỉ:</strong>{" "}
-                          {campaign.channels[0].address}
-                        </CardText>
-                        <CardText>
-                          <strong>Liên hệ:</strong> {campaign.channels[0].phone}
-                        </CardText>
-                      </>
-                    ) : (
-                      ""
-                    )}
-                    <CardSubtitle>
-                      <strong>Trạng thái:</strong>
-                    </CardSubtitle>
-                    <CardText>
-                      {renderStatus(
-                        campaign.approve,
-                        campaign.status,
-                        campaign.completed
-                      )}
-                    </CardText>
-                    <CardSubtitle>
-                      <strong>Người tạo:</strong>
-                    </CardSubtitle>
-                    <CardText>
-                      {campaign.user !== undefined
-                        ? campaign.user.username
-                        : ""}
-                    </CardText>
-                    <CardSubtitle>
-                      <strong>Thời gian:</strong>
-                    </CardSubtitle>
-                    {campaign.campaignTTL[0] !== undefined ? (
-                      <CardText>
-                        {"Từ " +
-                          new Date(
-                            campaign.campaignTTL[0].open_datetime
-                          ).toLocaleDateString("en-GB") +
-                          " - Đến " +
-                          new Date(
-                            campaign.campaignTTL[0].close_datetime
-                          ).toLocaleDateString("en-GB")}
-                      </CardText>
-                    ) : (
-                      ""
-                    )}
-                    <Button color="success">Liên hệ TrendZ</Button>
-                  </CardBody>
-                </Card>
-            ) : (
-              <Spinner />
-          </Row>
+        <Row>
+          <Card className="single-card">
+            <CardImg
+              src={renderImage()}
+              alt="Card image cap"
+              className="campaign-detail-img"
+            />
+            <CardBody>
+              <CardTitle>{campaign.title}</CardTitle>
+              <CardText
+                dangerouslySetInnerHTML={{
+                  __html: campaign.content,
+                }}
+              ></CardText>
+              <CardSubtitle>
+                <strong>Thể loại:</strong>
+              </CardSubtitle>
+              {campaign.category !== undefined ? (
+                <CardText>
+                  {campaign.category.name} - {campaign.category.description}
+                </CardText>
+              ) : (
+                ""
+              )}
+              <CardSubtitle>
+                <strong>Kênh:</strong>
+              </CardSubtitle>
+              {campaign.channels[0] !== undefined ? (
+                <>
+                  <CardText>
+                    <strong>{campaign.channels[0].name}</strong>
+                  </CardText>
+                  <CardText>
+                    <strong>Website:</strong>{" "}
+                    <a href="##">{campaign.channels[0].website}</a>
+                  </CardText>
+                  <CardText>
+                    <strong>Địa chỉ:</strong> {campaign.channels[0].address}
+                  </CardText>
+                  <CardText>
+                    <strong>Liên hệ:</strong> {campaign.channels[0].phone}
+                  </CardText>
+                </>
+              ) : (
+                ""
+              )}
+              <CardSubtitle>
+                <strong>Trạng thái:</strong>
+              </CardSubtitle>
+              <CardText>
+                {renderStatus(
+                  campaign.approve,
+                  campaign.status,
+                  campaign.completed
+                )}
+              </CardText>
+              <CardSubtitle>
+                <strong>Người tạo:</strong>
+              </CardSubtitle>
+              <CardText>
+                {campaign.user !== undefined ? campaign.user.username : ""}
+              </CardText>
+              <CardSubtitle>
+                <strong>Thời gian:</strong>
+              </CardSubtitle>
+              {campaign.campaignTTL[0] !== undefined ? (
+                <CardText>
+                  {"Từ " +
+                    new Date(
+                      campaign.campaignTTL[0].open_datetime
+                    ).toLocaleDateString("en-GB") +
+                    " - Đến " +
+                    new Date(
+                      campaign.campaignTTL[0].close_datetime
+                    ).toLocaleDateString("en-GB")}
+                </CardText>
+              ) : (
+                ""
+              )}
+              <Button color="success">Liên hệ TrendZ</Button>
+            </CardBody>
+          </Card>
+          ) : (
+          <Spinner />
+        </Row>
       );
   };
 
@@ -189,6 +210,7 @@ const Post = () => {
     else {
       let mountedCampaign = true;
       let mountedCategory = true;
+      let mountedCampaignDetails = true;
       try {
         const fetchCampaign = async () => {
           const url = API_URL + `/campaigns/${cid}`;
@@ -240,7 +262,18 @@ const Post = () => {
             setCategories({ categories: get_resolve.data });
           }
         };
-
+        const fetchCampaignDetails = async () => {
+          const url = API_URL + `/campaign-details?_where[campaign.id]=${cid}`;
+          const get_resolve = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+          if (mountedCampaignDetails) {
+            setCampaignDetails({ details: get_resolve.data });
+          }
+        };
+        fetchCampaignDetails();
         fetchCategory();
         fetchCampaign().then(setLoading(false));
       } catch (error) {
@@ -252,6 +285,7 @@ const Post = () => {
       return function cleanup() {
         mountedCampaign = false;
         mountedCategory = false;
+        mountedCampaignDetails = false;
         signal.cancel();
       };
     }
@@ -261,11 +295,7 @@ const Post = () => {
     <div className="wrapper">
       <div className="main">
         <Card>
-          <CardBody>
-          {campaign.content !== "" ? (
-            <RenderRole/>
-          ):""}
-          </CardBody>
+          <CardBody>{campaign.content !== "" ? <RenderRole /> : ""}</CardBody>
         </Card>
       </div>
     </div>

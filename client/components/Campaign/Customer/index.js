@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 
 const { API_URL } = process.env;
 
-const CustomerCampaignPage = ({ campaign, categories, cid }) => {
+const CustomerCampaignPage = ({ campaign, categories, cid, details }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state } = useAuth();
   const [navState, setNav] = useState({
@@ -887,6 +887,11 @@ const CustomerCampaignPage = ({ campaign, categories, cid }) => {
                 )}
               </Timeline>
             </Row>
+            {campaign.completed == false ? (
+              <Row>
+                
+              </Row>
+            ):("")}
           </TabPane>
         </TabContent>
       </Col>
