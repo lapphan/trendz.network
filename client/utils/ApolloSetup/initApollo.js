@@ -2,68 +2,54 @@ import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createHttpLink } from "apollo-link-http";
 import fetch from "isomorphic-unfetch";
-import { onError } from "apollo-link-error";
 import { setContext } from "apollo-link-context";
-import Router from "next/router";
-import { isBrowser } from "./isBrowser";
+
 
 let apolloClient = null;
 
-if (!isBrowser) {
+if (typeof window === "undefined") {
   global.fetch = fetch;
 }
 
-const create = (initialState, { getToken }) => {
+const create = (initialState, headers) => {
+  const isBrowser = typeof window !== "undefined";
+
   const httpLink = createHttpLink({
-    uri: process.env.API_URL+"/graphql" || "http://localhost:1337/graphql",
-    
+    uri: process.env.API_URL + "/graphql" || "http://localhost:1337/graphql",
   });
 
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors)
-      graphQLErrors.map(({ message, locations, path }) => {
-        console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-        );
-        if (isBrowser && message.includes("not authenticated")) {
-          Router.replace("/login");
-        }
-      });
-    if (networkError) console.log(`[Network error]: ${networkError}`);
-  });
-
-  const authLink = setContext((_, { headers }) => {
-
-    const cachedData = JSON.parse(localStorage.getItem("userInfo")||"")
-    const token = cachedData.jwt
+  const authLink = setContext((_, previousContext) => {
+    const cachedData = JSON.parse(localStorage.getItem("userInfo") || "");
+    const token = cachedData.jwt;
     //const token = getToken();
     return {
-      // headers: {
-      //   authorization: token ? `Bearer ${token}` : null,
-      // },
-      headers: Object.assign(Object.assign({}, headers), {
+      headers: {
         ...headers,
-        authorization: token ? `Bearer ${token}` : "",
-        cookie: token ? `qid=${token}`:""
-      }),
+        authorization: token ? `Bearer ${token}` : null,
+      },
+      //   headers: Object.assign(Object.assign({}, headers), {
+      //     ...headers,
+      //     authorization: token ? `Bearer ${token}` : "",
+      //     cookie: token ? `qid=${token}`:""
+      //   }),
     };
   });
 
   return new ApolloClient({
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser,
-    link: errorLink.concat(authLink.concat(httpLink)),
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache().restore(initialState || {}),
   });
 };
 
-export default function initApollo(initialState, options) {
-  if (!isBrowser) {
-    return create(initialState, options);
+export default function initApollo(initialState, headers) {
+  if (typeof window === "undefined") {
+    return create(initialState, headers);
   }
 
   if (!apolloClient) {
-    apolloClient = create(initialState, options);
+    apolloClient = create(initialState,headers);
   }
   return apolloClient;
 }

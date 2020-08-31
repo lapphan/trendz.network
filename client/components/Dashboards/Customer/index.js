@@ -509,14 +509,18 @@ const Customer = () => {
                                     </strong>
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <small className="text-muted">
-                                      {new Date(
-                                        campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString("en-GB") +
+                                  <small className="text-muted">
+                                      {campaign.campaignTTL[0] !== undefined ? (
+                                        new Date(
+                                          campaign.campaignTTL[0].open_datetime
+                                        ).toLocaleString("en-GB") +
                                         " - " +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")}
+                                        ).toLocaleString("en-GB")
+                                      ) : (
+                                        <Skeleton variant="text" />
+                                      )}
                                     </small>
                                   </CardSubtitle>
 

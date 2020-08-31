@@ -1,4 +1,4 @@
-import { useRouter, withRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useAuth } from "../../context/userContext";
 import React, { useEffect, useState } from "react";
 import Router from "next/router";
@@ -11,8 +11,6 @@ import {
   Container,
   CardTitle,
   CardText,
-  Row,
-  Spinner,
 } from "reactstrap";
 
 const { API_URL } = process.env;
@@ -74,10 +72,10 @@ const Influencer = () => {
   return (
     <div className="wrapper">
       <div className="main">
-        <Container>
           <Card>
                   <Container>
-                    <Card className="single-card">
+                    {influencer.info.user !==undefined ? (
+                      <Card className="single-card">
                       <CardImg
                         src={renderImage()}
                         alt="Card image cap"
@@ -126,12 +124,12 @@ const Influencer = () => {
                         )}
                       </CardBody>
                     </Card>
+                    ):""}
                   </Container>
           </Card>
-        </Container>
       </div>
     </div>
   );
 };
 
-export default withRouter(Influencer);
+export default Influencer;
