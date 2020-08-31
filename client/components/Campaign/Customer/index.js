@@ -50,6 +50,12 @@ import CloseIcon from "@material-ui/icons/Close";
 import SyncIcon from "@material-ui/icons/Sync";
 import LockIcon from "@material-ui/icons/Lock";
 
+import MessageList from '../../MessageChatList'
+
+const user={
+  "uid":"customer"
+}
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
@@ -71,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
 
 const { API_URL } = process.env;
 
-const CustomerCampaignPage = ({ campaign, categories, cid, details }) => {
+const CustomerCampaignPage = ({ campaign, categories, cid, messages }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state } = useAuth();
   const [navState, setNav] = useState({
@@ -86,7 +92,7 @@ const CustomerCampaignPage = ({ campaign, categories, cid, details }) => {
     channelId: "",
     channelName: "",
   });
-
+  console.log(messages)
   const [campaignModal, setCampaignModal] = useState(false);
   const toggleCampaignModal = () => {
     setCampaignModal(!campaignModal);
@@ -889,7 +895,23 @@ const CustomerCampaignPage = ({ campaign, categories, cid, details }) => {
             </Row>
             {campaign.completed == false ? (
               <Row>
-                
+                <Container>
+                <div className="chat-box">
+                  <div className="msg-page">
+                    <MessageList isLoading={false} messages={messages} user={user}/>
+                    <div className="chat-box-bottom">
+                      <div id="end-of-chat"/>
+                    </div>
+                  </div>
+                  <div className="msg-footer">
+                    <form className="message-form">
+                      <div className="chat-input-group">
+                        <input type="text" className="chat-form-control message-input"  required/>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                </Container>
               </Row>
             ):("")}
           </TabPane>

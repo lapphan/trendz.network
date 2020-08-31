@@ -51,9 +51,7 @@ const Post = () => {
     categories: [],
   });
 
-  const [campaignDetails, setCampaignDetails] = useState({
-    details: [],
-  });
+  const [messages, setMessages] = useState([]);
 
   const [influencer, setInfluencer] = useState({
     user: {},
@@ -66,7 +64,7 @@ const Post = () => {
           categories={categories}
           campaign={campaign}
           cid={cid}
-          details = {campaignDetails}
+          messages={messages}
         />
       );
     } else if (state.user.id == campaign.user.id) {
@@ -75,7 +73,7 @@ const Post = () => {
           campaign={campaign}
           categories={categories}
           cid={cid}
-          details = {campaignDetails}
+          messages={messages}
         />
       );
     } else if (state.user.role.name == "Employee") {
@@ -84,7 +82,7 @@ const Post = () => {
           campaign={campaign}
           influencer={influencer}
           cid={cid}
-          details = {campaignDetails}
+          messages={messages}
         />
       );
     } else
@@ -210,7 +208,6 @@ const Post = () => {
     else {
       let mountedCampaign = true;
       let mountedCategory = true;
-      let mountedCampaignDetails = true;
       try {
         const fetchCampaign = async () => {
           const url = API_URL + `/campaigns/${cid}`;
@@ -246,6 +243,56 @@ const Post = () => {
                 setInfluencer({
                   user: get_influencer.data,
                 });
+                try {
+                  const fetchCampaignDetails = async () => {
+                    const url =
+                      API_URL + `/campaign-details?_where[campaign.id]=${cid}`;
+                    const get_messages = await axios.get(url, {
+                      headers: {
+                        Authorization: `Bearer ${state.jwt}`,
+                      },
+                    });
+                    var fetchedMessages = get_messages.data[0].chatLog.map(
+                      function (message) {
+                        if (message.userMessage != null) {
+                          var userAvatar = "/256x186.svg";
+                          if (get_resolve.data.user.avatar !== null) {
+                            userAvatar = `${API_URL}${get_resolve.data.user.avatar.formats.thumbnail.url}`;
+                          }
+                          var log = {
+                            text: message.userMessage,
+                            id: `${message.id}`,
+                            sender: {
+                              name: get_resolve.data.user.username,
+                              uid: "customer",
+                              avatar: userAvatar,
+                            },
+                          };
+                          return log;
+                        }
+                        if (message.influencerMessage != null) {
+                          var userAvatar = "/256x186.svg";
+                          console.log(get_influencer.data)
+                          if (get_influencer.data.avatar !== null) {
+                            userAvatar = `${API_URL}${get_influencer.data.user.avatar.formats.thumbnail.url}`;
+                          }
+                          var log = {
+                            text: message.influencerMessage,
+                            id: `${message.id}`,
+                            sender: {
+                              name: get_influencer.data.username,
+                              uid: "influencer",
+                              avatar: userAvatar,
+                            },
+                          };
+                          return log;
+                        }
+                      }
+                    );
+                    setMessages(fetchedMessages);
+                  };
+                  fetchCampaignDetails();
+                } catch (error) {}
               };
               fetchInfluencer();
             } catch (error) {}
@@ -262,20 +309,9 @@ const Post = () => {
             setCategories({ categories: get_resolve.data });
           }
         };
-        const fetchCampaignDetails = async () => {
-          const url = API_URL + `/campaign-details?_where[campaign.id]=${cid}`;
-          const get_resolve = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${state.jwt}`,
-            },
-          });
-          if (mountedCampaignDetails) {
-            setCampaignDetails({ details: get_resolve.data });
-          }
-        };
-        fetchCampaignDetails();
+
+        fetchCampaign();
         fetchCategory();
-        fetchCampaign().then(setLoading(false));
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
@@ -285,7 +321,6 @@ const Post = () => {
       return function cleanup() {
         mountedCampaign = false;
         mountedCategory = false;
-        mountedCampaignDetails = false;
         signal.cancel();
       };
     }
