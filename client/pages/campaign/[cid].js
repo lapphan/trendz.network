@@ -45,6 +45,7 @@ const Post = () => {
     status: null,
     created_at: "",
     updated_at: "",
+    id:""
   });
 
   const [categories, setCategories] = useState({
@@ -230,6 +231,7 @@ const Post = () => {
               completed: get_resolve.data.completed,
               created_at: get_resolve.data.created_at,
               updated_at: get_resolve.data.updated_at,
+              id: get_resolve.data.id
             });
             try {
               const fetchInfluencer = async () => {
@@ -252,43 +254,45 @@ const Post = () => {
                         Authorization: `Bearer ${state.jwt}`,
                       },
                     });
-                    var fetchedMessages = get_messages.data[0].chatLog.map(
-                      function (message) {
-                        if (message.userMessage != null) {
-                          var userAvatar = "/256x186.svg";
-                          if (get_resolve.data.user.avatar !== null) {
-                            userAvatar = `${API_URL}${get_resolve.data.user.avatar.formats.thumbnail.url}`;
+                    if (get_messages.data[0] !== undefined) {
+                      var fetchedMessages = get_messages.data[0].chatLog.map(
+                        function (message) {
+                          if (message.userMessage != null) {
+                            var userAvatar = "/256x186.svg";
+                            if (get_resolve.data.user.avatar !== null) {
+                              userAvatar = `${API_URL}${get_resolve.data.user.avatar.formats.thumbnail.url}`;
+                            }
+                            var log = {
+                              text: message.userMessage,
+                              id: `${message.id}`,
+                              sender: {
+                                name: get_resolve.data.user.username,
+                                uid: "customer",
+                                avatar: userAvatar,
+                              },
+                            };
+                            return log;
                           }
-                          var log = {
-                            text: message.userMessage,
-                            id: `${message.id}`,
-                            sender: {
-                              name: get_resolve.data.user.username,
-                              uid: "customer",
-                              avatar: userAvatar,
-                            },
-                          };
-                          return log;
-                        }
-                        if (message.influencerMessage != null) {
-                          var userAvatar = "/256x186.svg";
-                          console.log(get_influencer.data)
-                          if (get_influencer.data.avatar !== null) {
-                            userAvatar = `${API_URL}${get_influencer.data.user.avatar.formats.thumbnail.url}`;
+                          if (message.influencerMessage != null) {
+                            var userAvatar = "/256x186.svg";
+                            console.log(get_influencer.data);
+                            if (get_influencer.data.avatar !== null) {
+                              userAvatar = `${API_URL}${get_influencer.data.user.avatar.formats.thumbnail.url}`;
+                            }
+                            var log = {
+                              text: message.influencerMessage,
+                              id: `${message.id}`,
+                              sender: {
+                                name: get_influencer.data.username,
+                                uid: "influencer",
+                                avatar: userAvatar,
+                              },
+                            };
+                            return log;
                           }
-                          var log = {
-                            text: message.influencerMessage,
-                            id: `${message.id}`,
-                            sender: {
-                              name: get_influencer.data.username,
-                              uid: "influencer",
-                              avatar: userAvatar,
-                            },
-                          };
-                          return log;
                         }
-                      }
-                    );
+                      );
+                    }
                     setMessages(fetchedMessages);
                   };
                   fetchCampaignDetails();

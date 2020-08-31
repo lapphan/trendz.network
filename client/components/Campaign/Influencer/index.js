@@ -71,6 +71,12 @@ const InfluencerCampaignPage = ({ campaign, cid }) => {
       status: approved,
       completed: false,
     };
+    console.log(campaign)
+    const campaignDetail = {
+      campaign: campaign
+    }
+    console.log(campaignDetail)
+    console.log(cid)
     try {
       await axios({
         method: 'PUT',
@@ -80,6 +86,14 @@ const InfluencerCampaignPage = ({ campaign, cid }) => {
         url: `${API_URL}/campaigns/${cid}`,
         data: status,
       });
+      // await axios({
+      //   method: 'POST',
+      //   headers: {
+      //     Authorization: `Bearer ${state.jwt}`,
+      //   },
+      //   url: `${API_URL}/campaign-details`,
+      //   data: campaignDetail,
+      // });
       if (approved) {
         enqueueSnackbar('Đã chấp thuận campaign!', { variant: 'success' });
       } else enqueueSnackbar('Đã từ chối campaign!', { variant: 'success' });
@@ -97,8 +111,8 @@ const InfluencerCampaignPage = ({ campaign, cid }) => {
     if (campaign.picture[0] !== undefined) {
       if (campaign.picture[0].formats.medium !== undefined) {
         return API_URL + campaign.picture[0].formats.medium.url;
-      } else if (campaign.picture[1].formats.medium !== undefined) {
-        return API_URL + campaign.picture[1].formats.medium.url;
+      } else if (campaign.picture[0].formats.thumbnail !== undefined) {
+        return API_URL + campaign.picture[0].formats.thumbnail.url;
       } else return '/256x186.svg';
     } else return '/256x186.svg';
   };

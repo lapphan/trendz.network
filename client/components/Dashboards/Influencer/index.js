@@ -62,7 +62,7 @@ const Influencer = () => {
     search: "",
   });
 
-  const [query, setQuery] = useState("?");
+  const [query, setQuery] = useState(`?_where[channels.user]=${state.user.id}`);
 
   const toggleTabs = (event, stateName, index) => {
     event.preventDefault();
@@ -120,18 +120,12 @@ const Influencer = () => {
   };
 
   useEffect(() => {
-    let query = "?";
-    if (filterItems.search !== "" && query === "?") {
-      query += "title_contains=" + filterItems.search;
-    } else if (filterItems.search !== "" && query !== "?")
+    let query = `?_where[channels.user]=${state.user.id}`;
+    if (filterItems.search !== "")
       query += "&title_contains=" + filterItems.search;
-    if (filterItems.category !== "" && query === "?") {
-      query += "_where[category.id]=" + filterItems.category;
-    } else if (filterItems.category !== "" && query !== "?")
+    if (filterItems.category !== "")
       query += "&_where[category.id]=" + filterItems.category;
-    if (filterItems.sort !== "" && query === "?") {
-      query += filterItems.sort;
-    } else if (filterItems.sort !== "" && query !== "?")
+    if (filterItems.sort !== "")
       query += "&" + filterItems.sort;
     setQuery(query);
   }, [filterItems]);
@@ -139,7 +133,8 @@ const Influencer = () => {
   useEffect(() => {
     let mountedCampaign = true;
     let mountedCategory = true;
-    const campaignUrl = API_URL + "/campaigns";
+    const campaignUrl = API_URL + `/campaigns?_where[channels.user]=${state.user.id}`;
+    console.log(campaignUrl)
     const categoryUrl = API_URL + "/categories";
     const fetchCampaign = async () => {
       try {
@@ -150,6 +145,7 @@ const Influencer = () => {
           },
         });
         if (mountedCampaign) {
+          console.log(get_resolve.data)
           try {
             setOnHoldCampaigns({
               campaigns: get_resolve.data.filter(function (campaign) {
@@ -520,13 +516,17 @@ const Influencer = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <small className="text-muted">
-                                      {new Date(
-                                        campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString("en-GB") +
+                                    {campaign.campaignTTL[0] !== undefined ? (
+                                        new Date(
+                                          campaign.campaignTTL[0].open_datetime
+                                        ).toLocaleString("en-GB") +
                                         " - " +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")}
+                                        ).toLocaleString("en-GB")
+                                      ) : (
+                                        <Skeleton variant="text" />
+                                      )}
                                     </small>
                                   </CardSubtitle>
 

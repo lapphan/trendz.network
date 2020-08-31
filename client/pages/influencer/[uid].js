@@ -28,9 +28,13 @@ const Influencer = () => {
   });
 
   const renderImage = () => {
-    if (influencer.info.avatar !== undefined) {
-      if (influencer.info.avatar.formats.thumbnail !== undefined) {
-        return API_URL + influencer.info.avatar.formats.thumbnail.url;
+    console.log(influencer);
+    if (
+      influencer.info.user.avatar !== undefined &&
+      influencer.info.user.avatar !== null
+    ) {
+      if (influencer.info.user.avatar.formats.thumbnail !== undefined) {
+        return API_URL + influencer.info.user.avatar.formats.thumbnail.url;
       } else return "/256x186.svg";
     } else return "/256x186.svg";
   };
@@ -41,15 +45,16 @@ const Influencer = () => {
       let mounted = true;
       try {
         const fetchInfluencer = async () => {
-          const url = API_URL + `/users/${uid}`;
+          const url = API_URL + `/channels?_where[user.id]=${uid}`;
           const get_resolve = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${state.jwt}`,
             },
           });
           if (mounted) {
+            console.log(get_resolve.data);
             setInfluencer({
-              info: get_resolve.data,
+              info: get_resolve.data[0],
             });
           }
         };
@@ -72,8 +77,7 @@ const Influencer = () => {
       <div className="main">
         <Container>
           <Card>
-            <CardBody>
-              <Row>
+
                 {isLoading === false ? (
                   <Container>
                     <Card className="single-card">
@@ -83,40 +87,41 @@ const Influencer = () => {
                         className="campaign-detail-img"
                       />
                       <CardBody>
-                        <CardTitle>{influencer.info.name}</CardTitle>
-                        <CardText>{influencer.info.username}</CardText>
+                        <CardTitle>{influencer.info.user.name}</CardTitle>
+                        <CardText>{influencer.info.user.username}</CardText>
+
                         <CardSubtitle>
                           <strong>Thể loại:</strong>
                         </CardSubtitle>
 
                         <CardText>
-                          {influencer.info.categoryDetail} -{" "}
-                          {influencer.info.categoryDescription}
+                          {influencer.info.category.name} -{" "}
+                          {influencer.info.category.description}
                         </CardText>
 
                         <CardSubtitle>
                           <strong>Kênh:</strong>
                         </CardSubtitle>
-                        {influencer.info.channels !== undefined ? (
+                        {influencer.info !== undefined ? (
                           <>
                             <CardText>
                               <strong>
-                                {influencer.info.channels[0].name}
+                                {influencer.info.name}
                               </strong>
                             </CardText>
                             <CardText>
                               <strong>Website:</strong>{" "}
                               <a href="##">
-                                {influencer.info.channels[0].website}
+                                {influencer.info.website}
                               </a>
                             </CardText>
                             <CardText>
                               <strong>Địa chỉ:</strong>{" "}
-                              {influencer.info.channels[0].address}
+                              {influencer.info.address}
                             </CardText>
                             <CardText>
                               <strong>Liên hệ:</strong>{" "}
-                              {influencer.info.channels[0].phone}
+                              {influencer.info.phone}
                             </CardText>
                           </>
                         ) : (
@@ -128,8 +133,8 @@ const Influencer = () => {
                 ) : (
                   <Spinner />
                 )}
-              </Row>
-            </CardBody>
+
+
           </Card>
         </Container>
       </div>
