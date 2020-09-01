@@ -1,12 +1,4 @@
 import Link from "next/link";
-//import { logout } from '../../utils/auth'
-
-/**
- *
- * Header
- *
- */
-
 import React, { useState, useEffect, useCallback } from "react";
 
 import {

@@ -21,9 +21,7 @@ import InfluencerCampaignPage from "../../components/Campaign/Influencer";
 
 const { API_URL } = process.env;
 
-const Post = () => {
-  const router = useRouter();
-  const { cid } = router.query;
+const Post = ({cid}) => {
   const { state } = useAuth();
 
   const signal = axios.CancelToken.source();
@@ -328,7 +326,7 @@ const Post = () => {
         signal.cancel();
       };
     }
-  }, [state]);
+  }, []);
 
   return (
     <div className="wrapper">
@@ -340,5 +338,12 @@ const Post = () => {
     </div>
   );
 };
+
+export async function getServerSideProps({params}){
+  const cid = params.cid;
+  return{
+    props:{cid}
+  }
+}
 
 export default Post;
