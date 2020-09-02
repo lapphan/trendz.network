@@ -21,9 +21,10 @@ import InfluencerCampaignPage from "../../components/Campaign/Influencer";
 
 const { API_URL } = process.env;
 
-const Post = ({cid}) => {
+const Post = () => {
   const { state } = useAuth();
-
+  const router = useRouter();
+  const { cid } = router.query;
   const signal = axios.CancelToken.source();
   const [campaign, setCampaign] = useState({
     campaignTTL: [
@@ -338,12 +339,5 @@ const Post = ({cid}) => {
     </div>
   );
 };
-
-export async function getServerSideProps({params}){
-  const cid = params.cid;
-  return{
-    props:{cid}
-  }
-}
 
 export default Post;

@@ -1,5 +1,8 @@
-import React from "react";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { useAuth } from "../../context/userContext";
+import React, { useEffect, useState } from "react";
+import Router from "next/router";
 import {
   Card,
   CardBody,
@@ -12,42 +15,96 @@ import {
 
 const { API_URL } = process.env;
 
-const Influencer = ({ influencer }) => {
+// const Influencer = ({ influencer }) => {
+const Influencer = () => {
+  const router = useRouter();
+  const { uid } = router.query;
+  const { state } = useAuth();
+  const signal = axios.CancelToken.source();
+  const [influencer, setInfluencer] = useState({
+    info: {},
+  });
+  // const renderImage = () => {
+  //   if (
+  //     influencer.user.avatar !== undefined &&
+  //     influencer.user.avatar !== null
+  //   ) {
+  //     if (influencer.user.avatar.formats.thumbnail !== undefined) {
+  //       return API_URL + influencer.user.avatar.formats.thumbnail.url;
+  //     } else return "/256x186.svg";
+  //   } else return "/256x186.svg";
+  // };
   const renderImage = () => {
-    console.log("line 30" + influencer);
+    console.log(influencer);
     if (
-      influencer.user.avatar !== undefined &&
-      influencer.user.avatar !== null
+      influencer.info.user.avatar !== undefined &&
+      influencer.info.user.avatar !== null
     ) {
-      if (influencer.user.avatar.formats.thumbnail !== undefined) {
-        return API_URL + influencer.user.avatar.formats.thumbnail.url;
+      if (influencer.info.user.avatar.formats.thumbnail !== undefined) {
+        return API_URL + influencer.info.user.avatar.formats.thumbnail.url;
       } else return "/256x186.svg";
     } else return "/256x186.svg";
   };
+
+  useEffect(() => {
+    if (state.jwt === "") Router.push("/login");
+    else {
+      let mounted = true;
+      try {
+        const fetchInfluencer = async () => {
+          const url = API_URL + `/channels?_where[user.id]=${uid}`;
+          const get_resolve = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+          if (mounted) {
+            console.log(get_resolve.data);
+            setInfluencer({
+              info: get_resolve.data[0],
+            });
+          }
+        };
+        fetchInfluencer();
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log("Error: ", error.message);
+        }
+      }
+
+      return function cleanup() {
+        mounted = false;
+        signal.cancel();
+      };
+    }
+  }, [state]);
+
   return (
     <div className="wrapper">
       <div className="main">
         <Card>
           <Container>
-              <Card className="single-card">
-                <CardImg
-                  src={renderImage()}
-                  alt="Card image cap"
-                  className="campaign-detail-img"
-                />
-                <CardBody>
-                  <CardTitle>{influencer.user.name}</CardTitle>
-                  <CardText>{influencer.user.username}</CardText>
+            <Card className="single-card">
+              <CardImg
+                src={renderImage()}
+                alt="Card image cap"
+                className="campaign-detail-img"
+              />
+              <CardBody>
+                {/* <CardTitle>{influencer.user.name}</CardTitle>
+                <CardText>{influencer.user.username}</CardText> */}
+                <CardTitle>{influencer.info.user.name}</CardTitle>
+                <CardText>{influencer.info.user.username}</CardText>
 
-                  {/* <CardSubtitle>
+                {/* <CardSubtitle>
                     <strong>Thể loại:</strong>
                   </CardSubtitle> */}
 
-                  {/* <CardText>
+                {/* <CardText>
                     {influencer.category.name} -{" "}
                     {influencer.category.description}
                   </CardText> */}
-                  {/* <CardSubtitle>
+                {/* <CardSubtitle>
                     <strong>Kênh:</strong>
                   </CardSubtitle>
                     <>
@@ -68,8 +125,8 @@ const Influencer = ({ influencer }) => {
                   ) : (
                     ""
                   )} */}
-                </CardBody>
-              </Card>
+              </CardBody>
+            </Card>
           </Container>
         </Card>
       </div>
@@ -77,13 +134,24 @@ const Influencer = ({ influencer }) => {
   );
 };
 
-export async function getServerSideProps({ params }) {
-  const url = API_URL + `/influencer-details?_where[user.id]=${params.uid}`;
-  const get_resolve = await axios.get(url);
-  const influencer = get_resolve.data[0];
-  return{
-    props:{influencer}
-  }
-}
+// export async function getStaticPaths(){
+//   const res = await fetch(API_URL+`/influencer-details`)
+//   const influencers = await res.json()
+//   console.log(influencers)
+//   const paths = influencers.map((influencer)=>{
+//     params: {id: influencer.user.id}
+//   })
+
+//   return {paths, fallback: false}
+// }
+
+// export async function getStaticProps({ params }) {
+//   const url = API_URL + `/influencer-details?_where[user.id]=${params.uid}`;
+//   const get_resolve = await axios.get(url);
+//   const influencer = get_resolve.data[0];
+//   return{
+//     props:{influencer}
+//   }
+// }
 
 export default Influencer;
