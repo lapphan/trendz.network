@@ -3,7 +3,6 @@ import Header from "../Header";
 import Footer from "../Footer";
 import { useAuth } from "../../context/userContext";
 import { useRouter } from "next/router";
-import Transition from "../PageTransition";
 
 const Layout = (props) => {
   const { state } = useAuth();
@@ -19,22 +18,18 @@ const Layout = (props) => {
     return (
       <div>
         <Header />
-        <Transition location={pathname}>
           <main>
             <div className="section">{props.children}</div>
           </main>
-        </Transition>
       </div>
     );
   } else
     return (
       <div>
         <Header />
-        <Transition location={pathname}>
           <main>
             <div>{props.children}</div>
           </main>
-        </Transition>
         <Footer />
       </div>
     );
