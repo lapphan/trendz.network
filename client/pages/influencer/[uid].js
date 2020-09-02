@@ -13,6 +13,8 @@ import {
   CardText,
 } from "reactstrap";
 
+import {Skeleton} from "@material-ui/lab";
+
 const { API_URL } = process.env;
 
 // const Influencer = ({ influencer }) => {
@@ -21,27 +23,14 @@ const Influencer = () => {
   const { uid } = router.query;
   const { state } = useAuth();
   const signal = axios.CancelToken.source();
-  const [influencer, setInfluencer] = useState({
-    info: {},
-  });
-  // const renderImage = () => {
-  //   if (
-  //     influencer.user.avatar !== undefined &&
-  //     influencer.user.avatar !== null
-  //   ) {
-  //     if (influencer.user.avatar.formats.thumbnail !== undefined) {
-  //       return API_URL + influencer.user.avatar.formats.thumbnail.url;
-  //     } else return "/256x186.svg";
-  //   } else return "/256x186.svg";
-  // };
+  const [influencer, setInfluencer] = useState(null);
   const renderImage = () => {
-    console.log(influencer);
     if (
-      influencer.info.user.avatar !== undefined &&
-      influencer.info.user.avatar !== null
+      influencer.user.avatar !== undefined &&
+      influencer.user.avatar !== null
     ) {
-      if (influencer.info.user.avatar.formats.thumbnail !== undefined) {
-        return API_URL + influencer.info.user.avatar.formats.thumbnail.url;
+      if (influencer.user.avatar.formats.thumbnail !== undefined) {
+        return API_URL + influencer.user.avatar.formats.thumbnail.url;
       } else return "/256x186.svg";
     } else return "/256x186.svg";
   };
@@ -60,9 +49,7 @@ const Influencer = () => {
           });
           if (mounted) {
             console.log(get_resolve.data);
-            setInfluencer({
-              info: get_resolve.data[0],
-            });
+            setInfluencer(get_resolve.data[0]);
           }
         };
         fetchInfluencer();
@@ -77,56 +64,60 @@ const Influencer = () => {
         signal.cancel();
       };
     }
-  }, [state]);
+  }, []);
 
   return (
     <div className="wrapper">
       <div className="main">
         <Card>
           <Container>
-            <Card className="single-card">
-              <CardImg
-                src={renderImage()}
-                alt="Card image cap"
-                className="campaign-detail-img"
-              />
-              <CardBody>
-                {/* <CardTitle>{influencer.user.name}</CardTitle>
-                <CardText>{influencer.user.username}</CardText> */}
-                <CardTitle>{influencer.info.user.name}</CardTitle>
-                <CardText>{influencer.info.user.username}</CardText>
+            {influencer != null ? (
+              <Card className="single-card">
+                <CardImg
+                  src={renderImage()}
+                  alt="Card image cap"
+                  className="campaign-detail-img"
+                />
+                <CardBody>
+                  <CardTitle>{influencer.user.name}</CardTitle>
+                  <CardText>{influencer.user.username}</CardText>
 
-                {/* <CardSubtitle>
+                  {/* <CardSubtitle>
                     <strong>Thể loại:</strong>
                   </CardSubtitle> */}
 
-                {/* <CardText>
+                  {/* <CardText>
                     {influencer.category.name} -{" "}
                     {influencer.category.description}
                   </CardText> */}
-                {/* <CardSubtitle>
+                  {/* <CardSubtitle>
                     <strong>Kênh:</strong>
-                  </CardSubtitle>
+                    </CardSubtitle>
                     <>
-                      <CardText>
-                        <strong>{influencer.name}</strong>
-                      </CardText>
-                      <CardText>
-                        <strong>Website:</strong>{" "}
-                        <a href="##">{influencer.info.website}</a>
-                      </CardText>
-                      <CardText>
-                        <strong>Địa chỉ:</strong> {influencer.info.address}
-                      </CardText>
-                      <CardText>
-                        <strong>Liên hệ:</strong> {influencer.info.phone}
-                      </CardText>
+                    <CardText>
+                    <strong>{influencer.name}</strong>
+                    </CardText>
+                    <CardText>
+                    <strong>Website:</strong>{" "}
+                    <a href="##">{influencer.info.website}</a>
+                    </CardText>
+                    <CardText>
+                    <strong>Địa chỉ:</strong> {influencer.info.address}
+                    </CardText>
+                    <CardText>
+                    <strong>Liên hệ:</strong> {influencer.info.phone}
+                    </CardText>
                     </>
                   ) : (
                     ""
                   )} */}
-              </CardBody>
-            </Card>
+                </CardBody>
+              </Card>
+            ) : (
+              <Card className="single-card">
+                <Skeleton variant="rect" width={256} height={186} />
+              </Card>
+            )}
           </Container>
         </Card>
       </div>
