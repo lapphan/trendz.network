@@ -3,6 +3,7 @@ import Header from "../Header";
 import Footer from "../Footer";
 import { useAuth } from "../../context/userContext";
 import { useRouter } from "next/router";
+import Transition from "../PageTransition";
 
 const Layout = (props) => {
   const { state } = useAuth();
@@ -14,25 +15,30 @@ const Layout = (props) => {
       setLoggedIn(true);
     }
   }, [state.jwt]);
-  if (isLoggedIn) {
-    return (
-      <div>
-        <Header />
-          <main>
-            <div className="section">{props.children}</div>
-          </main>
-      </div>
-    );
-  } else
-    return (
-      <div>
-        <Header />
-          <main>
-            <div>{props.children}</div>
-          </main>
-        <Footer />
-      </div>
-    );
+  return (
+    <>
+      {isLoggedIn ? (
+        <div>
+          <Header />
+          <Transition location={pathname}> 
+            <main>
+              <div className="section">{props.children}</div>
+            </main>
+           </Transition> 
+        </div>
+      ) : (
+        <div>
+          <Header />
+           <Transition location={pathname}> 
+            <main>
+              <div>{props.children}</div>
+            </main>
+           </Transition>
+          <Footer />
+        </div>
+      )}
+    </>
+  );
 };
 
 export default Layout;
