@@ -14,7 +14,8 @@ module.exports = {
     var result = [];
 
     campaigns.forEach( campaign => {
-        result.push(campaign.id);
+        var campaignId = { "id": campaign.id}
+        result.push(campaignId);
     });
 
     return result;
