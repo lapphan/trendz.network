@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "campaign_details",
+  "info": {
+    "name": "CampaignDetail"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "rating": {
+      "type": "integer",
+      "max": 5,
+      "min": 1
+    },
+    "report": {
+      "type": "text"
+    },
+    "chatLog": {
+      "type": "component",
+      "repeatable": true,
+      "component": "campaign-log.campaign-log"
+    },
+    "campaign": {
+      "model": "campaign"
+    }
+  }
+}
