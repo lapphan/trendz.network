@@ -21,17 +21,11 @@ const create = (initialState, headers) => {
   const authLink = setContext((_, previousContext) => {
     const cachedData = JSON.parse(localStorage.getItem("userInfo") || "");
     const token = cachedData.jwt;
-    //const token = getToken();
     return {
-      headers: {
-        ...headers,
-        authorization: token ? `Bearer ${token}` : null,
-      },
-      //   headers: Object.assign(Object.assign({}, headers), {
-      //     ...headers,
-      //     authorization: token ? `Bearer ${token}` : "",
-      //     cookie: token ? `qid=${token}`:""
-      //   }),
+        headers: Object.assign(Object.assign({}, headers), {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : "",
+        }),
     };
   });
 

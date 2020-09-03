@@ -22,10 +22,9 @@ import InfluencerCampaignPage from "../../components/Campaign/Influencer";
 const { API_URL } = process.env;
 
 const Post = () => {
+  const { state } = useAuth();
   const router = useRouter();
   const { cid } = router.query;
-  const { state } = useAuth();
-
   const signal = axios.CancelToken.source();
   const [campaign, setCampaign] = useState({
     campaignTTL: [
@@ -328,7 +327,7 @@ const Post = () => {
         signal.cancel();
       };
     }
-  }, [state]);
+  }, []);
 
   return (
     <div className="wrapper">

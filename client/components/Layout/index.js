@@ -15,29 +15,30 @@ const Layout = (props) => {
       setLoggedIn(true);
     }
   }, [state.jwt]);
-  if (isLoggedIn) {
-    return (
-      <div>
-        <Header />
-        <Transition location={pathname}>
-          <main>
-            <div className="section">{props.children}</div>
-          </main>
-        </Transition>
-      </div>
-    );
-  } else
-    return (
-      <div>
-        <Header />
-        <Transition location={pathname}>
-          <main>
-            <div>{props.children}</div>
-          </main>
-        </Transition>
-        <Footer />
-      </div>
-    );
+  return (
+    <>
+      {isLoggedIn ? (
+        <div>
+          <Header />
+          <Transition location={pathname}> 
+            <main>
+              <div className="section">{props.children}</div>
+            </main>
+           </Transition> 
+        </div>
+      ) : (
+        <div>
+          <Header />
+           <Transition location={pathname}> 
+            <main>
+              <div>{props.children}</div>
+            </main>
+           </Transition>
+          <Footer />
+        </div>
+      )}
+    </>
+  );
 };
 
 export default Layout;

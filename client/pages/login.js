@@ -118,6 +118,7 @@ const Login = () => {
         )
         Router.push('/dashboard');
       } catch (error) {
+        console.log(error)
         return enqueueSnackbar("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại!", {variant: 'error'})
       }
   };
