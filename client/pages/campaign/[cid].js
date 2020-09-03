@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useAuth } from "../../context/userContext";
 import React, { useEffect, useState } from "react";
 import Router from "next/router";
@@ -12,8 +11,9 @@ import {
   CardTitle,
   CardText,
   Row,
-  Spinner,
 } from "reactstrap";
+
+import { CircularProgress } from "@material-ui/core";
 
 import CustomerCampaignPage from "../../components/Campaign/Customer";
 import EmployeeCampaignPage from "../../components/Campaign/Employee";
@@ -21,10 +21,8 @@ import InfluencerCampaignPage from "../../components/Campaign/Influencer";
 
 const { API_URL } = process.env;
 
-const Post = () => {
+const Post = ({ cid }) => {
   const { state } = useAuth();
-  const router = useRouter();
-  const { cid } = router.query;
   const signal = axios.CancelToken.source();
   const [campaign, setCampaign] = useState({
     campaignTTL: [
@@ -44,9 +42,8 @@ const Post = () => {
     status: null,
     created_at: "",
     updated_at: "",
-    id:""
+    id: "",
   });
-
   const [categories, setCategories] = useState({
     categories: [],
   });
@@ -59,6 +56,8 @@ const Post = () => {
 
   const RenderRole = () => {
     if (state.user.id == campaign.channels[0].user) {
+      console.log(campaign);
+      console.log(categories);
       return (
         <InfluencerCampaignPage
           categories={categories}
@@ -206,124 +205,128 @@ const Post = () => {
   useEffect(() => {
     if (state.jwt === "") Router.push("/login");
     else {
-      let mountedCampaign = true;
-      let mountedCategory = true;
-      try {
-        const fetchCampaign = async () => {
-          const url = API_URL + `/campaigns/${cid}`;
-          const get_resolve = await axios.get(url, {
+      let mountedData = true;
+      //let mountedCategories = true;
+      //let mountedInfluencer = true;
+      //let mountedCampaignDetails = true;
+
+      const fetchData = async () => {
+        const campaign_url = API_URL + `/campaigns/${cid}`;
+
+        const campaignDetail_url =
+          API_URL + `/campaign-details?_where[campaign.id]=${cid}`;
+        const categories_url = API_URL + "/categories";
+        try {
+          //axios GET methods
+          const get_messages = await axios.get(campaignDetail_url, {
+            cancelToken: signal.token,
             headers: {
               Authorization: `Bearer ${state.jwt}`,
             },
           });
-          if (mountedCampaign) {
-            setCampaign({
-              user: get_resolve.data.user,
-              campaignTTL: get_resolve.data.campaignTTL,
-              category: get_resolve.data.category,
-              channels: get_resolve.data.channels,
-              picture: get_resolve.data.picture,
-              status: get_resolve.data.status,
-              title: get_resolve.data.title,
-              content: get_resolve.data.content,
-              approve: get_resolve.data.approve,
-              completed: get_resolve.data.completed,
-              created_at: get_resolve.data.created_at,
-              updated_at: get_resolve.data.updated_at,
-              id: get_resolve.data.id
-            });
+
+          const get_categories = await axios.get(categories_url, {
+            cancelToken: signal.token,
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+
+          const get_campaign = await axios.get(campaign_url, {
+            cancelToken: signal.token,
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+
+          const influencer_url =
+            API_URL + `/users/${get_campaign.data.channels[0].user}`;
+          const get_influencer = await axios.get(influencer_url, {
+            cancelToken: signal.token,
+            headers: {
+              Authorization: `Bearer ${state.jwt}`,
+            },
+          });
+          //setState methods
+          if (mountedData) {
             try {
-              const fetchInfluencer = async () => {
-                const url =
-                  API_URL + `/users/${get_resolve.data.channels[0].user}`;
-                const get_influencer = await axios.get(url, {
-                  headers: {
-                    Authorization: `Bearer ${state.jwt}`,
-                  },
-                });
-                setInfluencer({
-                  user: get_influencer.data,
-                });
-                try {
-                  const fetchCampaignDetails = async () => {
-                    const url =
-                      API_URL + `/campaign-details?_where[campaign.id]=${cid}`;
-                    const get_messages = await axios.get(url, {
-                      headers: {
-                        Authorization: `Bearer ${state.jwt}`,
-                      },
-                    });
-                    if (get_messages.data[0] !== undefined) {
-                      var fetchedMessages = get_messages.data[0].chatLog.map(
-                        function (message) {
-                          if (message.userMessage != null) {
-                            var userAvatar = "/256x186.svg";
-                            if (get_resolve.data.user.avatar !== null) {
-                              userAvatar = `${API_URL}${get_resolve.data.user.avatar.formats.thumbnail.url}`;
-                            }
-                            var log = {
-                              text: message.userMessage,
-                              id: `${message.id}`,
-                              sender: {
-                                name: get_resolve.data.user.username,
-                                uid: "customer",
-                                avatar: userAvatar,
-                              },
-                            };
-                            return log;
-                          }
-                          if (message.influencerMessage != null) {
-                            var userAvatar = "/256x186.svg";
-                            console.log(get_influencer.data);
-                            if (get_influencer.data.avatar !== null) {
-                              userAvatar = `${API_URL}${get_influencer.data.user.avatar.formats.thumbnail.url}`;
-                            }
-                            var log = {
-                              text: message.influencerMessage,
-                              id: `${message.id}`,
-                              sender: {
-                                name: get_influencer.data.username,
-                                uid: "influencer",
-                                avatar: userAvatar,
-                              },
-                            };
-                            return log;
-                          }
-                        }
-                      );
+              setInfluencer({
+                user: get_influencer.data,
+              });
+
+              if (get_messages.data[0] !== undefined) {
+                var fetchedMessages = get_messages.data[0].chatLog.map(
+                  function (message) {
+                    if (message.userMessage != null) {
+                      var userAvatar = "/256x186.svg";
+                      if (get_resolve.data.user.avatar !== null) {
+                        userAvatar = `${API_URL}${get_resolve.data.user.avatar.formats.thumbnail.url}`;
+                      }
+                      var log = {
+                        text: message.userMessage,
+                        id: `${message.id}`,
+                        sender: {
+                          name: get_resolve.data.user.username,
+                          uid: "customer",
+                          avatar: userAvatar,
+                        },
+                      };
+                      return log;
                     }
-                    setMessages(fetchedMessages);
-                  };
-                  fetchCampaignDetails();
-                } catch (error) {}
-              };
-              fetchInfluencer();
-            } catch (error) {}
-          }
-        };
-        const fetchCategory = async () => {
-          const url = API_URL + "/categories";
-          const get_resolve = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${state.jwt}`,
-            },
-          });
-          if (mountedCategory) {
-            setCategories({ categories: get_resolve.data });
-          }
-        };
+                    if (message.influencerMessage != null) {
+                      var userAvatar = "/256x186.svg";
+                      console.log(get_influencer.data);
+                      if (get_influencer.data.avatar !== null) {
+                        userAvatar = `${API_URL}${get_influencer.data.user.avatar.formats.thumbnail.url}`;
+                      }
+                      var log = {
+                        text: message.influencerMessage,
+                        id: `${message.id}`,
+                        sender: {
+                          name: get_influencer.data.username,
+                          uid: "influencer",
+                          avatar: userAvatar,
+                        },
+                      };
+                      return log;
+                    }
+                  }
+                );
+              }
+              setMessages(fetchedMessages);
 
-        fetchCampaign();
-        fetchCategory();
-      } catch (error) {
-        if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+              setCategories({
+                categories: get_categories.data,
+              });
+
+              setCampaign({
+                user: get_campaign.data.user,
+                campaignTTL: get_campaign.data.campaignTTL,
+                category: get_campaign.data.category,
+                channels: get_campaign.data.channels,
+                picture: get_campaign.data.picture,
+                status: get_campaign.data.status,
+                title: get_campaign.data.title,
+                content: get_campaign.data.content,
+                approve: get_campaign.data.approve,
+                completed: get_campaign.data.completed,
+                created_at: get_campaign.data.created_at,
+                updated_at: get_campaign.data.updated_at,
+                id: get_campaign.data.id,
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        } catch (error) {
+          if (axios.isCancel(error) && error.message !== undefined) {
+            console.log("Error: ", error.message);
+          }
         }
-      }
-
+      };
+      fetchData();
       return function cleanup() {
-        mountedCampaign = false;
-        mountedCategory = false;
+        mountedData = false;
         signal.cancel();
       };
     }
@@ -332,12 +335,39 @@ const Post = () => {
   return (
     <div className="wrapper">
       <div className="main">
+          {campaign.content !== "" ? (
         <Card>
-          <CardBody>{campaign.content !== "" ? <RenderRole /> : ""}</CardBody>
+            <CardBody>
+              <RenderRole />
+            </CardBody>
         </Card>
+          ) : (
+            <Card>
+              <br/>
+              <CircularProgress />
+              <br/>
+            </Card>
+          )}
       </div>
     </div>
   );
 };
+
+export async function getStaticPaths() {
+  const campaignIdsUrl = API_URL + "/campaigns/getid";
+  const get_resolve = await axios.get(campaignIdsUrl);
+  const campaignIds = get_resolve.data;
+  const paths = campaignIds.map((campaignId) => ({
+    params: { cid: campaignId.id.toString() },
+  }));
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  const cid = params.cid;
+  return {
+    props: { cid },
+  };
+}
 
 export default Post;

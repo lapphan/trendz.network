@@ -80,6 +80,7 @@ const { API_URL } = process.env;
 const CustomerCampaignPage = ({ campaign, categories, cid, messages }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { state } = useAuth();
+  const [tempCampaign, setTempCampaign] = useState(campaign);
   const [navState, setNav] = useState({
     vertical: 1,
   });
@@ -92,7 +93,7 @@ const CustomerCampaignPage = ({ campaign, categories, cid, messages }) => {
     channelId: "",
     channelName: "",
   });
-  console.log(messages)
+
   const [campaignModal, setCampaignModal] = useState(false);
   const toggleCampaignModal = () => {
     setCampaignModal(!campaignModal);
@@ -103,7 +104,6 @@ const CustomerCampaignPage = ({ campaign, categories, cid, messages }) => {
     setDeleteModal(!deleteModal);
   };
 
-  const [tempCampaign, setTempCampaign] = useState(campaign);
 
   var valid = function (current) {
     return current.isAfter(date);

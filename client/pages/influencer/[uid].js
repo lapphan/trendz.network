@@ -7,13 +7,12 @@ import {
   Card,
   CardBody,
   CardImg,
-  CardSubtitle,
   Container,
   CardTitle,
   CardText,
 } from "reactstrap";
 
-import {Skeleton} from "@material-ui/lab";
+import { Skeleton } from "@material-ui/lab";
 
 const { API_URL } = process.env;
 
@@ -39,25 +38,29 @@ const Influencer = () => {
     if (state.jwt === "") Router.push("/login");
     else {
       let mounted = true;
-      try {
-        const fetchInfluencer = async () => {
-          const url = API_URL + `/channels?_where[user.id]=${uid}`;
+      const fetchInfluencer = async () => {
+        const url = API_URL + `/channels?_where[user.id]=${uid}`;
+        try {
           const get_resolve = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${state.jwt}`,
             },
           });
           if (mounted) {
-            console.log(get_resolve.data);
-            setInfluencer(get_resolve.data[0]);
+            try {
+              console.log(get_resolve.data);
+              setInfluencer(get_resolve.data[0]);
+            } catch (error) {
+              console.log(error);
+            }
           }
-        };
-        fetchInfluencer();
-      } catch (error) {
-        if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+        } catch (error) {
+          if (axios.isCancel(error) && error.message !== undefined) {
+            console.log("Error: ", error.message);
+          }
         }
-      }
+      };
+      fetchInfluencer();
 
       return function cleanup() {
         mounted = false;
