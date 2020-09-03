@@ -30,7 +30,8 @@ module.exports = withCSS(withSass(withFonts(withImages({
           '/create':{page:'/create'},
           '/login':{page:'/login'},
           '/register':{page:'/register'},
-          '/profile':{page:'/profile'}
+          '/profile':{page:'/profile'},
+          '/404':{page:'/404'}
       };
   },
 }))))
