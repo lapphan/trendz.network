@@ -1,0 +1,67 @@
+{
+  "kind": "collectionType",
+  "collectionName": "channels",
+  "info": {
+    "name": "Channel"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "avatar": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": false
+    },
+    "picture": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "status": {
+      "type": "boolean"
+    },
+    "user": {
+      "via": "channels",
+      "plugin": "users-permissions",
+      "model": "user"
+    },
+    "category": {
+      "model": "category",
+      "via": "channels"
+    },
+    "campaigns": {
+      "via": "channels",
+      "collection": "campaign",
+      "dominant": true
+    }
+  }
+}

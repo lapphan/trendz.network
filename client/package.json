@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "prod": "next export"
+    "prod": "serve out"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.29",
