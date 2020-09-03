@@ -6,7 +6,7 @@ const withSass = require('@zeit/next-sass')
 const withFonts = require('next-fonts')
 const withImages = require('next-images')
 
-module.exports=withCSS(withSass(withFonts(withImages({
+module.exports = withCSS(withSass(withFonts(withImages({
     webpack: function(config){
         config.module.rules.push({
             test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
@@ -23,5 +23,9 @@ module.exports=withCSS(withSass(withFonts(withImages({
     env:{
         API_URL: process.env.API_URL
     },
-    
+    exportPathMap: function() {
+      return {
+          '/': { page: '/' },
+      };
+  },
 }))))

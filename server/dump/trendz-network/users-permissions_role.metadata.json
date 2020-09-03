@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"trendz-network.users-permissions_role"},{"v":{"$numberInt":"2"},"unique":true,"key":{"type":{"$numberInt":"1"}},"name":"type_1","ns":"trendz-network.users-permissions_role","background":true}],"uuid":"8d994890db6c4e9fb44636dc5addfbdc"}
