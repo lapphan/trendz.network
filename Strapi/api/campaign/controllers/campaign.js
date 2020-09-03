@@ -1,7 +1,7 @@
 const { sanitizeEntity } = require('strapi-utils');
 
 module.exports = {
-  async findId(ctx) {
+  async getId(ctx) {
     let entities;
     if (ctx.query._q) {
       entities = await strapi.services.campaign.search(ctx.query);
