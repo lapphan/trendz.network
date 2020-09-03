@@ -98,8 +98,8 @@ function Header() {
     dispatch({ type: LOGOUT });
     //Router.reload();
     
-    Router.push("/")
-    location.reload()
+    Router.push("/login")
+    //location.reload()
   };
 
   const renderUnloggedInButton = (

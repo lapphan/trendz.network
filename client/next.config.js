@@ -26,6 +26,11 @@ module.exports = withCSS(withSass(withFonts(withImages({
     exportPathMap: function() {
       return {
           '/': { page: '/' },
+          '/dashboard':{page:'/dashboard'},
+          '/create':{page:'/create'},
+          '/login':{page:'/login'},
+          '/register':{page:'/register'},
+          '/profile':{page:'/profile'}
       };
   },
 }))))
