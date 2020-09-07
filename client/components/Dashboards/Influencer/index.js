@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../context/userContext";
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/userContext';
 
-import axios from "axios";
-import Link from "next/link";
-import classnames from "classnames";
+import axios from 'axios';
+import Link from 'next/link';
+import classnames from 'classnames';
 import {
   Button,
   Card,
@@ -25,11 +25,11 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-} from "reactstrap";
+} from 'reactstrap';
 
-import Skeleton from "@material-ui/lab/Skeleton";
+import Skeleton from '@material-ui/lab/Skeleton';
 
-import { sortBy } from "../../../utils/filters/sortBy";
+import { sortBy } from '../../../utils/filters/sortBy';
 const { API_URL } = process.env;
 
 const Influencer = () => {
@@ -57,9 +57,9 @@ const Influencer = () => {
   const signal = axios.CancelToken.source();
 
   const [filterItems, setFilterItems] = useState({
-    category: "",
-    sort: "",
-    search: "",
+    category: '',
+    sort: '',
+    search: '',
   });
 
   const [query, setQuery] = useState(`?_where[channels.user]=${state.user.id}`);
@@ -69,11 +69,11 @@ const Influencer = () => {
     setNav((previousState) => {
       return { ...previousState, [stateName]: index };
     });
-    setQuery("?");
+    setQuery('?');
     setFilterItems({
-      category: "",
-      sort: "",
-      search: "",
+      category: '',
+      sort: '',
+      search: '',
     });
   };
 
@@ -98,44 +98,44 @@ const Influencer = () => {
 
   const handleClearFilter = () => {
     setFilterItems({
-      category: "",
-      sort: "",
-      search: "",
+      category: '',
+      sort: '',
+      search: '',
     });
   };
 
   const renderStatus = (approvalStatus, influencerStatus, status) => {
     if (approvalStatus == true && influencerStatus == null) {
-      return "Đang chờ influencer chấp thuận";
+      return 'Đang chờ influencer chấp thuận';
     }
     if (approvalStatus == true && influencerStatus == true) {
-      return "Đã được chấp thuận - Đang thực hiện";
+      return 'Đã được chấp thuận - Đang thực hiện';
     }
     if (approvalStatus == true && influencerStatus == false) {
-      return "Đã được cấp phép - Influencer đã từ chối";
+      return 'Đã được cấp phép - Influencer đã từ chối';
     }
     if (approvalStatus && influencerStatus && status == false) {
-      return "Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động";
-    } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
+      return 'Đã được cấp phép - Influencer đã chấp thuận - Đang hoạt động';
+    } else return 'Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc';
   };
 
   useEffect(() => {
     let query = `?_where[channels.user]=${state.user.id}`;
-    if (filterItems.search !== "")
-      query += "&title_contains=" + filterItems.search;
-    if (filterItems.category !== "")
-      query += "&_where[category.id]=" + filterItems.category;
-    if (filterItems.sort !== "")
-      query += "&" + filterItems.sort;
+    if (filterItems.search !== '')
+      query += '&title_contains=' + filterItems.search;
+    if (filterItems.category !== '')
+      query += '&_where[category.id]=' + filterItems.category;
+    if (filterItems.sort !== '') query += '&' + filterItems.sort;
     setQuery(query);
   }, [filterItems]);
 
   useEffect(() => {
     let mountedCampaign = true;
     let mountedCategory = true;
-    const campaignUrl = API_URL + `/campaigns?_where[channels.user]=${state.user.id}`;
-    console.log(campaignUrl)
-    const categoryUrl = API_URL + "/categories";
+    const campaignUrl =
+      API_URL + `/campaigns?_where[channels.user]=${state.user.id}`;
+    console.log(campaignUrl);
+    const categoryUrl = API_URL + '/categories';
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
@@ -145,7 +145,7 @@ const Influencer = () => {
           },
         });
         if (mountedCampaign) {
-          console.log(get_resolve.data)
+          console.log(get_resolve.data);
           try {
             setOnHoldCampaigns({
               campaigns: get_resolve.data.filter(function (campaign) {
@@ -168,7 +168,7 @@ const Influencer = () => {
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+          console.log('Error: ', error.message);
         }
       }
     };
@@ -191,7 +191,7 @@ const Influencer = () => {
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+          console.log('Error: ', error.message);
         }
       }
     };
@@ -207,9 +207,9 @@ const Influencer = () => {
     let mountedCampaign = true;
     let campaignUrl;
 
-    if (query !== "?undefined") {
-      campaignUrl = API_URL + "/campaigns" + query;
-    } else campaignUrl = API_URL + "/campaigns";
+    if (query !== '?undefined') {
+      campaignUrl = API_URL + '/campaigns' + query;
+    } else campaignUrl = API_URL + '/campaigns';
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
@@ -241,7 +241,7 @@ const Influencer = () => {
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
-          console.log("Error: ", error.message);
+          console.log('Error: ', error.message);
         }
       }
     };
@@ -253,19 +253,19 @@ const Influencer = () => {
   }, [query]);
 
   return (
-    <div className="wrapper">
-      <div className="main">
+    <div className='wrapper'>
+      <div className='main'>
         <Card>
           <CardBody>
             <Row>
-              <Col md="2">
-                <Nav className="nav-pills-primary flex-column" pills>
+              <Col md='2'>
+                <Nav className='nav-pills-primary flex-column' pills>
                   <NavItem>
                     <NavLink
                       className={classnames({
                         active: navState.vertical === 1,
                       })}
-                      onClick={(e) => toggleTabs(e, "vertical", 1)}
+                      onClick={(e) => toggleTabs(e, 'vertical', 1)}
                     >
                       Campaign requests
                     </NavLink>
@@ -275,7 +275,7 @@ const Influencer = () => {
                       className={classnames({
                         active: navState.vertical === 2,
                       })}
-                      onClick={(e) => toggleTabs(e, "vertical", 2)}
+                      onClick={(e) => toggleTabs(e, 'vertical', 2)}
                     >
                       Approved Campaigns
                     </NavLink>
@@ -285,7 +285,7 @@ const Influencer = () => {
                       className={classnames({
                         active: navState.vertical === 3,
                       })}
-                      onClick={(e) => toggleTabs(e, "vertical", 3)}
+                      onClick={(e) => toggleTabs(e, 'vertical', 3)}
                     >
                       Unapproved Campaigns
                     </NavLink>
@@ -293,18 +293,18 @@ const Influencer = () => {
                 </Nav>
               </Col>
               <Col>
-                <TabContent activeTab={"vertical" + navState.vertical}>
-                  <Row style={{ marginTop: "30px" }}>
+                <TabContent activeTab={'vertical' + navState.vertical}>
+                  <Row style={{ marginTop: '30px' }}>
                     <Col>
                       <Row>
                         <CardSubtitle>Tìm kiếm</CardSubtitle>
                       </Row>
                       <Row>
                         <Input
-                          type="text"
+                          type='text'
                           value={filterItems.search}
-                          name="search"
-                          id="search"
+                          name='search'
+                          id='search'
                           onChange={handleSearchChange}
                         />
                       </Row>
@@ -317,25 +317,25 @@ const Influencer = () => {
                         <UncontrolledDropdown group>
                           <DropdownToggle
                             caret
-                            color="secondary"
-                            data-toggle="dropdown"
-                            className="mydropdown"
+                            color='secondary'
+                            data-toggle='dropdown'
+                            className='mydropdown'
                           >
-                            {filterItems.category === ""
-                              ? "Chọn Danh mục..."
+                            {filterItems.category === ''
+                              ? 'Chọn Danh mục...'
                               : categories.categories.find(
                                   (category) =>
                                     category.id === filterItems.category
                                 ).name}
                           </DropdownToggle>
-                          <DropdownMenu className="dropdown-menu">
+                          <DropdownMenu className='dropdown-menu'>
                             {categories.categories.map((category) => (
                               <DropdownItem
                                 key={category.id}
                                 onClick={(event) => {
                                   event.preventDefault();
                                   handleFilterItemsChange(
-                                    "category",
+                                    'category',
                                     category.id
                                   );
                                 }}
@@ -355,23 +355,23 @@ const Influencer = () => {
                         <UncontrolledDropdown group>
                           <DropdownToggle
                             caret
-                            color="secondary"
-                            data-toggle="dropdown"
-                            className="mydropdown"
+                            color='secondary'
+                            data-toggle='dropdown'
+                            className='mydropdown'
                           >
-                            {filterItems.sort === ""
-                              ? "Sắp xếp theo..."
+                            {filterItems.sort === ''
+                              ? 'Sắp xếp theo...'
                               : sortBy.find(
                                   (sort) => sort.value === filterItems.sort
                                 ).type}
                           </DropdownToggle>
-                          <DropdownMenu className="dropdown-menu">
+                          <DropdownMenu className='dropdown-menu'>
                             {sortBy.map((sort) => (
                               <DropdownItem
                                 key={sort.id}
                                 onClick={(event) => {
                                   event.preventDefault();
-                                  handleFilterItemsChange("sort", sort.value);
+                                  handleFilterItemsChange('sort', sort.value);
                                 }}
                               >
                                 {sort.type}
@@ -388,52 +388,57 @@ const Influencer = () => {
                       <Row>
                         <Button
                           onClick={handleClearFilter}
-                          color="warning"
-                          style={{ marginTop: "19px" }}
+                          color='warning'
+                          style={{ marginTop: '19px' }}
                         >
                           Làm sạch bộ lọc
                         </Button>
                       </Row>
                     </Col>
                   </Row>
-                  <TabPane tabId="vertical1">
+                  <Link href='/create-channel'>
+                    <Button color='primary' className='btn-create'>
+                      Tạo Channel
+                    </Button>
+                  </Link>
+                  <TabPane tabId='vertical1'>
                     <Row>
                       <CardDeck>
                         {onHoldCampaigns.campaigns.length !== 0 ? (
                           onHoldCampaigns.campaigns.map((campaign) => (
                             <Col md={4} key={campaign.id}>
-                              <Card className="campaign-card">
+                              <Card className='campaign-card'>
                                 {campaign.picture[0] !== undefined ? (
                                   <CardImg
                                     src={`${API_URL}${campaign.picture[0].formats.thumbnail.url}`}
-                                    alt="Card image cap"
-                                    className="campaign-img"
+                                    alt='Card image cap'
+                                    className='campaign-img'
                                   />
                                 ) : (
                                   <Skeleton
-                                    variant="rect"
+                                    variant='rect'
                                     width={256}
                                     height={186}
                                   />
                                 )}
                                 <CardBody>
-                                  <CardTitle className="dashboard-card-title">
+                                  <CardTitle className='dashboard-card-title'>
                                     {campaign.title !== undefined ? (
                                       campaign.title
                                     ) : (
-                                      <Skeleton variant="text" />
+                                      <Skeleton variant='text' />
                                     )}
                                   </CardTitle>
                                   <CardSubtitle>
-                                    <strong>Người tạo:</strong>{" "}
+                                    <strong>Người tạo:</strong>{' '}
                                     {campaign.user !== null ? (
                                       campaign.user.username
                                     ) : (
-                                      <Skeleton variant="text" />
+                                      <Skeleton variant='text' />
                                     )}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>Trạng thái:</strong>{" "}
+                                    <strong>Trạng thái:</strong>{' '}
                                     {renderStatus(
                                       campaign.approve,
                                       campaign.status,
@@ -446,22 +451,22 @@ const Influencer = () => {
                                     </strong>
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <small className="text-muted">
+                                    <small className='text-muted'>
                                       {campaign.campaignTTL[0] !== undefined ? (
                                         new Date(
                                           campaign.campaignTTL[0].open_datetime
-                                        ).toLocaleString("en-GB") +
-                                        " - " +
+                                        ).toLocaleString('en-GB') +
+                                        ' - ' +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")
+                                        ).toLocaleString('en-GB')
                                       ) : (
-                                        <Skeleton variant="text" />
+                                        <Skeleton variant='text' />
                                       )}
                                     </small>
                                   </CardSubtitle>
                                   <Link
-                                    href="/campaign/[cid]"
+                                    href='/campaign/[cid]'
                                     as={`/campaign/${campaign.id}`}
                                   >
                                     <Button>Chi tiết</Button>
@@ -471,38 +476,38 @@ const Influencer = () => {
                             </Col>
                           ))
                         ) : (
-                          <Spinner color="light" />
+                          <Spinner color='light' />
                         )}
                       </CardDeck>
                     </Row>
                   </TabPane>
-                  <TabPane tabId="vertical2">
+                  <TabPane tabId='vertical2'>
                     <Row>
                       <CardDeck>
                         {approvedCampaigns.campaigns.length !== 0 ? (
                           approvedCampaigns.campaigns.map((campaign) => (
                             <Col md={4} key={campaign.id}>
-                              <Card className="campaign-card">
+                              <Card className='campaign-card'>
                                 <CardImg
                                   src={
                                     campaign.picture[0] !== undefined
                                       ? `
                                         ${API_URL}${campaign.picture[0].formats.thumbnail.url}`
-                                      : "/256x186.svg"
+                                      : '/256x186.svg'
                                   }
-                                  alt="Card image cap"
-                                  className="campaign-img"
+                                  alt='Card image cap'
+                                  className='campaign-img'
                                 />
                                 <CardBody>
-                                  <CardTitle className="dashboard-card-title">
+                                  <CardTitle className='dashboard-card-title'>
                                     {campaign.title}
                                   </CardTitle>
                                   <CardSubtitle>
-                                    <strong>Người tạo:</strong>{" "}
+                                    <strong>Người tạo:</strong>{' '}
                                     {campaign.user.username}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>Trạng thái:</strong>{" "}
+                                    <strong>Trạng thái:</strong>{' '}
                                     {renderStatus(
                                       campaign.approve,
                                       campaign.status,
@@ -515,23 +520,23 @@ const Influencer = () => {
                                     </strong>
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <small className="text-muted">
-                                    {campaign.campaignTTL[0] !== undefined ? (
+                                    <small className='text-muted'>
+                                      {campaign.campaignTTL[0] !== undefined ? (
                                         new Date(
                                           campaign.campaignTTL[0].open_datetime
-                                        ).toLocaleString("en-GB") +
-                                        " - " +
+                                        ).toLocaleString('en-GB') +
+                                        ' - ' +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")
+                                        ).toLocaleString('en-GB')
                                       ) : (
-                                        <Skeleton variant="text" />
+                                        <Skeleton variant='text' />
                                       )}
                                     </small>
                                   </CardSubtitle>
 
                                   <Link
-                                    href="/campaign/[cid]"
+                                    href='/campaign/[cid]'
                                     as={`/campaign/${campaign.id}`}
                                   >
                                     <Button>Chi tiết</Button>
@@ -541,38 +546,38 @@ const Influencer = () => {
                             </Col>
                           ))
                         ) : (
-                          <Spinner color="light" />
+                          <Spinner color='light' />
                         )}
                       </CardDeck>
                     </Row>
                   </TabPane>
-                  <TabPane tabId="vertical3">
+                  <TabPane tabId='vertical3'>
                     <Row>
                       <CardDeck>
                         {unapprovedCampaigns.campaigns.length !== 0 ? (
                           unapprovedCampaigns.campaigns.map((campaign) => (
                             <Col md={4} key={campaign.id}>
-                              <Card className="campaign-card">
+                              <Card className='campaign-card'>
                                 <CardImg
                                   src={
                                     campaign.picture[0] !== undefined
                                       ? `
                                         ${API_URL}${campaign.picture[0].formats.thumbnail.url}`
-                                      : "/256x186.svg"
+                                      : '/256x186.svg'
                                   }
-                                  alt="Card image cap"
-                                  className="campaign-img"
+                                  alt='Card image cap'
+                                  className='campaign-img'
                                 />
                                 <CardBody>
-                                  <CardTitle className="dashboard-card-title">
+                                  <CardTitle className='dashboard-card-title'>
                                     {campaign.title}
                                   </CardTitle>
                                   <CardSubtitle>
-                                    <strong>Người tạo:</strong>{" "}
+                                    <strong>Người tạo:</strong>{' '}
                                     {campaign.user.username}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>Trạng thái:</strong>{" "}
+                                    <strong>Trạng thái:</strong>{' '}
                                     {renderStatus(
                                       campaign.approve,
                                       campaign.status,
@@ -585,19 +590,19 @@ const Influencer = () => {
                                     </strong>
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <small className="text-muted">
+                                    <small className='text-muted'>
                                       {new Date(
                                         campaign.campaignTTL[0].open_datetime
-                                      ).toLocaleString("en-GB") +
-                                        " - " +
+                                      ).toLocaleString('en-GB') +
+                                        ' - ' +
                                         new Date(
                                           campaign.campaignTTL[0].close_datetime
-                                        ).toLocaleString("en-GB")}
+                                        ).toLocaleString('en-GB')}
                                     </small>
                                   </CardSubtitle>
 
                                   <Link
-                                    href="/campaign/[cid]"
+                                    href='/campaign/[cid]'
                                     as={`/campaign/${campaign.id}`}
                                   >
                                     <Button>Chi tiết</Button>
@@ -607,7 +612,7 @@ const Influencer = () => {
                             </Col>
                           ))
                         ) : (
-                          <Spinner color="light" />
+                          <Spinner color='light' />
                         )}
                       </CardDeck>
                     </Row>
