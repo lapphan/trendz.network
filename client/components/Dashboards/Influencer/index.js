@@ -299,6 +299,9 @@ const Influencer = () => {
   return (
     <div className="wrapper">
       <div className="main">
+          <Button color="primary" className="btn-create" href="/create-channel">
+            Tạo Channel
+          </Button>  
         <Card>
           <CardBody>
             <Row>
@@ -450,11 +453,6 @@ const Influencer = () => {
                       </Row>
                     </Col>
                   </Row>
-                  <Link href='/create-channel'>
-                    <Button color='primary' className='btn-create'>
-                      Tạo Channel
-                    </Button>
-                  </Link>
                   <TabPane tabId='vertical1'>
                     <Row>
                       <CardDeck>
