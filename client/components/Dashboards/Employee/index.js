@@ -765,11 +765,7 @@ const Employee = () => {
                                     )}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>
-                                      Ngày tạo:
-                                    </strong>
-                                  </CardSubtitle>
-                                  <CardSubtitle>
+                                    <strong>Ngày tạo:</strong>{" "}
                                     <small className="text-muted">
                                       {channel.created_at !== undefined ? (
                                         new Date(
@@ -849,11 +845,7 @@ const Employee = () => {
                                     )}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>
-                                      Ngày tạo:
-                                    </strong>
-                                  </CardSubtitle>
-                                  <CardSubtitle>
+                                    <strong>Ngày tạo:</strong>{" "}
                                     <small className="text-muted">
                                       {channel.created_at !== undefined ? (
                                         new Date(
@@ -933,11 +925,7 @@ const Employee = () => {
                                     )}
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                    <strong>
-                                      Ngày tạo:
-                                    </strong>
-                                  </CardSubtitle>
-                                  <CardSubtitle>
+                                    <strong>Ngày tạo:</strong>{" "}
                                     <small className="text-muted">
                                       {channel.created_at !== undefined ? (
                                         new Date(
