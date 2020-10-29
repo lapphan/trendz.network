@@ -299,11 +299,6 @@ const Influencer = () => {
   return (
     <div className="wrapper">
       <div className="main">
-  
-          <Button color="primary" className="btn-create" href="/create-channel">
-            Tạo Channel
-          </Button>
-        
         <Card>
           <CardBody>
             <Row>
