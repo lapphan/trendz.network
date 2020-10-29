@@ -10,6 +10,14 @@
     },
     {
       "method": "GET",
+      "path": "/channels/getId",
+      "handler": "channel.getId",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/channels/count",
       "handler": "channel.count",
       "config": {
