@@ -38,6 +38,10 @@ const Influencer = () => {
     vertical: 1,
   });
 
+  const [channels, setChannels] = useState({
+    channels: [],
+  });
+
   const [categories, setCategories] = useState({
     categories: [],
   });
@@ -119,23 +123,40 @@ const Influencer = () => {
     } else return "Đã được cấp phép - Influencer đã chấp thuận - Đã kết thúc";
   };
 
+  const renderChannelStatus = (employeeConfirm, adminConfirm, status) => {
+    if (employeeConfirm == null ||(employeeConfirm == true && adminConfirm == null)) {
+      return "Đang chờ cấp phép";
+    }
+    if (!employeeConfirm || !adminConfirm) {
+      return "Không được cấp phép";
+    }
+    if (adminConfirm && employeeConfirm && status == false) {
+      return "Đã được cấp phép - Đang dừng hoạt động";
+    }
+    if (adminConfirm && employeeConfirm && status == true) {
+      return "Đã được cấp phép - Đang hoạt động";
+    }
+  };
+
   useEffect(() => {
     let query = `?_where[channels.user]=${state.user.id}`;
     if (filterItems.search !== "")
       query += "&title_contains=" + filterItems.search;
     if (filterItems.category !== "")
       query += "&_where[category.id]=" + filterItems.category;
-    if (filterItems.sort !== "")
-      query += "&" + filterItems.sort;
+    if (filterItems.sort !== "") query += "&" + filterItems.sort;
     setQuery(query);
   }, [filterItems]);
 
   useEffect(() => {
     let mountedCampaign = true;
     let mountedCategory = true;
-    const campaignUrl = API_URL + `/campaigns?_where[channels.user]=${state.user.id}`;
-    console.log(campaignUrl)
+    let mountedChannel = true;
+    const campaignUrl =
+      API_URL + `/campaigns?_where[channels.user]=${state.user.id}`;
     const categoryUrl = API_URL + "/categories";
+    const channelUrl = API_URL + `/channels?_where[user.id]=${state.user.id}`;
+
     const fetchCampaign = async () => {
       try {
         const get_resolve = await axios.get(campaignUrl, {
@@ -145,7 +166,6 @@ const Influencer = () => {
           },
         });
         if (mountedCampaign) {
-          console.log(get_resolve.data)
           try {
             setOnHoldCampaigns({
               campaigns: get_resolve.data.filter(function (campaign) {
@@ -195,10 +215,36 @@ const Influencer = () => {
         }
       }
     };
+    const fetchChannels = async () => {
+      try {
+        const get_resolve = await axios.get(channelUrl, {
+          cancelToken: signal.token,
+          headers: {
+            Authorization: `Bearer ${state.jwt}`,
+          },
+        });
+        if (mountedChannel) {
+          try {
+            setChannels({
+              channels: get_resolve.data,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      } catch (error) {
+        if (axios.isCancel(error) && error.message !== undefined) {
+          console.log("Error: ", error.message);
+        }
+      }
+    };
     fetchCampaign();
     fetchCategories();
+    fetchChannels();
     return function cleanup() {
       mountedCampaign = false;
+      mountedCategory = false;
+      mountedChannel = false;
       signal.cancel();
     };
   }, []);
@@ -255,6 +301,11 @@ const Influencer = () => {
   return (
     <div className="wrapper">
       <div className="main">
+  
+          <Button color="primary" className="btn-create" href="/create-channel">
+            Tạo Channel
+          </Button>
+        
         <Card>
           <CardBody>
             <Row>
@@ -288,6 +339,16 @@ const Influencer = () => {
                       onClick={(e) => toggleTabs(e, "vertical", 3)}
                     >
                       Unapproved Campaigns
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      className={classnames({
+                        active: navState.vertical === 4,
+                      })}
+                      onClick={(e) => toggleTabs(e, "vertical", 4)}
+                    >
+                      Channel của tôi
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -516,7 +577,7 @@ const Influencer = () => {
                                   </CardSubtitle>
                                   <CardSubtitle>
                                     <small className="text-muted">
-                                    {campaign.campaignTTL[0] !== undefined ? (
+                                      {campaign.campaignTTL[0] !== undefined ? (
                                         new Date(
                                           campaign.campaignTTL[0].open_datetime
                                         ).toLocaleString("en-GB") +
@@ -599,6 +660,90 @@ const Influencer = () => {
                                   <Link
                                     href="/campaign/[cid]"
                                     as={`/campaign/${campaign.id}`}
+                                  >
+                                    <Button>Chi tiết</Button>
+                                  </Link>
+                                </CardBody>
+                              </Card>
+                            </Col>
+                          ))
+                        ) : (
+                          <Spinner color="light" />
+                        )}
+                      </CardDeck>
+                    </Row>
+                  </TabPane>
+                  <TabPane tabId="vertical4">
+                    <Row>
+                      <CardDeck>
+                        {channels.channels.length !== 0 ? (
+                          channels.channels.map((channel) => (
+                            <Col md={4} key={channel.id}>
+                              <Card className="campaign-card">
+                                {channel.avatar !== null ? (
+                                  <CardImg
+                                    src={`${API_URL}${channel.avatar.formats.thumbnail.url}`}
+                                    alt="Card image cap"
+                                    className="campaign-img"
+                                  />
+                                ) : (
+                                  <Skeleton
+                                    variant="rect"
+                                    width={350}
+                                    height={320}
+                                  />
+                                )}
+                                <CardBody>
+                                  <CardTitle className="dashboard-card-title">
+                                    {channel.name !== undefined ? (
+                                      channel.name
+                                    ) : (
+                                      <Skeleton variant="text" />
+                                    )}
+                                  </CardTitle>
+                                  <CardSubtitle>
+                                    <strong>Thể loại:</strong>{" "}
+                                    {channel.category.name !== null ? (
+                                      channel.category.name
+                                    ) : (
+                                      <Skeleton variant="text" />
+                                    )}
+                                  </CardSubtitle>
+                                  <CardSubtitle>
+                                    <strong>Trạng thái:</strong>{" "}
+                                    {renderChannelStatus(
+                                      channel.employeeConfirm,
+                                      channel.adminConfirm,
+                                      channel.status
+                                    )}
+                                  </CardSubtitle>
+                                  <CardSubtitle>
+                                    <strong>
+                                      Ngày tạo:
+                                    </strong>
+                                  </CardSubtitle>
+                                  <CardSubtitle>
+                                    <small className="text-muted">
+                                      {channel.created_at !== undefined ? (
+                                        new Date(
+                                          channel.created_at
+                                        ).toLocaleString("en-GB")
+                                      ) : (
+                                        <Skeleton variant="text" />
+                                      )}
+                                    </small>
+                                  </CardSubtitle>
+                                  <CardSubtitle>
+                                    <strong>Người tạo:</strong>{" "}
+                                    {channel.user.username !== null ? (
+                                      channel.user.username
+                                    ) : (
+                                      <Skeleton variant="text" />
+                                    )}
+                                  </CardSubtitle>
+                                  <Link
+                                    href="/channel/[chid]"
+                                    as={`/channel/${channel.id}`}
                                   >
                                     <Button>Chi tiết</Button>
                                   </Link>

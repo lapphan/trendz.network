@@ -56,8 +56,6 @@ const Post = ({ cid }) => {
 
   const RenderRole = () => {
     if (state.user.id == campaign.channels[0].user) {
-      console.log(campaign);
-      console.log(categories);
       return (
         <InfluencerCampaignPage
           categories={categories}
@@ -275,7 +273,6 @@ const Post = ({ cid }) => {
                     }
                     if (message.influencerMessage != null) {
                       var userAvatar = "/256x186.svg";
-                      console.log(get_influencer.data);
                       if (get_influencer.data.avatar !== null) {
                         userAvatar = `${API_URL}${get_influencer.data.user.avatar.formats.thumbnail.url}`;
                       }

@@ -17,7 +17,6 @@ import {
   Form,
 } from "reactstrap";
 import { useSnackbar } from "notistack";
-import { useMutation } from "react-apollo";
 import axios from "axios";
 import { errorLog } from "../utils/functions/error-log-snackbar";
 import Datetime from "react-datetime";
@@ -39,7 +38,6 @@ const Create = () => {
     status: null,
     user: state.user.id,
     category: null,
-    // channels: [],
     open_datetime: new Date().toISOString(),
     close_datetime: new Date().toISOString(),
     approve: null,
@@ -149,7 +147,10 @@ const Create = () => {
       channelId: "",
       channelName: "",
     });
-    setAllChannels(categories.categories.find((x) => x.id === id).channels);
+    //raw channels
+    const allChannelsRaw = categories.categories.find((x) => x.id === id).channels
+    //filter status=true channels
+    setAllChannels(allChannelsRaw.filter((x)=>x.status===true));
   };
 
   const handleInfluencerChange = (id, name) => {
@@ -159,7 +160,10 @@ const Create = () => {
       channelId: "",
       channelName: "",
     });
-    setAllChannels(influencers.influencers.find((x) => x.id === id).channels);
+    //raw channels
+    const allChannelsRaw = influencers.influencers.find((x) => x.id === id).channels
+    //filter status=true channels
+    setAllChannels(allChannelsRaw.filter((x)=>x.status===true));
   };
 
   const handleChannelsChange = (id, name) => {
@@ -277,6 +281,7 @@ const Create = () => {
           completed: null,
           }
         createCampaign(campaign)
+        Router.push("/dashboard");
       })
       return enqueueSnackbar("Tạo campaign thành công!", {
         variant: "success",
@@ -475,7 +480,7 @@ const Create = () => {
   }, [campaignState]);
 
   useEffect(() => {
-    if (state.jwt === "") Router.push("/login");
+    if (state.user.role.type !== "customer") Router.push("/login");
     else {
       let mounted = true;
       //fetch Categories

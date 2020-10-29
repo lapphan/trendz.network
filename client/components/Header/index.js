@@ -99,7 +99,7 @@ function Header() {
     //Router.reload();
     
     Router.push("/login")
-    //location.reload()
+    location.reload()
   };
 
   const renderUnloggedInButton = (

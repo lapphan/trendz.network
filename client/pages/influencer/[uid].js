@@ -48,7 +48,6 @@ const Influencer = () => {
           });
           if (mounted) {
             try {
-              console.log(get_resolve.data);
               setInfluencer(get_resolve.data[0]);
             } catch (error) {
               console.log(error);
@@ -84,36 +83,6 @@ const Influencer = () => {
                 <CardBody>
                   <CardTitle>{influencer.user.name}</CardTitle>
                   <CardText>{influencer.user.username}</CardText>
-
-                  {/* <CardSubtitle>
-                    <strong>Thể loại:</strong>
-                  </CardSubtitle> */}
-
-                  {/* <CardText>
-                    {influencer.category.name} -{" "}
-                    {influencer.category.description}
-                  </CardText> */}
-                  {/* <CardSubtitle>
-                    <strong>Kênh:</strong>
-                    </CardSubtitle>
-                    <>
-                    <CardText>
-                    <strong>{influencer.name}</strong>
-                    </CardText>
-                    <CardText>
-                    <strong>Website:</strong>{" "}
-                    <a href="##">{influencer.info.website}</a>
-                    </CardText>
-                    <CardText>
-                    <strong>Địa chỉ:</strong> {influencer.info.address}
-                    </CardText>
-                    <CardText>
-                    <strong>Liên hệ:</strong> {influencer.info.phone}
-                    </CardText>
-                    </>
-                  ) : (
-                    ""
-                  )} */}
                 </CardBody>
               </Card>
             ) : (
@@ -127,25 +96,5 @@ const Influencer = () => {
     </div>
   );
 };
-
-// export async function getStaticPaths(){
-//   const res = await fetch(API_URL+`/influencer-details`)
-//   const influencers = await res.json()
-//   console.log(influencers)
-//   const paths = influencers.map((influencer)=>{
-//     params: {id: influencer.user.id}
-//   })
-
-//   return {paths, fallback: false}
-// }
-
-// export async function getStaticProps({ params }) {
-//   const url = API_URL + `/influencer-details?_where[user.id]=${params.uid}`;
-//   const get_resolve = await axios.get(url);
-//   const influencer = get_resolve.data[0];
-//   return{
-//     props:{influencer}
-//   }
-// }
 
 export default Influencer;

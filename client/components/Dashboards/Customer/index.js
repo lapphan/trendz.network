@@ -179,6 +179,7 @@ const Customer = () => {
         });
         if (mountedCampaign) {
           try {
+            console.log(get_resolve.data)
             setMyCampaigns({
               campaigns: get_resolve.data.filter(function (campaign) {
                 return campaign.user.id == state.user.id;
@@ -509,7 +510,7 @@ const Customer = () => {
                                     </strong>
                                   </CardSubtitle>
                                   <CardSubtitle>
-                                  <small className="text-muted">
+                                    <small className="text-muted">
                                       {campaign.campaignTTL[0] !== undefined ? (
                                         new Date(
                                           campaign.campaignTTL[0].open_datetime
