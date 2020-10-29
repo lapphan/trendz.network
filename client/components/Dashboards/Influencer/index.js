@@ -304,7 +304,7 @@ const Influencer = () => {
     <div className="wrapper">
       <div className="main">
         <Button color="primary" className="btn-create" href="/create-channel">
-          Tạo Channel
+          Create Channel
         </Button>
         <Card>
           <CardBody>
