@@ -20,7 +20,7 @@ import { useSnackbar } from "notistack";
 import axios from "axios";
 import { errorLog } from "../utils/functions/error-log-snackbar";
 import { Editor } from "@tinymce/tinymce-react";
-import {CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import CheckIcon from "@material-ui/icons/Check";
 
 const { API_URL } = process.env;
@@ -42,7 +42,7 @@ const Create = () => {
     phone: "",
     price: 0,
     status: false,
-    avatar: null
+    avatar: null,
   });
   const [isAbleToSubmit, setIsAbleToSubmit] = useState(false);
 
@@ -110,15 +110,17 @@ const Create = () => {
     try {
       createChannel(channelState);
       Router.push("/dashboard");
-      Router.reload;
-      return enqueueSnackbar("Tạo channel thành công! Channel của bạn đang được xét duyệt!", {
-        variant: "success",
-      });
+      return enqueueSnackbar(
+        "Tạo channel thành công! Channel của bạn đang được xét duyệt!",
+        {
+          variant: "success",
+        }
+      );
     } catch (error) {
       return enqueueSnackbar(errorLog(error.message), { variant: "error" });
     }
   };
-  
+
   const handleAvatarSubmit = async (event) => {
     event.preventDefault();
     setAvatar((previousState) => {
@@ -151,7 +153,7 @@ const Create = () => {
       };
     });
   };
-  
+
   useEffect(() => {
     if (
       channelState.name !== "" &&
@@ -311,9 +313,9 @@ const Create = () => {
                     <Label for="picture">Chọn ảnh...</Label>
                     <br />
                     <input type="file" onChange={handleAvatarChange} />
-                    <Button>Tải lên</Button>            
-                      {avatar.loading ? <CircularProgress /> : null}
-                      {avatar.submmited ? <CheckIcon /> : <p></p>}
+                    <Button>Tải lên</Button>
+                    {avatar.loading ? <CircularProgress /> : null}
+                    {avatar.submmited ? <CheckIcon /> : <p></p>}
                   </form>
                 </div>
                 <div className="form-button">

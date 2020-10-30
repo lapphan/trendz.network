@@ -78,7 +78,6 @@ const Admin = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedChannel) {
           try {
             try {
               setOnHoldChannels({
@@ -102,8 +101,7 @@ const Admin = () => {
           } catch (error) {
             console.log(error);
           }
-        }
-      } catch (error) {
+        } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
           console.log("Error: ", error.message);
         }
@@ -111,7 +109,6 @@ const Admin = () => {
     };
     fetchChannels();
     return function cleanup() {
-      mountedChannel = false;
       signal.cancel();
     };
   }, []);

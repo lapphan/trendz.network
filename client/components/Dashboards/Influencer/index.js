@@ -152,9 +152,6 @@ const Influencer = () => {
   }, [filterItems]);
 
   useEffect(() => {
-    let mountedCampaign = true;
-    let mountedCategory = true;
-    let mountedChannel = true;
     const campaignUrl =
       API_URL + `/campaigns?_where[channels.user]=${state.user.id}`;
     const categoryUrl = API_URL + "/categories";
@@ -167,26 +164,24 @@ const Influencer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedCampaign) {
-          try {
-            setOnHoldCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.approve == true && campaign.status == null;
-              }),
-            });
-            setApprovedCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.approve && campaign.status == true;
-              }),
-            });
-            setUnapprovedCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.approve == true && campaign.status == false;
-              }),
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setOnHoldCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.approve == true && campaign.status == null;
+            }),
+          });
+          setApprovedCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.approve && campaign.status == true;
+            }),
+          });
+          setUnapprovedCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.approve == true && campaign.status == false;
+            }),
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -202,14 +197,12 @@ const Influencer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedCategory) {
-          try {
-            setCategories({
-              categories: get_resolve.data,
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setCategories({
+            categories: get_resolve.data,
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -225,14 +218,12 @@ const Influencer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedChannel) {
-          try {
-            setChannels({
-              channels: get_resolve.data,
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setChannels({
+            channels: get_resolve.data,
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -244,9 +235,6 @@ const Influencer = () => {
     fetchCategories();
     fetchChannels();
     return function cleanup() {
-      mountedCampaign = false;
-      mountedCategory = false;
-      mountedChannel = false;
       signal.cancel();
     };
   }, []);
@@ -684,7 +672,7 @@ const Influencer = () => {
                           channels.channels.map((channel) => (
                             <Col md={4} key={channel.id}>
                               <Card className="campaign-card">
-                                {channel.avatar !== null ? (
+                                {channel.avatar.formats !== null ? (
                                   <CardImg
                                     src={`${API_URL}${channel.avatar.formats.thumbnail.url}`}
                                     alt="Card image cap"
@@ -694,7 +682,7 @@ const Influencer = () => {
                                   <Skeleton
                                     variant="rect"
                                     width={350}
-                                    height={320}
+                                    height={300}
                                   />
                                 )}
                                 <CardBody>

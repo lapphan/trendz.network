@@ -163,9 +163,6 @@ const Customer = () => {
   }, [query]);
 
   useEffect(() => {
-    let mountedCampaign = true;
-    let mountedInfluencer = true;
-    let mountedCategory = true;
     const campaignUrl = API_URL + "/campaigns";
     const influencersUrl = API_URL + "/users";
     const categoryUrl = API_URL + "/categories";
@@ -177,17 +174,15 @@ const Customer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedCampaign) {
-          try {
-            console.log(get_resolve.data)
-            setMyCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.user.id == state.user.id;
-              }),
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          console.log(get_resolve.data);
+          setMyCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.user.id == state.user.id;
+            }),
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -203,16 +198,14 @@ const Customer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedInfluencer) {
-          try {
-            setInfluencers({
-              influencers: get_resolve.data.filter(function (user) {
-                return user.role.name == "Influencer";
-              }),
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setInfluencers({
+            influencers: get_resolve.data.filter(function (user) {
+              return user.role.name == "Influencer";
+            }),
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -228,14 +221,12 @@ const Customer = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedCategory) {
-          try {
-            setCategories({
-              categories: get_resolve.data,
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setCategories({
+            categories: get_resolve.data,
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -247,9 +238,6 @@ const Customer = () => {
     fetchInfluencers();
     fetchCategories();
     return function cleanup() {
-      mountedCampaign = false;
-      mountedInfluencer = false;
-      mountedCategory = false;
       signal.cancel();
     };
   }, []);

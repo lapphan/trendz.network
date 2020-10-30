@@ -136,7 +136,10 @@ const Employee = () => {
   };
 
   const renderChannelStatus = (employeeConfirm, adminConfirm, status) => {
-    if (employeeConfirm == null ||(employeeConfirm == true && adminConfirm == null)) {
+    if (
+      employeeConfirm == null ||
+      (employeeConfirm == true && adminConfirm == null)
+    ) {
       return "Đang chờ cấp phép";
     }
     if (!employeeConfirm || !adminConfirm) {
@@ -216,9 +219,6 @@ const Employee = () => {
   }, [query]);
 
   useEffect(() => {
-    let mountedCampaign = true;
-    let mountedCategory = true;
-    let mountedChannel = true;
     const campaignUrl = API_URL + "/campaigns";
     const categoryUrl = API_URL + "/categories";
     const channelUrl = API_URL + "/channels";
@@ -230,26 +230,24 @@ const Employee = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedCampaign) {
-          try {
-            setOnHoldCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.approve == null;
-              }),
-            });
-            setApprovedCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.approve == true;
-              }),
-            });
-            setUnapprovedCampaigns({
-              campaigns: get_resolve.data.filter(function (campaign) {
-                return campaign.approve == false;
-              }),
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setOnHoldCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.approve == null;
+            }),
+          });
+          setApprovedCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.approve == true;
+            }),
+          });
+          setUnapprovedCampaigns({
+            campaigns: get_resolve.data.filter(function (campaign) {
+              return campaign.approve == false;
+            }),
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -265,14 +263,12 @@ const Employee = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedCategory) {
-          try {
-            setCategories({
-              categories: get_resolve.data,
-            });
-          } catch (error) {
-            console.log(error);
-          }
+        try {
+          setCategories({
+            categories: get_resolve.data,
+          });
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -288,30 +284,28 @@ const Employee = () => {
             Authorization: `Bearer ${state.jwt}`,
           },
         });
-        if (mountedChannel) {
+        try {
           try {
-            try {
-              setOnHoldChannels({
-                channels: get_resolve.data.filter(function (channel) {
-                  return channel.employeeConfirm == null;
-                }),
-              });
-              setApprovedChannels({
-                channels: get_resolve.data.filter(function (channel) {
-                  return channel.employeeConfirm == true;
-                }),
-              });
-              setUnApprovedChannels({
-                channels: get_resolve.data.filter(function (channel) {
-                  return channel.employeeConfirm == false;
-                }),
-              });
-            } catch (error) {
-              console.log(error);
-            }
+            setOnHoldChannels({
+              channels: get_resolve.data.filter(function (channel) {
+                return channel.employeeConfirm == null;
+              }),
+            });
+            setApprovedChannels({
+              channels: get_resolve.data.filter(function (channel) {
+                return channel.employeeConfirm == true;
+              }),
+            });
+            setUnApprovedChannels({
+              channels: get_resolve.data.filter(function (channel) {
+                return channel.employeeConfirm == false;
+              }),
+            });
           } catch (error) {
             console.log(error);
           }
+        } catch (error) {
+          console.log(error);
         }
       } catch (error) {
         if (axios.isCancel(error) && error.message !== undefined) {
@@ -323,9 +317,6 @@ const Employee = () => {
     fetchCategories();
     fetchChannels();
     return function cleanup() {
-      mountedCampaign = false;
-      mountedCategory = false;
-      mountedChannel = false;
       signal.cancel();
     };
   }, []);
@@ -803,7 +794,7 @@ const Employee = () => {
                   <TabPane tabId="vertical5">
                     <Row>
                       <CardDeck>
-                      {approvedChannels.channels.length !== 0 ? (
+                        {approvedChannels.channels.length !== 0 ? (
                           approvedChannels.channels.map((channel) => (
                             <Col md={4} key={channel.id}>
                               <Card className="campaign-card">
@@ -883,7 +874,7 @@ const Employee = () => {
                   <TabPane tabId="vertical6">
                     <Row>
                       <CardDeck>
-                      {unApprovedChannels.channels.length !== 0 ? (
+                        {unApprovedChannels.channels.length !== 0 ? (
                           unApprovedChannels.channels.map((channel) => (
                             <Col md={4} key={channel.id}>
                               <Card className="campaign-card">
