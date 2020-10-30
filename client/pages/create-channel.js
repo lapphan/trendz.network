@@ -110,6 +110,7 @@ const Create = () => {
     try {
       createChannel(channelState);
       Router.push("/dashboard");
+      Router.reload;
       return enqueueSnackbar("Tạo channel thành công! Channel của bạn đang được xét duyệt!", {
         variant: "success",
       });
@@ -164,7 +165,8 @@ const Create = () => {
         new RegExp(/(03|07|08|09|01[2|6|8|9])+([0-9]{8})\b/)
       ) &&
       channelState.price >= 50000 &&
-      channelState.category !== ""
+      channelState.category !== "" &&
+      channelState.avatar !== null
     ) {
       setIsAbleToSubmit(true);
     }
@@ -202,10 +204,6 @@ const Create = () => {
       };
     }
   }, [state]);
-
-  useEffect(()=>{
-    Router.prefetch('/dashboard')
-  },[])
 
   return (
     <div>
