@@ -203,6 +203,10 @@ const Create = () => {
     }
   }, [state]);
 
+  useEffect(()=>{
+    Router.prefetch('/dashboard')
+  },[])
+
   return (
     <div>
       <div className="wrapper">
