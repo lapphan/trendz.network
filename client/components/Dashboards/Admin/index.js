@@ -162,7 +162,7 @@ const Admin = () => {
                           onHoldChannels.channels.map((channel) => (
                             <Col md={4} key={channel.id}>
                               <Card className="campaign-card">
-                                {channel.avatar !== null ? (
+                                {channel.avatar.formats !== null ? (
                                   <CardImg
                                     src={`${API_URL}${channel.avatar.formats.thumbnail.url}`}
                                     alt="Card image cap"
@@ -246,7 +246,7 @@ const Admin = () => {
                           approvedChannels.channels.map((channel) => (
                             <Col md={4} key={channel.id}>
                               <Card className="campaign-card">
-                                {channel.avatar !== null ? (
+                                {channel.avatar.formats !== null ? (
                                   <CardImg
                                     src={`${API_URL}${channel.avatar.formats.thumbnail.url}`}
                                     alt="Card image cap"
@@ -330,7 +330,7 @@ const Admin = () => {
                           unApprovedChannels.channels.map((channel) => (
                             <Col md={4} key={channel.id}>
                               <Card className="campaign-card">
-                                {channel.avatar !== null ? (
+                                {channel.avatar.formats !== null ? (
                                   <CardImg
                                     src={`${API_URL}${channel.avatar.formats.thumbnail.url}`}
                                     alt="Card image cap"

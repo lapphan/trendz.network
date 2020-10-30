@@ -150,9 +150,9 @@ const InfluencerCampaignPage = ({ chid, channel }) => {
       {channel.status !== null ? renderStatusModal() : ""}
       <CardImg
         src={
-          channel.avatar !== null
+          channel.avatar.formats !== null
             ? `${API_URL}${channel.avatar.formats.thumbnail.url}`
-            : ""
+            : `${API_URL}${channel.avatar.url}`
         }
         alt="Card image cap"
         className="campaign-detail-img"
