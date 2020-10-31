@@ -721,14 +721,6 @@ const Influencer = () => {
                                       )}
                                     </small>
                                   </CardSubtitle>
-                                  <CardSubtitle>
-                                    <strong>Người tạo:</strong>{" "}
-                                    {channel.user.username !== null ? (
-                                      channel.user.username
-                                    ) : (
-                                      <Skeleton variant="text" />
-                                    )}
-                                  </CardSubtitle>
                                   <Link
                                     href="/channel/[chid]"
                                     as={`/channel/${channel.id}`}

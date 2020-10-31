@@ -41,7 +41,7 @@ const Create = () => {
     adminConfirm: null,
     phone: "",
     price: 0,
-    status: false,
+    status: null,
     avatar: null,
   });
   const [isAbleToSubmit, setIsAbleToSubmit] = useState(false);
